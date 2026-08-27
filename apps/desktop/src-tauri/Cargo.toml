@@ -1,0 +1,43 @@
+[package]
+name = "strafe-desktop"
+version = "0.0.0"
+description = "Desktop shell for Strafe"
+edition = "2024"
+rust-version = "1.85"
+
+[lib]
+name = "strafe_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-autostart = "2"
+tauri-plugin-clipboard-manager = "2"
+tauri-plugin-deep-link = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+tauri-plugin-global-shortcut = "2"
+tauri-plugin-http = "2"
+tauri-plugin-log = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-opener = "2"
+tauri-plugin-os = "2"
+tauri-plugin-positioner = { version = "2", features = ["tray-icon"] }
+tauri-plugin-process = "2"
+tauri-plugin-shell = "2"
+tauri-plugin-single-instance = { version = "2", features = ["deep-link"] }
+tauri-plugin-sql = { version = "2", features = ["sqlite"] }
+tauri-plugin-store = "2"
+tauri-plugin-stronghold = "2"
+tauri-plugin-updater = "2"
+tauri-plugin-upload = "2"
+tauri-plugin-websocket = "2"
+tauri-plugin-window-state = "2"
+
+[profile.dev.package.scrypt]
+opt-level = 3
