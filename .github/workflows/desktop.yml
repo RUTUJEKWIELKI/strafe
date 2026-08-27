@@ -1,0 +1,63 @@
+name: Desktop
+
+on:
+  pull_request:
+    paths:
+      - apps/desktop/**
+      - apps/web/**
+      - pnpm-lock.yaml
+      - .github/workflows/desktop.yml
+  push:
+    branches:
+      - main
+    paths:
+      - apps/desktop/**
+      - apps/web/**
+      - pnpm-lock.yaml
+      - .github/workflows/desktop.yml
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Cargo check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libssl-dev \
+            libwebkit2gtk-4.1-dev \
+            patchelf
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri
+
+      - name: Install JavaScript dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check Rust workspace
+        run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
