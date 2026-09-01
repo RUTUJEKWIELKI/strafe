@@ -57,7 +57,7 @@
     "docs:lint": "pnpm --filter @strafe/docs lint",
     "docs:preview": "pnpm --filter @strafe/docs preview",
     "docs:sync": "pnpm --filter @strafe/docs sync",
-    "docs:test": "playwright test --config playwright.docs.config.ts",
+    "docs:test": "vitest run apps/docs",
     "docs:typedoc": "pnpm --filter @strafe/docs typedoc",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
