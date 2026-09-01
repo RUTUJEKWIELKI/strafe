@@ -310,8 +310,9 @@ export class AuthService {
   ): Promise<AuthResponse> {
     const { db } = requireDatabase(this.#app)
     const nextRefreshToken = createOpaqueToken()
-    const now = new Date()
-    const [session] = await db
+                  const now = new Date()
+                  const now = new Date()
+    let [session] = await db
       .update(userSessions)
       .set({
         ...(metadata
@@ -343,6 +344,7 @@ export class AuthService {
         .where(
           and(
             eq(userSessions.previousRefreshTokenHash, hashSecret(refreshToken)),
+              lt(userSessions.rotatedAt, new Date(now.getTime() - 10_000)),
             isNull(userSessions.revokedAt),
           ),
         )
@@ -447,7 +449,7 @@ export class AuthService {
     }
 
     const { db } = requireDatabase(this.#app)
-    const [session] = await db
+    let [session] = await db
       .select({
         deviceId: userSessions.deviceId,
         id: userSessions.id,
