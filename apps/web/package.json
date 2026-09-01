@@ -12,7 +12,6 @@
     "typecheck": "pnpm run shared:build && tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@strafe/shared": "workspace:*",
     "@dnd-kit/solid": "^0.5.0",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource-variable/outfit": "^5.3.0",
