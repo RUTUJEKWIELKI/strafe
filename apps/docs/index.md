@@ -44,14 +44,14 @@ practical guides cover [authentication](/guide/guides/authentication),
 
 ```mermaid
 flowchart LR
-  Client[Web / Desktop] --> API[Fastify API]
-  API --> PG[(PostgreSQL)]
-  API --> Redis[(Redis)]
-  API --> Storage[S3 / MinIO]
-  PG --> Outbox[Transactional outbox]
-  Outbox --> Search[Meilisearch]
-  Outbox --> Push[Notifications]
-  Redis --> Gateway[WebSocket gateway]
+  Client["Web / Desktop"] --> API["Fastify API"]
+  API --> PG[("PostgreSQL")]
+  API --> Redis[("Redis")]
+  API --> Storage["S3 / MinIO"]
+  PG --> Outbox["Transactional outbox"]
+  Outbox --> Search["Meilisearch"]
+  Outbox --> Push["Notifications"]
+  Redis --> Gateway["WebSocket gateway"]
 ```
 
 PostgreSQL owns durable state. Redis carries presence and realtime streams.

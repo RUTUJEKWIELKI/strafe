@@ -40,11 +40,11 @@ can run local-only realtime without Redis, but production realtime requires it.
 
 ## Health and observability
 
-| Endpoint | Behavior |
-| --- | --- |
-| `GET /api/health` | Reports configured PostgreSQL and Redis status; always returns `200` |
+| Endpoint                | Behavior                                                                                    |
+| ----------------------- | ------------------------------------------------------------------------------------------- |
+| `GET /api/health`       | Reports configured PostgreSQL and Redis status; always returns `200`                        |
 | `GET /api/health/ready` | Probes PostgreSQL and Redis; returns `503` when either configured dependency is unavailable |
-| `GET /api/metrics` | Prometheus process and HTTP metrics, or `404` when disabled |
+| `GET /api/metrics`      | Prometheus process and HTTP metrics, or `404` when disabled                                 |
 
 Fastify/Pino logs include request IDs and remove authorization, cookie, and
 `set-cookie` values. Responses expose the request ID through `x-request-id` and
