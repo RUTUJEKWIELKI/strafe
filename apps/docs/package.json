@@ -17,9 +17,6 @@
   "dependencies": {
     "@braintree/sanitize-url": "^7.1.2",
     "@scalar/api-reference": "^1.62.4",
-    "cytoscape": "^3.34.2",
-    "cytoscape-cose-bilkent": "^4.1.0",
-    "dayjs": "^1.11.23",
     "vue": "3.5.42"
   },
   "devDependencies": {
