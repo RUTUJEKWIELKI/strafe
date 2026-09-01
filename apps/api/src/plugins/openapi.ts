@@ -24,7 +24,7 @@ const openApiPlugin: FastifyPluginAsync = async (app) => {
         title: 'Strafe API',
         version: app.config.SERVICE_VERSION,
       },
-      servers: [{ url: 'http://localhost:3000' }],
+      servers: [],
     },
   })
 
