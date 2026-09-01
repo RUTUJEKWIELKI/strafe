@@ -1,6 +1,21 @@
 node_modules/
+.pnpm-store/
 dist/
+coverage/
 target/
+
+# Application build output
+/apps/api/dist/
+/apps/web/dist/
+/apps/docs/.vitepress/dist/
+/apps/docs/.vitepress/cache/
+/apps/desktop/dist/
+/apps/desktop/src-tauri/target/
+/test-results/
+/playwright-report/
+/blob-report/
+*.tsbuildinfo
+
 .env
 .env.*
 !.env.example
