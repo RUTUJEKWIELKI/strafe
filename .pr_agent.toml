@@ -1,0 +1,23 @@
+[github_app]
+pr_commands = [
+  "/agentic_describe",
+  "/agentic_review",
+]
+feedback_on_draft_pr = true
+handle_push_trigger = true
+push_commands = [
+  "/agentic_review",
+]
+
+[review_agent]
+enable_commitable_suggestions = true
+persistent_comment_notification = false
+
+[chat_agent]
+enable_fixer_agent = true
+
+[fixer_agent]
+enable = true
+enable_auto_fix = true
+action_level_threshold = 2
+open_new_pr = false
