@@ -1,0 +1,103 @@
+name: Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - apps/docs/**
+      - apps/api/openapi/**
+      - packages/shared/src/**
+      - docs/**
+      - '*.md'
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - .github/workflows/docs.yml
+  pull_request:
+    paths:
+      - apps/docs/**
+      - apps/api/openapi/**
+      - packages/shared/src/**
+      - docs/**
+      - '*.md'
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - .github/workflows/docs.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.24.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          cache: pnpm
+          node-version: 24
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Restore VitePress cache
+        uses: actions/cache@v4
+        with:
+          path: apps/docs/.vitepress/cache
+          key: ${{ runner.os }}-vitepress-${{ hashFiles('apps/docs/**', 'apps/api/openapi/**', 'packages/shared/src/**', 'pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-vitepress-
+
+      - name: Build documentation
+        run: pnpm docs:build
+        env:
+          DOCS_BASE: /strafe/
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Test documentation
+        run: pnpm docs:test
+        env:
+          DOCS_BASE: /strafe/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/docs/.vitepress/dist
+
+  deploy:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

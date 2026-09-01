@@ -1,0 +1,32 @@
+{
+  "name": "@strafe/docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "pnpm run sync && pnpm run typedoc",
+    "dev": "pnpm run generate && vitepress dev .",
+    "build": "pnpm run generate && vitepress build .",
+    "build:local": "node scripts/build-local.mjs",
+    "preview": "pnpm run build:local && vitepress preview .",
+    "sync": "node scripts/sync-docs.mjs",
+    "typedoc": "typedoc --options typedoc.json",
+    "lint": "pnpm run sync && markdownlint-cli2 \"**/*.md\" \"!node_modules\" \"!.vitepress/dist\""
+  },
+  "dependencies": {
+    "@braintree/sanitize-url": "^7.1.2",
+    "@scalar/api-reference": "^1.62.4",
+    "cytoscape": "^3.34.2",
+    "cytoscape-cose-bilkent": "^4.1.0",
+    "dayjs": "^1.11.23",
+    "vue": "3.5.42"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "^0.23.2",
+    "mermaid": "^11.17.2",
+    "typedoc": "^0.28.20",
+    "typedoc-plugin-markdown": "^4.13.0",
+    "vitepress": "^1.6.4",
+    "vitepress-plugin-mermaid": "^2.0.17"
+  }
+}
