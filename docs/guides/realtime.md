@@ -11,19 +11,19 @@ Frames use `{ "op": string, "d": object }`.
 
 ## Protocol operations
 
-| Operation | Direction | Auth | Payload / purpose |
-| --- | --- | --- | --- |
-| `hello` | Server → client | No | Session ID, heartbeat interval, resume mode |
-| `identify` | Client → server | No | Access `token` and optional `lastStreamId` |
-| `ready` | Server → client | Yes | User, servers, presence, and gateway session |
-| `heartbeat` / `heartbeat_ack` | Both | Yes | Keepalive and acknowledgement |
-| `presence_update` / `presence_ack` | Both | Yes | Set and confirm presence |
-| `subscribe` / `subscribed` | Both | Yes | Join a channel after `ViewChannel` authorization |
-| `unsubscribe` | Client → server | Yes | Leave a channel room |
-| `typing` | Client → server | Yes | Transient typing after `SendMessages` authorization |
-| `event` | Server → client | Yes | Visible realtime event envelope |
-| `resumed` / `resync_required` | Server → client | Yes | Resume result or required REST reload |
-| `error` | Server → client | Varies | Invalid frame code and safe message |
+| Operation                          | Direction       | Auth   | Payload / purpose                                   |
+| ---------------------------------- | --------------- | ------ | --------------------------------------------------- |
+| `hello`                            | Server → client | No     | Session ID, heartbeat interval, resume mode         |
+| `identify`                         | Client → server | No     | Access `token` and optional `lastStreamId`          |
+| `ready`                            | Server → client | Yes    | User, servers, presence, and gateway session        |
+| `heartbeat` / `heartbeat_ack`      | Both            | Yes    | Keepalive and acknowledgement                       |
+| `presence_update` / `presence_ack` | Both            | Yes    | Set and confirm presence                            |
+| `subscribe` / `subscribed`         | Both            | Yes    | Join a channel after `ViewChannel` authorization    |
+| `unsubscribe`                      | Client → server | Yes    | Leave a channel room                                |
+| `typing`                           | Client → server | Yes    | Transient typing after `SendMessages` authorization |
+| `event`                            | Server → client | Yes    | Visible realtime event envelope                     |
+| `resumed` / `resync_required`      | Server → client | Yes    | Resume result or required REST reload               |
+| `error`                            | Server → client | Varies | Invalid frame code and safe message                 |
 
 ## Identify the connection
 
