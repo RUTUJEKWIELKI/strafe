@@ -900,6 +900,11 @@ export class ServerService {
         )
         .limit(1)
       const wasActive = existing?.state === 'active'
+        if (wasActive) {
+          const [server] = await tx.select().from(servers).where(eq(servers.id, invite.serverId)).limit(1)
+          if (!server) throw new Error('Invite references a missing server')
+          return { joined: false as const, server: mapServer(server) }
+        }
       const memberId = existing?.id ?? createId()
 
       const [member] = await tx
