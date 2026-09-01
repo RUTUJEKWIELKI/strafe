@@ -80,6 +80,7 @@ export default withMermaid(
                 text: 'Files and Attachments',
                 link: '/guide/guides/files',
               },
+              { text: 'Voice', link: '/guide/guides/voice' },
             ],
             text: 'Guides',
           },
@@ -91,6 +92,10 @@ export default withMermaid(
                 text: 'Data & Realtime Architecture',
                 link: '/guide/data-realtime-architecture',
               },
+              {
+                text: 'Database & Operations',
+                link: '/guide/database-operations',
+              },
             ],
             text: 'Architecture',
           },
@@ -98,6 +103,7 @@ export default withMermaid(
             items: [
               { text: 'Interactive API', link: '/api/reference' },
               { text: 'TypeScript Contracts', link: '/api/generated/' },
+              { text: 'Configuration', link: '/guide/configuration' },
             ],
             text: 'Reference',
           },

@@ -9,6 +9,22 @@ ws://localhost:3000/api/gateway
 
 Frames use `{ "op": string, "d": object }`.
 
+## Protocol operations
+
+| Operation | Direction | Auth | Payload / purpose |
+| --- | --- | --- | --- |
+| `hello` | Server → client | No | Session ID, heartbeat interval, resume mode |
+| `identify` | Client → server | No | Access `token` and optional `lastStreamId` |
+| `ready` | Server → client | Yes | User, servers, presence, and gateway session |
+| `heartbeat` / `heartbeat_ack` | Both | Yes | Keepalive and acknowledgement |
+| `presence_update` / `presence_ack` | Both | Yes | Set and confirm presence |
+| `subscribe` / `subscribed` | Both | Yes | Join a channel after `ViewChannel` authorization |
+| `unsubscribe` | Client → server | Yes | Leave a channel room |
+| `typing` | Client → server | Yes | Transient typing after `SendMessages` authorization |
+| `event` | Server → client | Yes | Visible realtime event envelope |
+| `resumed` / `resync_required` | Server → client | Yes | Resume result or required REST reload |
+| `error` | Server → client | Varies | Invalid frame code and safe message |
+
 ## Identify the connection
 
 The server first sends `hello` with a gateway session ID, heartbeat interval,
@@ -67,6 +83,12 @@ If Redis no longer contains the requested window, it sends:
 In that case, reload durable state through REST before accepting new realtime
 events. Always deduplicate by `eventId`; a reconnect may overlap an event already
 applied by the client.
+
+Durable event types currently cover `server.*`, `channel.*`, `role.*`,
+`message.*`, `notification.created`, `file.*`, and `moderation.*` mutations.
+`presence.changed` and `typing.started` are transient. All use the same `event`
+operation and generated shared envelope; clients should ignore unknown types for
+forward compatibility.
 
 ## Limits and failures
 

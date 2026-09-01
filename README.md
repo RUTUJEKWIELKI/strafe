@@ -8,6 +8,8 @@
 
 An independent, clean-room rewrite scaffold for a new Strafe implementation.
 
+Documentation: <https://rutujekwielki.github.io/strafe/>
+
 > [!IMPORTANT]
 > This is not the official Strafe project and is not affiliated with the StrafeChat organization. The original Strafe project is Bryden's work. I do not claim ownership of the original project, its source code, brand, design, assets, or infrastructure. The official project and its repositories are available at [StrafeChat](https://github.com/StrafeChat).
 
@@ -108,7 +110,8 @@ available at `http://127.0.0.1:5173`; Tauri starts the same Vite application wit
 `pnpm --filter @strafe/desktop dev`.
 
 Run `pnpm docs:dev` in another terminal to start the VitePress documentation
-site. Use `pnpm docs:build` for the static production bundle.
+site. Use `pnpm contracts:generate` before `pnpm docs:build` to refresh the API
+reference and produce the static production bundle.
 
 Shared TypeBox contracts live in `packages/shared/src/contracts`. After changing a
 route schema, run `pnpm contracts:generate` to update
