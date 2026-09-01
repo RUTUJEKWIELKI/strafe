@@ -297,7 +297,8 @@ export class FileService {
           'INVALID_UPLOAD_PARTS',
         )
       }
-      await this.#app.objectStorage.completeMultipart(
+      try {
+          await this.#app.objectStorage.completeMultipart(
         upload.file.objectKey,
         upload.upload.providerUploadId,
         input.parts.map((part) => ({
@@ -305,7 +306,15 @@ export class FileService {
           PartNumber: part.partNumber,
         })),
       )
-      const head = await this.#app.objectStorage.head(upload.file.objectKey)
+                )
+        } catch (error: unknown) {
+          try {
+            await this.#app.objectStorage.head(upload.file.objectKey)
+          } catch {
+            throw error
+          }
+        }
+        const head = await this.#app.objectStorage.head(upload.file.objectKey)
       if (head.sizeBytes !== upload.file.sizeBytes) {
         const now = new Date()
         await tx
