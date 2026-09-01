@@ -324,7 +324,7 @@ const gatewayRoutes: FastifyPluginAsync = async (app) => {
         failedFrames = 0
       }
 
-      socket.on('message', (raw) => {
+      socket.on('message', (raw: unknown) => {
         frameChain = frameChain
           .then(() => handleFrame(raw))
           .catch((error: unknown) => {
@@ -349,7 +349,7 @@ const gatewayRoutes: FastifyPluginAsync = async (app) => {
             })
         }
       })
-      socket.on('error', (error) => {
+      socket.on('error', (error: unknown) => {
         request.log.debug({ err: error }, 'WebSocket connection error')
       })
     },

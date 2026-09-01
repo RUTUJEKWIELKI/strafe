@@ -45,6 +45,7 @@ jobs:
           fetch-depth: 0
 
       - name: Configure GitHub Pages
+        if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v4
 
       - name: Set up pnpm
