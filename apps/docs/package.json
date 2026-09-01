@@ -8,7 +8,8 @@
     "dev": "pnpm run generate && vitepress dev .",
     "build": "pnpm run generate && vitepress build .",
     "build:local": "node scripts/build-local.mjs",
-    "preview": "pnpm run build:local && vitepress preview .",
+    "preview": "pnpm run build:local && pnpm run preview:serve",
+    "preview:serve": "vitepress preview .",
     "sync": "node scripts/sync-docs.mjs",
     "typedoc": "typedoc --options typedoc.json",
     "lint": "pnpm run sync && markdownlint-cli2 \"**/*.md\" \"!node_modules\" \"!.vitepress/dist\""

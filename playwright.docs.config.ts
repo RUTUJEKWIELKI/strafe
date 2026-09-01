@@ -32,7 +32,8 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   webServer: {
-    command: 'pnpm --filter @strafe/docs preview --host 127.0.0.1 --port 4173',
+    command:
+      'pnpm --filter @strafe/docs preview:serve --host 127.0.0.1 --port 4173',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     url: baseURL,
