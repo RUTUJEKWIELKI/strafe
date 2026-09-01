@@ -59,7 +59,7 @@ export interface AppConfig {
 
 export const envOptions: FastifyEnvOptions = {
   confKey: 'config',
-  dotenv: true,
+  dotenv: process.env.NODE_ENV !== 'test',
   schema: {
     type: 'object',
     required: [
