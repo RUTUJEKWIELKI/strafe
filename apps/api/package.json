@@ -3,7 +3,21 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "build": "pnpm run shared:build && tsc -p tsconfig.json",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "dev": "pnpm run shared:build && tsx watch src/index.ts",
+    "openapi:generate": "pnpm run shared:build && tsx scripts/generate-openapi.ts",
+    "shared:build": "pnpm --filter @strafe/shared build",
+    "start": "node dist/index.js",
+    "test": "pnpm run build && vitest run",
+    "test:integration": "pnpm run build && vitest run src/integration.test.ts src/community-management.integration.test.ts src/platform-hardening.integration.test.ts src/realtime-multi-instance.integration.test.ts",
+    "typecheck": "pnpm run shared:build && tsc -p tsconfig.json --noEmit"
+  },
   "dependencies": {
+    "@strafe/shared": "workspace:*",
     "@aws-sdk/client-s3": "^3.1118.0",
     "@aws-sdk/lib-storage": "^3.1118.0",
     "@aws-sdk/s3-request-presigner": "^3.1118.0",

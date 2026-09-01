@@ -1,0 +1,1 @@
+-- Schema-state checkpoint. Changes were applied by 0004_platform_hardening.sql.

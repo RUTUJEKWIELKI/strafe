@@ -2,7 +2,7 @@
 
 [![SolidJS](https://img.shields.io/badge/SolidJS-1.9-2C4F7C?style=flat-square&logo=solid&logoColor=white)](https://www.solidjs.com/)
 [![Fastify](https://img.shields.io/badge/Fastify-5-000000?style=flat-square&logo=fastify&logoColor=white)](https://fastify.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-7-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![pnpm](https://img.shields.io/badge/pnpm-11-F69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
 [![Node.js](https://img.shields.io/badge/Node.js-24%2B-5FA04E?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 
@@ -24,23 +24,30 @@ Contributions should preserve that boundary:
 
 ## Status
 
-The repository currently contains package boundaries only. There is no application code, generated interface, placeholder API, or production configuration yet.
+Launchpad provides a typed Fastify API, PostgreSQL migrations, generated OpenAPI
+client, operational telemetry, and a responsive SolidJS design-system shell. The
+Tauri desktop application embeds the web client and remains an early native shell.
+
+The implementation roadmap and backend data flow are maintained in
+[`ROADMAP.md`](ROADMAP.md).
 
 ## Workspace
 
-| Path | Package | Responsibility |
-| --- | --- | --- |
-| `apps/web` | `@strafe/web` | SolidJS web client |
-| `apps/api` | `@strafe/api` | Fastify HTTP API |
-| `packages/shared` | `@strafe/shared` | Shared contracts and domain types once they are defined |
+| Path              | Package           | Responsibility                    |
+| ----------------- | ----------------- | --------------------------------- |
+| `apps/web`        | `@strafe/web`     | SolidJS web client                |
+| `apps/api`        | `@strafe/api`     | Fastify HTTP API                  |
+| `apps/docs`       | `@strafe/docs`    | VitePress documentation site      |
+| `apps/desktop`    | `@strafe/desktop` | Tauri native shell                |
+| `packages/shared` | `@strafe/shared`  | Shared contracts and domain types |
 
 ```text
 strafe/
 ├── apps/
 │   ├── api/
-│   │   └── package.json
+│   ├── docs/
+│   ├── desktop/
 │   └── web/
-│       └── package.json
 ├── packages/
 │   └── shared/
 │       └── package.json
@@ -52,7 +59,7 @@ strafe/
 
 - Node.js 24 or newer
 - pnpm 11
-- TypeScript 7
+- TypeScript 5.9
 - SolidJS with Vite for the web package
 - Fastify for the API package
 
@@ -67,7 +74,76 @@ corepack enable
 pnpm install
 ```
 
-There are intentionally no development or build commands yet. Scripts should be added together with the first executable implementation, so the repository does not advertise workflows that do not exist.
+Run the API in development mode:
+
+```bash
+pnpm api:dev
+```
+
+The server listens on `http://localhost:3000` by default. Its health endpoint is
+available at `GET /api/health`. Copy `apps/api/.env.example` to `apps/api/.env` to
+override the host, port, or environment.
+
+API files placed in `apps/api/src/plugins` and `apps/api/src/routes` are loaded
+automatically. Route modules receive the `/api` prefix. Use `pnpm api:typecheck`,
+`pnpm api:test`, and `pnpm api:build` for verification and production compilation.
+
+## Launchpad development
+
+Start the local data, realtime, file, search, scanning, and mail services, then
+apply the checked-in Drizzle migrations:
+
+```bash
+docker compose -f compose.yaml -f compose.dev.yaml up -d postgres redis minio meilisearch clamav mailpit
+cp apps/api/.env.example apps/api/.env
+pnpm db:migrate
+```
+
+The base `compose.yaml` does not publish host ports; services are available only
+on the private Compose network. `compose.dev.yaml` is an optional loopback
+override for an API running locally with `pnpm api:dev`.
+
+Run `pnpm api:dev` and `pnpm web:dev` in separate terminals. The frontend is
+available at `http://127.0.0.1:5173`; Tauri starts the same Vite application with
+`pnpm --filter @strafe/desktop dev`.
+
+Run `pnpm docs:dev` in another terminal to start the VitePress documentation
+site. Use `pnpm docs:build` for the static production bundle.
+
+Shared TypeBox contracts live in `packages/shared/src/contracts`. After changing a
+route schema, run `pnpm contracts:generate` to update
+`apps/api/openapi/openapi.json` and the typed `openapi-fetch` schema used by the
+web application.
+
+Operational endpoints are available at `GET /api/health`,
+`GET /api/health/ready`, and `GET /api/metrics`. Interactive OpenAPI
+documentation is served at `/docs`. Logs are structured and redact credentials;
+set `SENTRY_DSN` to enable external error reporting.
+
+The community backend includes local accounts with rotating refresh sessions,
+servers, roles and channel overwrites, invites, cursor-paginated messages,
+transactional outbox delivery, presence, typing and a resumable WebSocket gateway
+at `/api/gateway`. OpenAPI documents the HTTP routes. The gateway starts with a
+`hello` frame; clients respond with `identify` containing an access token and then
+send heartbeats at the advertised interval.
+
+Account hardening includes an active-device list, per-session and global logout,
+password change/reset, verified email changes, security audit events, and new-login
+notifications. File attachments use presigned S3 multipart uploads and remain in
+quarantine until MIME checks, ClamAV, metadata removal, and derivative generation
+succeed. Reports, appeals, user blocks, Redis-backed automod, permission-aware
+Meilisearch, Web Push, e-mail, and notification digests are exposed through the
+same typed API. See `docs/backend-api.md` for endpoints and required environment
+variables.
+
+Community administration includes server updates, ownership transfer and
+soft-deletion; member listing, leave, kick, ban/unban and timeout clearing; full
+channel, role and permission-overwrite management; stable ordering; and a
+cursor-paginated audit log. Every successful mutation writes its audit record and
+realtime outbox event in the same PostgreSQL transaction.
+
+Run `pnpm check` before opening a pull request. It verifies formatting, linting,
+types, tests, and production builds across the workspace.
 
 ## Repository rules
 

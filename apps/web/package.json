@@ -3,7 +3,16 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "build": "pnpm run shared:build && vite build",
+    "dev": "pnpm run shared:build && vite",
+    "preview": "vite preview",
+    "shared:build": "pnpm --filter @strafe/shared build",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "pnpm run shared:build && tsc -p tsconfig.json --noEmit"
+  },
   "dependencies": {
+    "@strafe/shared": "workspace:*",
     "@dnd-kit/solid": "^0.5.0",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource-variable/outfit": "^5.3.0",

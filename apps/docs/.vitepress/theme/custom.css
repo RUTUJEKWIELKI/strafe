@@ -1,0 +1,68 @@
+:root {
+  --vp-c-brand-1: #059669;
+  --vp-c-brand-2: #10b981;
+  --vp-c-brand-3: #34d399;
+  --vp-c-brand-soft: rgb(16 185 129 / 14%);
+}
+
+.dark {
+  --vp-c-brand-1: #34d399;
+  --vp-c-brand-2: #10b981;
+  --vp-c-brand-3: #059669;
+  --vp-c-brand-soft: rgb(52 211 153 / 16%);
+}
+
+.vp-doc h2 {
+  margin-top: 2.5rem;
+}
+
+.scalar-api-reference {
+  min-height: 70vh;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.api-reference-page .VPDoc .container,
+.api-reference-page .VPDoc .content,
+.api-reference-page .VPDoc .content-container {
+  max-width: none;
+}
+
+.api-reference-page .VPDoc .content {
+  padding-right: 24px;
+  padding-left: 24px;
+}
+
+.api-reference-status {
+  display: grid;
+  min-height: 240px;
+  place-content: center;
+  gap: 12px;
+  padding: 32px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-2);
+  text-align: center;
+}
+
+.api-reference-status strong {
+  color: var(--vp-c-text-1);
+}
+
+.api-reference-status button {
+  justify-self: center;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: var(--vp-c-brand-1);
+  color: white;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .api-reference-page .VPDoc .content {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+}
