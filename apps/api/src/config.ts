@@ -137,7 +137,8 @@ export const envOptions: FastifyEnvOptions = {
         maximum: 50,
         default: 10,
       },
-      DATABASE_SSL: {
+      DATABASE_SSL_CA: { type: 'string' },
+        DATABASE_SSL: {
         type: 'string',
         enum: ['disable', 'require'],
         default: 'disable',
@@ -256,6 +257,11 @@ export const envOptions: FastifyEnvOptions = {
       WEB_PUSH_SUBJECT: {
         type: 'string',
         default: 'mailto:security@strafe.app',
+      },
+    },
+  },
+}
+app',
       },
     },
   },
