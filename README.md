@@ -8,11 +8,11 @@ Fast realtime communication, typed APIs, secure account flows, and polished cros
 
 [![CI](https://github.com/RUTUJEKWIELKI/strafe/actions/workflows/ci.yml/badge.svg)](https://github.com/RUTUJEKWIELKI/strafe/actions/workflows/ci.yml)
 [![Docs](https://github.com/RUTUJEKWIELKI/strafe/actions/workflows/docs.yml/badge.svg)](https://github.com/RUTUJEKWIELKI/strafe/actions/workflows/docs.yml)
-[![License](https://img.shields.io/github/license/RUTUJEKWIELKI/strafe?style=flat-square&color=9bb85b)](LICENSE)
+[![License](https://img.shields.io/github/license/RUTUJEKWIELKI/strafe?style=flat-square&color=9bb85b)](https://github.com/RUTUJEKWIELKI/strafe/blob/main/LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-24%2B-5FA04E?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![pnpm](https://img.shields.io/badge/pnpm-11-F69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
 
-[Documentation](https://rutujekwielki.github.io/strafe/) · [Roadmap](ROADMAP.md) · [Security](SECURITY.md) · [Issues](https://github.com/RUTUJEKWIELKI/strafe/issues)
+[Documentation](https://rutujekwielki.github.io/strafe/) · [Roadmap](ROADMAP.md) · [Security](https://github.com/RUTUJEKWIELKI/strafe/blob/main/SECURITY.md) · [Issues](https://github.com/RUTUJEKWIELKI/strafe/issues)
 
 </div>
 
@@ -54,13 +54,13 @@ The development stack also uses Drizzle ORM, TypeBox, Vite, VitePress, Meilisear
 
 ## Workspace
 
-| Path                                 | Package           | Responsibility                    |
-| ------------------------------------ | ----------------- | --------------------------------- |
-| [`apps/web`](apps/web)               | `@strafe/web`     | SolidJS web client                |
-| [`apps/api`](apps/api)               | `@strafe/api`     | Fastify API and WebSocket gateway |
-| [`apps/docs`](apps/docs)             | `@strafe/docs`    | VitePress documentation           |
-| [`apps/desktop`](apps/desktop)       | `@strafe/desktop` | Tauri native shell                |
-| [`packages/shared`](packages/shared) | `@strafe/shared`  | Shared contracts and domain types |
+| Path                                                                                   | Package           | Responsibility                    |
+| -------------------------------------------------------------------------------------- | ----------------- | --------------------------------- |
+| [`apps/web`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/apps/web)               | `@strafe/web`     | SolidJS web client                |
+| [`apps/api`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/apps/api)               | `@strafe/api`     | Fastify API and WebSocket gateway |
+| [`apps/docs`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/apps/docs)             | `@strafe/docs`    | VitePress documentation           |
+| [`apps/desktop`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/apps/desktop)       | `@strafe/desktop` | Tauri native shell                |
+| [`packages/shared`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/packages/shared) | `@strafe/shared`  | Shared contracts and domain types |
 
 ```text
 strafe/
@@ -114,13 +114,13 @@ pnpm web:dev
 pnpm docs:dev
 ```
 
-| Service           | Address                                                              |
-| ----------------- | -------------------------------------------------------------------- |
-| Web client        | [http://127.0.0.1:5173](http://127.0.0.1:5173)                       |
-| API               | [http://localhost:3000](http://localhost:3000)                       |
-| OpenAPI UI        | [http://localhost:3000/docs](http://localhost:3000/docs)             |
-| Health            | [http://localhost:3000/api/health](http://localhost:3000/api/health) |
-| WebSocket gateway | `ws://localhost:3000/api/gateway`                                    |
+| Service           | Address                            |
+| ----------------- | ---------------------------------- |
+| Web client        | `http://127.0.0.1:5173`            |
+| API               | `http://localhost:3000`            |
+| OpenAPI UI        | `http://localhost:3000/docs`       |
+| Health            | `http://localhost:3000/api/health` |
+| WebSocket gateway | `ws://localhost:3000/api/gateway`  |
 
 Run the desktop shell with `pnpm --filter @strafe/desktop dev`.
 
@@ -136,7 +136,7 @@ Run the desktop shell with `pnpm --filter @strafe/desktop dev`.
 | `pnpm db:studio`          | Open Drizzle Studio                                                   |
 | `pnpm build`              | Build contracts, API, web client, and documentation                   |
 
-Shared TypeBox contracts live in [`packages/shared/src/contracts`](packages/shared/src/contracts). API plugins and routes load automatically from `apps/api/src/plugins` and `apps/api/src/routes`; route modules receive the `/api` prefix.
+Shared TypeBox contracts live in [`packages/shared/src/contracts`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/packages/shared/src/contracts). API plugins and routes load automatically from `apps/api/src/plugins` and `apps/api/src/routes`; route modules receive the `/api` prefix.
 
 ## Realtime protocol
 
@@ -165,13 +165,13 @@ Contributors must implement behavior independently, never copy upstream code or 
 
 ## Security
 
-Do not disclose vulnerabilities in public issues. Follow [SECURITY.md](SECURITY.md) to report security problems responsibly.
+Do not disclose vulnerabilities in public issues. Follow [SECURITY.md](https://github.com/RUTUJEKWIELKI/strafe/blob/main/SECURITY.md) to report security problems responsibly.
 
 ## License
 
 Copyright © 2026 RUTUJEKWIELKI.
 
-Licensed under the [GNU Affero General Public License v3.0](LICENSE). If you run a modified version as a network service, you must offer its corresponding source code to the users of that service under the same license.
+Licensed under the [GNU Affero General Public License v3.0](https://github.com/RUTUJEKWIELKI/strafe/blob/main/LICENSE). If you run a modified version as a network service, you must offer its corresponding source code to the users of that service under the same license.
 
 ## Attribution
 
