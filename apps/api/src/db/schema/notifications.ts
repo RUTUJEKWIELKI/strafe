@@ -169,15 +169,40 @@ export const bots = pgTable(
       .defaultNow()
       .notNull(),
     id: uuid('id').primaryKey(),
-    tokenHash: text('token_hash').notNull(),
     userId: uuid('user_id').references(() => users.id, {
       onDelete: 'set null',
     }),
   },
   (table) => [
     uniqueIndex('bots_application_unique').on(table.applicationId),
-    uniqueIndex('bots_token_hash_unique').on(table.tokenHash),
     index('bots_user_id_idx').on(table.userId),
+  ],
+)
+
+export const botTokens = pgTable(
+  'bot_tokens',
+  {
+    botId: uuid('bot_id')
+      .notNull()
+      .references(() => bots.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    credentialPrefix: text('credential_prefix').notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    id: uuid('id').primaryKey(),
+    lastSourceHash: text('last_source_hash'),
+    lastUsedAt: timestamp('last_used_at', { withTimezone: true }),
+    name: text('name').notNull(),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+    scopes: jsonb('scopes').$type<string[]>().default([]).notNull(),
+    tokenHash: text('token_hash').notNull(),
+  },
+  (table) => [
+    index('bot_tokens_bot_id_idx').on(table.botId),
+    index('bot_tokens_expires_at_idx').on(table.expiresAt),
+    uniqueIndex('bot_tokens_hash_unique').on(table.tokenHash),
+    uniqueIndex('bot_tokens_prefix_unique').on(table.credentialPrefix),
   ],
 )
 

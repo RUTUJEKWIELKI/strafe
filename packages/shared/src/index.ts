@@ -1,4 +1,5 @@
 export * from './contracts/auth.js'
+export * from './contracts/bots.js'
 export * from './contracts/channels.js'
 export * from './contracts/common.js'
 export * from './contracts/errors.js'

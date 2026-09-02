@@ -6,6 +6,9 @@ export interface AppConfig {
   AUTH_CHALLENGE_TTL_SECONDS: number
   AUTH_JWT_SECRET?: string
   AUTH_REFRESH_TTL_SECONDS: number
+  BOT_TOKEN_EXPIRY_ALERT_SECONDS: number
+  BOT_TOKEN_MAINTENANCE_INTERVAL_MS: number
+  BOT_TOKEN_MAX_TTL_SECONDS: number
   CORS_ORIGINS: string
   CLAMAV_HOST?: string
   CLAMAV_PORT: number
@@ -67,6 +70,9 @@ export const envOptions: FastifyEnvOptions = {
       'AUTH_ACCESS_TTL_SECONDS',
       'AUTH_CHALLENGE_TTL_SECONDS',
       'AUTH_REFRESH_TTL_SECONDS',
+      'BOT_TOKEN_EXPIRY_ALERT_SECONDS',
+      'BOT_TOKEN_MAINTENANCE_INTERVAL_MS',
+      'BOT_TOKEN_MAX_TTL_SECONDS',
       'CLAMAV_PORT',
       'CORS_ORIGINS',
       'DATABASE_POOL_MAX',
@@ -118,6 +124,24 @@ export const envOptions: FastifyEnvOptions = {
         minimum: 3_600,
         maximum: 31_536_000,
         default: 2_592_000,
+      },
+      BOT_TOKEN_EXPIRY_ALERT_SECONDS: {
+        type: 'integer',
+        minimum: 300,
+        maximum: 2_592_000,
+        default: 604_800,
+      },
+      BOT_TOKEN_MAINTENANCE_INTERVAL_MS: {
+        type: 'integer',
+        minimum: 60_000,
+        maximum: 86_400_000,
+        default: 3_600_000,
+      },
+      BOT_TOKEN_MAX_TTL_SECONDS: {
+        type: 'integer',
+        minimum: 300,
+        maximum: 31_536_000,
+        default: 7_776_000,
       },
       CORS_ORIGINS: {
         type: 'string',
