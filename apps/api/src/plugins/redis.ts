@@ -27,8 +27,8 @@ function disconnectRedis(...clients: Redis[]) {
 const redisPlugin: FastifyPluginAsync = async (app) => {
   app.decorate('redis', null)
   if (!app.config.REDIS_URL) {
-    if (app.config.NODE_ENV === 'production' && app.config.REALTIME_ENABLED) {
-      throw new Error('REDIS_URL is required for realtime in production')
+    if (app.config.NODE_ENV === 'production') {
+      throw new Error('REDIS_URL is required for rate limiting in production')
     }
     app.log.warn('Redis disabled: REDIS_URL is not configured')
     return

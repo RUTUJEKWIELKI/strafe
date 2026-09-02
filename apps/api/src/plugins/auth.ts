@@ -34,6 +34,7 @@ const authPlugin: FastifyPluginAsync = async (app) => {
   app.decorate('authService', authService)
   app.decorateRequest('auth')
   app.decorate('authenticate', async (request) => {
+    if (request.auth) return
     request.auth = await authService.authenticateRequest(request)
   })
   app.addHook('onRoute', (routeOptions) => {
