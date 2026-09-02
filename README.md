@@ -1,161 +1,184 @@
+<div align="center">
+
 # Strafe
 
-[![SolidJS](https://img.shields.io/badge/SolidJS-1.9-2C4F7C?style=flat-square&logo=solid&logoColor=white)](https://www.solidjs.com/)
-[![Fastify](https://img.shields.io/badge/Fastify-5-000000?style=flat-square&logo=fastify&logoColor=white)](https://fastify.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![pnpm](https://img.shields.io/badge/pnpm-11-F69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
+<strong>A modern, self-hostable community platform built in the open</strong>
+
+Fast realtime communication, typed APIs, secure account flows, and polished cross-platform clients in one TypeScript monorepo.
+
+[![CI](https://github.com/RUTUJEKWIELKI/strafe/actions/workflows/ci.yml/badge.svg)](https://github.com/RUTUJEKWIELKI/strafe/actions/workflows/ci.yml)
+[![Docs](https://github.com/RUTUJEKWIELKI/strafe/actions/workflows/docs.yml/badge.svg)](https://github.com/RUTUJEKWIELKI/strafe/actions/workflows/docs.yml)
+[![License](https://img.shields.io/github/license/RUTUJEKWIELKI/strafe?style=flat-square&color=9bb85b)](https://github.com/RUTUJEKWIELKI/strafe/blob/main/LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-24%2B-5FA04E?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![pnpm](https://img.shields.io/badge/pnpm-11-F69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
 
-An independent, clean-room rewrite scaffold for a new Strafe implementation.
+[Documentation](https://rutujekwielki.github.io/strafe/) · [Roadmap](ROADMAP.md) · [Security](https://github.com/RUTUJEKWIELKI/strafe/blob/main/SECURITY.md) · [Issues](https://github.com/RUTUJEKWIELKI/strafe/issues)
 
-Documentation: <https://rutujekwielki.github.io/strafe/>
+</div>
 
 > [!IMPORTANT]
-> This is not the official Strafe project and is not affiliated with the StrafeChat organization. The original Strafe project is Bryden's work. I do not claim ownership of the original project, its source code, brand, design, assets, or infrastructure. The official project and its repositories are available at [StrafeChat](https://github.com/StrafeChat).
+> This is an independent clean-room rewrite, not the official Strafe project, and is not affiliated with the [StrafeChat organization](https://github.com/StrafeChat). The original project, source code, brand, design, assets, and infrastructure remain the work of Bryden and its original contributors.
 
-## Rewrite policy
+## About Strafe
 
-This repository starts from an empty codebase. It does not reuse source code, assets, or implementation details from the original Strafe repositories. References to Strafe describe the rewrite target and its technical direction, not ownership of the original project.
+Strafe is an open-source communication platform for communities that want control over their infrastructure and data. It combines a responsive SolidJS web client, a typed Fastify backend, a Tauri desktop shell, and generated API documentation.
 
-Contributions should preserve that boundary:
+The current launchpad provides foundations for accounts, communities, realtime messaging, moderation, file delivery, search, notifications, and operational observability. Development is active and the native desktop application remains an early shell.
 
-- implement behavior independently;
-- do not copy upstream source code or assets;
-- do not present this repository as an official Strafe release;
-- keep attribution to Bryden and the original StrafeChat project intact.
+## Highlights
 
-## Status
+| Area            | What is included                                                                                                    |
+| --------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **Communities** | Servers, channels, roles, permission overwrites, invites, ownership transfer, bans, kicks, timeouts, and audit logs |
+| **Messaging**   | Cursor pagination, typing, presence, transactional outbox delivery, and a resumable WebSocket gateway               |
+| **Accounts**    | Rotating refresh sessions, device management, password recovery, verified email changes, and security events        |
+| **Files**       | Multipart uploads, quarantine, MIME validation, malware scanning, metadata removal, derivatives, and quotas         |
+| **Safety**      | Blocks, reports, appeals, Redis-backed automod, permission-aware search, and moderation tools                       |
+| **Operations**  | Redacted structured logs, health probes, Prometheus metrics, OpenAPI, and optional Sentry reporting                 |
+| **Clients**     | Responsive SolidJS web app and a Tauri desktop shell sharing typed contracts                                        |
 
-Launchpad provides a typed Fastify API, PostgreSQL migrations, generated OpenAPI
-client, operational telemetry, and a responsive SolidJS design-system shell. The
-Tauri desktop application embeds the web client and remains an early native shell.
+## Technology
 
-The implementation roadmap and backend data flow are maintained in
-[`ROADMAP.md`](ROADMAP.md).
+<div align="center">
+
+[![SolidJS](https://img.shields.io/badge/SolidJS-1.9-2C4F7C?style=for-the-badge&logo=solid&logoColor=white)](https://www.solidjs.com/)
+[![Fastify](https://img.shields.io/badge/Fastify-5-111111?style=for-the-badge&logo=fastify&logoColor=white)](https://fastify.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
+[![Tauri](https://img.shields.io/badge/Tauri-24C8DB?style=for-the-badge&logo=tauri&logoColor=white)](https://tauri.app/)
+
+</div>
+
+The development stack also uses Drizzle ORM, TypeBox, Vite, VitePress, Meilisearch, MinIO, ClamAV, Mailpit, Vitest, Playwright, ESLint, Prettier, and Turborepo.
 
 ## Workspace
 
-| Path              | Package           | Responsibility                    |
-| ----------------- | ----------------- | --------------------------------- |
-| `apps/web`        | `@strafe/web`     | SolidJS web client                |
-| `apps/api`        | `@strafe/api`     | Fastify HTTP API                  |
-| `apps/docs`       | `@strafe/docs`    | VitePress documentation site      |
-| `apps/desktop`    | `@strafe/desktop` | Tauri native shell                |
-| `packages/shared` | `@strafe/shared`  | Shared contracts and domain types |
+| Path                                                                                   | Package           | Responsibility                    |
+| -------------------------------------------------------------------------------------- | ----------------- | --------------------------------- |
+| [`apps/web`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/apps/web)               | `@strafe/web`     | SolidJS web client                |
+| [`apps/api`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/apps/api)               | `@strafe/api`     | Fastify API and WebSocket gateway |
+| [`apps/docs`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/apps/docs)             | `@strafe/docs`    | VitePress documentation           |
+| [`apps/desktop`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/apps/desktop)       | `@strafe/desktop` | Tauri native shell                |
+| [`packages/shared`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/packages/shared) | `@strafe/shared`  | Shared contracts and domain types |
 
 ```text
 strafe/
 ├── apps/
 │   ├── api/
-│   ├── docs/
 │   ├── desktop/
+│   ├── docs/
 │   └── web/
 ├── packages/
 │   └── shared/
-│       └── package.json
+├── compose.yaml
 ├── package.json
 └── pnpm-workspace.yaml
 ```
 
-## Toolchain
+## Quick start
+
+### Requirements
 
 - Node.js 24 or newer
 - pnpm 11
-- TypeScript 5.9
-- SolidJS with Vite for the web package
-- Fastify for the API package
+- Docker with Compose for local infrastructure
+- Rust toolchain and platform dependencies only for the desktop client
 
-Package versions are declared at the workspace boundary where they are used. Cross-package contracts belong in `@strafe/shared`; application-specific dependencies stay inside their respective application package.
-
-## Bootstrap
+### Install
 
 ```bash
 git clone https://github.com/RUTUJEKWIELKI/strafe.git
 cd strafe
 corepack enable
 pnpm install
+cp apps/api/.env.example apps/api/.env
 ```
 
-Run the API in development mode:
-
-```bash
-pnpm api:dev
-```
-
-The server listens on `http://localhost:3000` by default. Its health endpoint is
-available at `GET /api/health`. Copy `apps/api/.env.example` to `apps/api/.env` to
-override the host, port, or environment.
-
-API files placed in `apps/api/src/plugins` and `apps/api/src/routes` are loaded
-automatically. Route modules receive the `/api` prefix. Use `pnpm api:typecheck`,
-`pnpm api:test`, and `pnpm api:build` for verification and production compilation.
-
-## Launchpad development
-
-Start the local data, realtime, file, search, scanning, and mail services, then
-apply the checked-in Drizzle migrations:
+### Start infrastructure
 
 ```bash
 docker compose -f compose.yaml -f compose.dev.yaml up -d postgres redis minio meilisearch clamav mailpit
-cp apps/api/.env.example apps/api/.env
 pnpm db:migrate
 ```
 
-The base `compose.yaml` does not publish host ports; services are available only
-on the private Compose network. `compose.dev.yaml` is an optional loopback
-override for an API running locally with `pnpm api:dev`.
+The base `compose.yaml` keeps services on a private network. The development override publishes them on loopback for an API running locally.
 
-Run `pnpm api:dev` and `pnpm web:dev` in separate terminals. The frontend is
-available at `http://127.0.0.1:5173`; Tauri starts the same Vite application with
-`pnpm --filter @strafe/desktop dev`.
+### Run Strafe
 
-Run `pnpm docs:dev` in another terminal to start the VitePress documentation
-site. Use `pnpm contracts:generate` before `pnpm docs:build` to refresh the API
-reference and produce the static production bundle.
+Use separate terminals:
 
-Shared TypeBox contracts live in `packages/shared/src/contracts`. After changing a
-route schema, run `pnpm contracts:generate` to update
-`apps/api/openapi/openapi.json` and the typed `openapi-fetch` schema used by the
-web application.
+```bash
+pnpm api:dev
+pnpm web:dev
+pnpm docs:dev
+```
 
-Operational endpoints are available at `GET /api/health`,
-`GET /api/health/ready`, and `GET /api/metrics`. Interactive OpenAPI
-documentation is served at `/docs`. Logs are structured and redact credentials;
-set `SENTRY_DSN` to enable external error reporting.
+| Service           | Address                            |
+| ----------------- | ---------------------------------- |
+| Web client        | `http://127.0.0.1:5173`            |
+| API               | `http://localhost:3000`            |
+| OpenAPI UI        | `http://localhost:3000/docs`       |
+| Health            | `http://localhost:3000/api/health` |
+| WebSocket gateway | `ws://localhost:3000/api/gateway`  |
 
-The community backend includes local accounts with rotating refresh sessions,
-servers, roles and channel overwrites, invites, cursor-paginated messages,
-transactional outbox delivery, presence, typing and a resumable WebSocket gateway
-at `/api/gateway`. OpenAPI documents the HTTP routes. The gateway starts with a
-`hello` frame; clients respond with `identify` containing an access token and then
-send heartbeats at the advertised interval.
+Run the desktop shell with `pnpm --filter @strafe/desktop dev`.
 
-Account hardening includes an active-device list, per-session and global logout,
-password change/reset, verified email changes, security audit events, and new-login
-notifications. File attachments use presigned S3 multipart uploads and remain in
-quarantine until MIME checks, ClamAV, metadata removal, and derivative generation
-succeed. Reports, appeals, user blocks, Redis-backed automod, permission-aware
-Meilisearch, Web Push, e-mail, and notification digests are exposed through the
-same typed API. See `docs/backend-api.md` for endpoints and required environment
-variables.
+## Commands
 
-Community administration includes server updates, ownership transfer and
-soft-deletion; member listing, leave, kick, ban/unban and timeout clearing; full
-channel, role and permission-overwrite management; stable ordering; and a
-cursor-paginated audit log. Every successful mutation writes its audit record and
-realtime outbox event in the same PostgreSQL transaction.
+| Command                   | Purpose                                                               |
+| ------------------------- | --------------------------------------------------------------------- |
+| `pnpm check`              | Formatting, linting, types, tests, docs checks, and production builds |
+| `pnpm test`               | Run workspace tests                                                   |
+| `pnpm typecheck`          | Type-check workspace packages                                         |
+| `pnpm contracts:generate` | Refresh OpenAPI output and the typed client schema                    |
+| `pnpm db:migrate`         | Apply checked-in Drizzle migrations                                   |
+| `pnpm db:studio`          | Open Drizzle Studio                                                   |
+| `pnpm build`              | Build contracts, API, web client, and documentation                   |
 
-Run `pnpm check` before opening a pull request. It verifies formatting, linting,
-types, tests, and production builds across the workspace.
+Shared TypeBox contracts live in [`packages/shared/src/contracts`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/packages/shared/src/contracts). API plugins and routes load automatically from `apps/api/src/plugins` and `apps/api/src/routes`; route modules receive the `/api` prefix.
 
-## Repository rules
+## Realtime protocol
 
-- Keep pull requests narrow and reviewable.
-- Do not add speculative infrastructure or unused dependencies.
-- Do not commit generated placeholder interfaces.
-- Keep package ownership clear and avoid imports across application boundaries.
-- Record architectural decisions when they become real decisions, not before.
+The gateway at `/api/gateway` starts with a `hello` frame. Clients answer with `identify`, including an access token, then send heartbeats at the advertised interval. Reconnectable sessions and transactional outbox delivery keep realtime events consistent with PostgreSQL mutations.
 
-## Original project
+See the [backend API guide](docs/backend-api.md) and [generated documentation](https://rutujekwielki.github.io/strafe/) for endpoint and environment details.
 
-The original Strafe project, documentation, and active repositories live under the [StrafeChat GitHub organization](https://github.com/StrafeChat). All credit for that project belongs to Bryden and its original contributors.
+## Project status
+
+Strafe is under active development and is not yet a stable production release. The public [roadmap](ROADMAP.md) tracks implemented foundations and upcoming work.
+
+Before opening a pull request:
+
+- keep changes focused and reviewable;
+- keep application ownership boundaries clear;
+- put cross-package contracts in `@strafe/shared`;
+- avoid unused dependencies and speculative infrastructure;
+- regenerate contracts after changing route schemas;
+- run `pnpm check`.
+
+## Clean-room policy
+
+This repository began from an empty codebase and does not reuse source code, assets, or private implementation details from the original Strafe repositories. References to Strafe describe the rewrite target and technical direction, not ownership of the original project.
+
+Contributors must implement behavior independently, never copy upstream code or assets, never present this repository as an official release, and preserve attribution to Bryden and StrafeChat.
+
+## Security
+
+Do not disclose vulnerabilities in public issues. Follow [SECURITY.md](https://github.com/RUTUJEKWIELKI/strafe/blob/main/SECURITY.md) to report security problems responsibly.
+
+## License
+
+Copyright © 2026 RUTUJEKWIELKI.
+
+Licensed under the [GNU Affero General Public License v3.0](https://github.com/RUTUJEKWIELKI/strafe/blob/main/LICENSE). If you run a modified version as a network service, you must offer its corresponding source code to the users of that service under the same license.
+
+## Attribution
+
+The official Strafe project and active repositories live under the [StrafeChat GitHub organization](https://github.com/StrafeChat). All credit for the original project belongs to Bryden and its contributors.
+
+<div align="center">
+
+Built openly, one carefully reviewed change at a time.
+
+</div>
