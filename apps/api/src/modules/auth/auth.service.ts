@@ -568,7 +568,11 @@ export class AuthService {
   #signAccessToken(userId: string, sessionId: string): string {
     return this.#app.jwt.sign(
       { sid: sessionId, sub: userId, typ: 'access' },
-      { expiresIn: this.#app.config.AUTH_ACCESS_TTL_SECONDS },
+      {
+        expiresIn: this.#app.config.AUTH_ACCESS_TTL_SECONDS,
+        key: this.#app.jwtSigningKey.privateKey,
+        kid: this.#app.jwtSigningKey.kid,
+      },
     )
   }
 

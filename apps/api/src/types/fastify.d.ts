@@ -40,6 +40,7 @@ declare module 'fastify' {
     fileProcessingService: FileProcessingService
     fileService: FileService
     metrics: Registry
+    jwtSigningKey: { kid: string; privateKey: string }
     messageService: MessageService
     moderationService: ModerationService
     memberService: MemberService

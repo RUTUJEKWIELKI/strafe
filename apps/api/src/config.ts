@@ -4,7 +4,7 @@ export interface AppConfig {
   APP_PUBLIC_URL: string
   AUTH_ACCESS_TTL_SECONDS: number
   AUTH_CHALLENGE_TTL_SECONDS: number
-  AUTH_JWT_SECRET?: string
+  AUTH_JWT_KEYSET_FILE?: string
   AUTH_REFRESH_TTL_SECONDS: number
   CORS_ORIGINS: string
   CLAMAV_HOST?: string
@@ -30,12 +30,14 @@ export interface AppConfig {
   MEILISEARCH_API_KEY?: string
   MEILISEARCH_HOST?: string
   METRICS_ENABLED: boolean
+  METRICS_BEARER_TOKEN_FILE?: string
   NODE_ENV: 'development' | 'test' | 'production'
   OUTBOX_BATCH_SIZE: number
   OUTBOX_ENABLED: boolean
   OUTBOX_POLL_INTERVAL_MS: number
   PORT: number
   REDIS_URL?: string
+  TRUST_PROXY_CIDRS: string
   REALTIME_ENABLED: boolean
   SENTRY_DSN?: string
   SESSION_TRUST_GEO_HEADERS: boolean
@@ -106,7 +108,7 @@ export const envOptions: FastifyEnvOptions = {
         maximum: 86_400,
         default: 900,
       },
-      AUTH_JWT_SECRET: { type: 'string', minLength: 32 },
+      AUTH_JWT_KEYSET_FILE: { type: 'string', minLength: 1 },
       AUTH_CHALLENGE_TTL_SECONDS: {
         type: 'integer',
         minimum: 300,
@@ -210,6 +212,7 @@ export const envOptions: FastifyEnvOptions = {
       MEILISEARCH_API_KEY: { type: 'string', minLength: 1 },
       MEILISEARCH_HOST: { type: 'string', minLength: 1 },
       METRICS_ENABLED: { type: 'boolean', default: true },
+      METRICS_BEARER_TOKEN_FILE: { type: 'string', minLength: 1 },
       NODE_ENV: {
         type: 'string',
         enum: ['development', 'test', 'production'],
@@ -231,6 +234,7 @@ export const envOptions: FastifyEnvOptions = {
       PORT: { type: 'integer', minimum: 1, maximum: 65_535, default: 3000 },
       REALTIME_ENABLED: { type: 'boolean', default: true },
       REDIS_URL: { type: 'string', minLength: 1 },
+      TRUST_PROXY_CIDRS: { type: 'string', default: '' },
       SENTRY_DSN: { type: 'string', minLength: 1 },
       SESSION_TRUST_GEO_HEADERS: { type: 'boolean', default: false },
       SMTP_FROM: { type: 'string', minLength: 3 },

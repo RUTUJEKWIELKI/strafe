@@ -16,7 +16,10 @@ const httpPlugin: FastifyPluginAsync = async (app) => {
   )
 
   await app.register(sensible)
-  await app.register(helmet)
+  await app.register(helmet, {
+    contentSecurityPolicy: false,
+    hsts: false,
+  })
   await app.register(compress)
   await app.register(rateLimit, {
     global: false,
@@ -43,6 +46,12 @@ const httpPlugin: FastifyPluginAsync = async (app) => {
 
   app.addHook('onRequest', async (request, reply) => {
     reply.header('x-request-id', request.id)
+    if (request.protocol === 'https') {
+      reply.header(
+        'strict-transport-security',
+        'max-age=31536000; includeSubDomains',
+      )
+    }
   })
 }
 
