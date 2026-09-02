@@ -2693,6 +2693,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         archivedAt: string | null;
+                        flags: number;
                         /** Format: uuid */
                         id: string;
                         name: string;
@@ -2814,6 +2815,7 @@ export interface operations {
                     "application/json": {
                         channels: {
                             archivedAt: string | null;
+                            flags: number;
                             /** Format: uuid */
                             id: string;
                             name: string;
@@ -3538,6 +3540,7 @@ export interface operations {
                     "application/json": {
                         channels: {
                             archivedAt: string | null;
+                            flags: number;
                             /** Format: uuid */
                             id: string;
                             name: string;
@@ -3577,6 +3580,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         archivedAt: string | null;
+                        flags: number;
                         /** Format: uuid */
                         id: string;
                         name: string;
@@ -5449,6 +5453,36 @@ export interface operations {
                 "application/json": {
                     category: string;
                     description?: string;
+                    encryptedEvidence?: {
+                        context: {
+                            /** Format: uuid */
+                            authorId: string;
+                            /** Format: uuid */
+                            channelId: string;
+                            content: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: uuid */
+                            id: string;
+                        }[];
+                        cryptographicMaterial: {
+                            /** @enum {string} */
+                            algorithm: "Ed25519";
+                            authorPublicKey: string;
+                            signature: string;
+                        };
+                        message: {
+                            /** Format: uuid */
+                            authorId: string;
+                            /** Format: uuid */
+                            channelId: string;
+                            content: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: uuid */
+                            id: string;
+                        };
+                    };
                     /** Format: uuid */
                     serverId?: string;
                     /** Format: uuid */
@@ -5470,6 +5504,39 @@ export interface operations {
                         /** Format: date-time */
                         createdAt: string;
                         description: string | null;
+                        encryptedEvidence: {
+                            authorKeyFingerprint: string;
+                            context: {
+                                /** Format: uuid */
+                                authorId: string;
+                                /** Format: uuid */
+                                channelId: string;
+                                content: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: uuid */
+                                id: string;
+                            }[];
+                            cryptographicMaterial: {
+                                /** @enum {string} */
+                                algorithm: "Ed25519";
+                                authorPublicKey: string;
+                                signature: string;
+                            };
+                            message: {
+                                /** Format: uuid */
+                                authorId: string;
+                                /** Format: uuid */
+                                channelId: string;
+                                content: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: uuid */
+                                id: string;
+                            };
+                            /** @enum {string} */
+                            verification: "signature_valid";
+                        } | null;
                         /** Format: uuid */
                         id: string;
                         /** Format: uuid */
@@ -5534,6 +5601,39 @@ export interface operations {
                             /** Format: date-time */
                             createdAt: string;
                             description: string | null;
+                            encryptedEvidence: {
+                                authorKeyFingerprint: string;
+                                context: {
+                                    /** Format: uuid */
+                                    authorId: string;
+                                    /** Format: uuid */
+                                    channelId: string;
+                                    content: string;
+                                    /** Format: date-time */
+                                    createdAt: string;
+                                    /** Format: uuid */
+                                    id: string;
+                                }[];
+                                cryptographicMaterial: {
+                                    /** @enum {string} */
+                                    algorithm: "Ed25519";
+                                    authorPublicKey: string;
+                                    signature: string;
+                                };
+                                message: {
+                                    /** Format: uuid */
+                                    authorId: string;
+                                    /** Format: uuid */
+                                    channelId: string;
+                                    content: string;
+                                    /** Format: date-time */
+                                    createdAt: string;
+                                    /** Format: uuid */
+                                    id: string;
+                                };
+                                /** @enum {string} */
+                                verification: "signature_valid";
+                            } | null;
                             /** Format: uuid */
                             id: string;
                             /** Format: uuid */
@@ -5586,6 +5686,39 @@ export interface operations {
                         /** Format: date-time */
                         createdAt: string;
                         description: string | null;
+                        encryptedEvidence: {
+                            authorKeyFingerprint: string;
+                            context: {
+                                /** Format: uuid */
+                                authorId: string;
+                                /** Format: uuid */
+                                channelId: string;
+                                content: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: uuid */
+                                id: string;
+                            }[];
+                            cryptographicMaterial: {
+                                /** @enum {string} */
+                                algorithm: "Ed25519";
+                                authorPublicKey: string;
+                                signature: string;
+                            };
+                            message: {
+                                /** Format: uuid */
+                                authorId: string;
+                                /** Format: uuid */
+                                channelId: string;
+                                content: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: uuid */
+                                id: string;
+                            };
+                            /** @enum {string} */
+                            verification: "signature_valid";
+                        } | null;
                         /** Format: uuid */
                         id: string;
                         /** Format: uuid */
@@ -5943,6 +6076,7 @@ export interface operations {
                             enabled: boolean;
                             /** Format: uuid */
                             id: string;
+                            enforcementScope: "metadata" | "plaintext";
                             name: string;
                             /** Format: uuid */
                             serverId: string;
@@ -5994,6 +6128,7 @@ export interface operations {
                         enabled: boolean;
                         /** Format: uuid */
                         id: string;
+                        enforcementScope: "metadata" | "plaintext";
                         name: string;
                         /** Format: uuid */
                         serverId: string;
@@ -6073,6 +6208,7 @@ export interface operations {
                         enabled: boolean;
                         /** Format: uuid */
                         id: string;
+                        enforcementScope: "metadata" | "plaintext";
                         name: string;
                         /** Format: uuid */
                         serverId: string;
@@ -6587,6 +6723,7 @@ export interface operations {
                     "application/json": {
                         channels: {
                             archivedAt: string | null;
+                            flags: number;
                             /** Format: uuid */
                             id: string;
                             name: string;
@@ -6614,6 +6751,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    encrypted?: boolean;
                     name: string;
                     /** Format: uuid */
                     parentId?: string;
@@ -6632,6 +6770,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         archivedAt: string | null;
+                        flags: number;
                         /** Format: uuid */
                         id: string;
                         name: string;

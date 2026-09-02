@@ -1,7 +1,8 @@
-import type {
-  CreateMessageBody,
-  Message,
-  UpdateMessageBody,
+import {
+  EncryptedChannelFlag,
+  type CreateMessageBody,
+  type Message,
+  type UpdateMessageBody,
 } from '@strafe/shared'
 import {
   and,
@@ -322,6 +323,7 @@ export class MessageService {
       userId,
       id,
       content,
+      (authorization.channel.flags & EncryptedChannelFlag) !== 0,
     )
     if (automod.blocked) {
       throw new BadRequestError(
@@ -506,6 +508,7 @@ export class MessageService {
       userId,
       messageId,
       content,
+      (authorization.channel.flags & EncryptedChannelFlag) !== 0,
     )
     if (automod.blocked) {
       throw new BadRequestError(

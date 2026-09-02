@@ -2,6 +2,9 @@ import { Type, type Static } from 'typebox'
 
 import { DateTimeSchema, IdSchema } from './common.js'
 
+/** Channel content is an opaque end-to-end encrypted envelope for the API. */
+export const EncryptedChannelFlag = 1 << 0
+
 export const ChannelTypeSchema = Type.Union([
   Type.Literal('category'),
   Type.Literal('text'),
@@ -18,6 +21,7 @@ export const ChannelTypeSchema = Type.Union([
 export const ChannelSchema = Type.Object(
   {
     archivedAt: Type.Union([DateTimeSchema, Type.Null()]),
+    flags: Type.Integer({ minimum: 0 }),
     id: IdSchema,
     name: Type.String(),
     parentId: Type.Union([IdSchema, Type.Null()]),
@@ -32,6 +36,7 @@ export const ChannelSchema = Type.Object(
 
 export const CreateChannelBodySchema = Type.Object(
   {
+    encrypted: Type.Optional(Type.Boolean()),
     name: Type.String({ maxLength: 100, minLength: 1 }),
     parentId: Type.Optional(IdSchema),
     slowmodeSeconds: Type.Optional(

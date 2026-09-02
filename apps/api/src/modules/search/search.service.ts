@@ -3,7 +3,8 @@ import type {
   SearchMessagesQuery,
   SearchServersQuery,
 } from '@strafe/shared'
-import { and, eq, ilike, inArray, isNull, or } from 'drizzle-orm'
+import { EncryptedChannelFlag } from '@strafe/shared'
+import { and, eq, ilike, inArray, isNull, or, sql } from 'drizzle-orm'
 import type { FastifyInstance } from 'fastify'
 import { Meilisearch } from 'meilisearch'
 
@@ -85,8 +86,12 @@ export class SearchService {
         return
       }
       const document = await this.#messageDocument(event.aggregateId)
-      if (document)
+      if (document) {
         await this.#client.index('messages').addDocuments([document])
+      } else {
+        // Also removes documents left behind when a channel becomes encrypted.
+        await this.#client.index('messages').deleteDocument(event.aggregateId)
+      }
       return
     }
     if (event.type.startsWith('server.')) {
@@ -153,6 +158,7 @@ export class SearchService {
       .where(
         and(
           inArray(messages.channelId, channelIds),
+          sql`(${channels.flags} & ${EncryptedChannelFlag}) = 0`,
           isNull(messages.deletedAt),
           ilike(messages.content, `%${escaped}%`),
         ),
@@ -261,6 +267,7 @@ export class SearchService {
           eq(serverMembers.userId, userId),
           eq(serverMembers.state, 'active'),
           isNull(channels.deletedAt),
+          sql`(${channels.flags} & ${EncryptedChannelFlag}) = 0`,
           ...(serverId ? [eq(channels.serverId, serverId)] : []),
         ),
       )
@@ -276,6 +283,7 @@ export class SearchService {
               eq(channelMembers.userId, userId),
               isNull(channels.serverId),
               isNull(channels.deletedAt),
+              sql`(${channels.flags} & ${EncryptedChannelFlag}) = 0`,
             ),
           )
           .limit(1_000)
@@ -307,13 +315,20 @@ export class SearchService {
         deletedAt: messages.deletedAt,
         id: messages.id,
         serverId: channels.serverId,
+        channelFlags: channels.flags,
       })
       .from(messages)
       .innerJoin(channels, eq(channels.id, messages.channelId))
       .where(eq(messages.id, messageId))
       .limit(1)
-    if (!row || row.deletedAt) return null
-    return { ...row, createdAt: row.createdAt.toISOString() }
+    if (
+      !row ||
+      row.deletedAt ||
+      (row.channelFlags & EncryptedChannelFlag) !== 0
+    )
+      return null
+    const { channelFlags: _channelFlags, ...document } = row
+    return { ...document, createdAt: row.createdAt.toISOString() }
   }
 
   async #serverDocument(serverId: string): Promise<ServerDocument | null> {

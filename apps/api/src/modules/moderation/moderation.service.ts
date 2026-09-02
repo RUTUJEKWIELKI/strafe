@@ -1,12 +1,14 @@
-import type {
-  CreateAppealBody,
-  CreateAutomodRuleBody,
-  CreateReportBody,
-  DecideAppealBody,
-  UpdateAutomodRuleBody,
-  UpdateReportBody,
-  UserBlockBody,
+import {
+  EncryptedChannelFlag,
+  type CreateAppealBody,
+  type CreateAutomodRuleBody,
+  type CreateReportBody,
+  type DecideAppealBody,
+  type UpdateAutomodRuleBody,
+  type UpdateReportBody,
+  type UserBlockBody,
 } from '@strafe/shared'
+import { createHash, createPublicKey, verify } from 'node:crypto'
 import { and, desc, eq, isNull, lt, or, sql } from 'drizzle-orm'
 import type { FastifyInstance } from 'fastify'
 
@@ -41,6 +43,7 @@ function reportResponse(report: typeof userReports.$inferSelect) {
     category: report.category,
     createdAt: report.createdAt.toISOString(),
     description: report.description,
+    encryptedEvidence: report.encryptedEvidence,
     id: report.id,
     reporterId: report.reporterId,
     resolutionNote: report.resolutionNote,
@@ -59,11 +62,69 @@ function ruleResponse(rule: typeof automodRules.$inferSelect) {
     createdAt: rule.createdAt.toISOString(),
     enabled: rule.enabled,
     id: rule.id,
+    enforcementScope: automodEnforcementScope(rule.triggerType),
     name: rule.name,
     serverId: rule.serverId,
     triggerType: rule.triggerType as
       'flood' | 'keyword' | 'link' | 'raid' | 'spam',
     updatedAt: rule.updatedAt.toISOString(),
+  }
+}
+
+type AutomodEnforcementScope = 'metadata' | 'plaintext'
+
+function automodEnforcementScope(triggerType: string): AutomodEnforcementScope {
+  return triggerType === 'spam' || triggerType === 'raid'
+    ? 'metadata'
+    : 'plaintext'
+}
+
+function canonicalReportedMessage(
+  message: NonNullable<CreateReportBody['encryptedEvidence']>['message'],
+): string {
+  return JSON.stringify({
+    authorId: message.authorId,
+    channelId: message.channelId,
+    content: message.content,
+    createdAt: message.createdAt,
+    id: message.id,
+  })
+}
+
+function verifiedEncryptedEvidence(
+  evidence: NonNullable<CreateReportBody['encryptedEvidence']>,
+) {
+  try {
+    const publicKeyBytes = Buffer.from(
+      evidence.cryptographicMaterial.authorPublicKey,
+      'base64',
+    )
+    const publicKey = createPublicKey({
+      format: 'der',
+      key: publicKeyBytes,
+      type: 'spki',
+    })
+    const valid = verify(
+      null,
+      Buffer.from(canonicalReportedMessage(evidence.message)),
+      publicKey,
+      Buffer.from(evidence.cryptographicMaterial.signature, 'base64'),
+    )
+    if (!valid) throw new Error('invalid signature')
+    return {
+      authorKeyFingerprint: createHash('sha256')
+        .update(publicKeyBytes)
+        .digest('base64url'),
+      context: evidence.context,
+      cryptographicMaterial: evidence.cryptographicMaterial,
+      message: evidence.message,
+      verification: 'signature_valid' as const,
+    }
+  } catch {
+    throw new BadRequestError(
+      'Encrypted report evidence signature is invalid',
+      'INVALID_REPORT_EVIDENCE',
+    )
   }
 }
 
@@ -221,6 +282,32 @@ export class ModerationService {
 
   async createReport(reporterId: string, input: CreateReportBody) {
     const serverId = await this.#validateReportTarget(reporterId, input)
+    const encryptedEvidence = input.encryptedEvidence
+      ? verifiedEncryptedEvidence(input.encryptedEvidence)
+      : null
+    if (encryptedEvidence && input.targetType !== 'message') {
+      throw new BadRequestError(
+        'Encrypted evidence can only accompany a message report',
+        'INVALID_REPORT_EVIDENCE',
+      )
+    }
+    if (encryptedEvidence && encryptedEvidence.message.id !== input.targetId) {
+      throw new BadRequestError(
+        'Encrypted evidence does not match the reported message',
+        'INVALID_REPORT_EVIDENCE',
+      )
+    }
+    if (
+      encryptedEvidence &&
+      encryptedEvidence.context.some(
+        (message) => message.channelId !== encryptedEvidence.message.channelId,
+      )
+    ) {
+      throw new BadRequestError(
+        'Encrypted report context must come from the reported channel',
+        'INVALID_REPORT_EVIDENCE',
+      )
+    }
     const { db } = requireDatabase(this.#app)
     const [report] = await db.transaction(async (tx) => {
       const [created] = await tx
@@ -228,6 +315,7 @@ export class ModerationService {
         .values({
           category: input.category.trim().toLowerCase(),
           description: input.description?.trim() || null,
+          encryptedEvidence,
           id: createId(),
           reporterId,
           serverId,
@@ -788,6 +876,7 @@ export class ModerationService {
     userId: string,
     messageId: string,
     content: string,
+    encrypted = false,
   ): Promise<{ blocked: boolean }> {
     if (!serverId) return { blocked: false }
     const { db } = requireDatabase(this.#app)
@@ -801,6 +890,13 @@ export class ModerationService {
         ),
       )
     for (const rule of rules) {
+      // The API only sees ciphertext in encrypted channels. Content-dependent
+      // rules are intentionally not presented as if they were enforceable.
+      if (
+        encrypted &&
+        automodEnforcementScope(rule.triggerType) === 'plaintext'
+      )
+        continue
       if (!(await this.#matches(rule, channelId, userId, content))) continue
       const blocked = rule.action === 'block' || rule.action === 'timeout'
       await db.transaction(async (tx) => {
@@ -1014,7 +1110,9 @@ export class ModerationService {
       case 'message': {
         const [message] = await db
           .select({
+            authorId: messages.authorId,
             channelId: messages.channelId,
+            channelFlags: channels.flags,
             serverId: channels.serverId,
           })
           .from(messages)
@@ -1022,6 +1120,25 @@ export class ModerationService {
           .where(eq(messages.id, input.targetId))
           .limit(1)
         if (!message) throw new NotFoundError('Message not found')
+        const encrypted = (message.channelFlags & EncryptedChannelFlag) !== 0
+        if (encrypted !== Boolean(input.encryptedEvidence)) {
+          throw new BadRequestError(
+            encrypted
+              ? 'Reporting an encrypted message requires explicitly shared evidence'
+              : 'Encrypted evidence is only accepted for encrypted channels',
+            'INVALID_REPORT_EVIDENCE',
+          )
+        }
+        if (
+          input.encryptedEvidence &&
+          (input.encryptedEvidence.message.channelId !== message.channelId ||
+            input.encryptedEvidence.message.authorId !== message.authorId)
+        ) {
+          throw new BadRequestError(
+            'Encrypted evidence metadata does not match the reported message',
+            'INVALID_REPORT_EVIDENCE',
+          )
+        }
         if (input.serverId && input.serverId !== message.serverId) {
           throw new BadRequestError('Report server does not match its target')
         }
