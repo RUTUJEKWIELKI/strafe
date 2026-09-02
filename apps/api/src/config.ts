@@ -27,6 +27,7 @@ export interface AppConfig {
   LIVEKIT_API_KEY?: string
   LIVEKIT_API_SECRET?: string
   LIVEKIT_URL?: string
+  KEY_TRANSPARENCY_PRIVATE_KEY?: string
   MEILISEARCH_API_KEY?: string
   MEILISEARCH_HOST?: string
   METRICS_ENABLED: boolean
@@ -207,6 +208,7 @@ export const envOptions: FastifyEnvOptions = {
       LIVEKIT_API_KEY: { type: 'string', minLength: 1 },
       LIVEKIT_API_SECRET: { type: 'string', minLength: 16 },
       LIVEKIT_URL: { type: 'string', minLength: 1 },
+      KEY_TRANSPARENCY_PRIVATE_KEY: { type: 'string', minLength: 32 },
       MEILISEARCH_API_KEY: { type: 'string', minLength: 1 },
       MEILISEARCH_HOST: { type: 'string', minLength: 1 },
       METRICS_ENABLED: { type: 'boolean', default: true },
