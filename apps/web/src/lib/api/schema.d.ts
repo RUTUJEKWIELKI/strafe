@@ -603,6 +603,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/users/@me/key-backup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fetch the latest opaque encrypted key backup */
+        get: operations["getCurrentUserKeyBackup"];
+        /** Append an opaque encrypted key backup version */
+        put: operations["putCurrentUserKeyBackup"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/servers/{serverId}/members": {
         parameters: {
             query?: never;
@@ -4074,6 +4092,137 @@ export interface operations {
                         status: "ok" | "degraded";
                         /** Format: date-time */
                         timestamp: string;
+                    };
+                };
+            };
+        };
+    };
+    getCurrentUserKeyBackup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        backup: {
+                            /** @enum {string} */
+                            aead: "aes-256-gcm";
+                            ciphertext: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: uuid */
+                            deviceId: string;
+                            identityKeyFingerprint: string;
+                            kdf: {
+                                /** @enum {string} */
+                                algorithm: "argon2id";
+                                iterations: number;
+                                memoryKiB: number;
+                                parallelism: number;
+                                salt: string;
+                            };
+                            nonce: string;
+                            previousDigest: string | null;
+                            version: number;
+                        } | null;
+                        latestVersion: number;
+                    };
+                };
+            };
+        };
+    };
+    putCurrentUserKeyBackup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    aead: "aes-256-gcm";
+                    ciphertext: string;
+                    /** Format: date-time */
+                    createdAt: string;
+                    /** Format: uuid */
+                    deviceId: string;
+                    identityKeyFingerprint: string;
+                    kdf: {
+                        /** @enum {string} */
+                        algorithm: "argon2id";
+                        iterations: number;
+                        memoryKiB: number;
+                        parallelism: number;
+                        salt: string;
+                    };
+                    nonce: string;
+                    previousDigest: string | null;
+                    version: number;
+                } & {
+                    expectedPreviousVersion: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        backup: {
+                            /** @enum {string} */
+                            aead: "aes-256-gcm";
+                            ciphertext: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: uuid */
+                            deviceId: string;
+                            identityKeyFingerprint: string;
+                            kdf: {
+                                /** @enum {string} */
+                                algorithm: "argon2id";
+                                iterations: number;
+                                memoryKiB: number;
+                                parallelism: number;
+                                salt: string;
+                            };
+                            nonce: string;
+                            previousDigest: string | null;
+                            version: number;
+                        } | null;
+                        latestVersion: number;
+                    };
+                };
+            };
+            /** @description Default Response */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
                     };
                 };
             };

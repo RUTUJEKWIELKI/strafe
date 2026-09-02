@@ -25,6 +25,7 @@ import type { FileProcessingService } from '../modules/files/file-processing.ser
 import type { ModerationService } from '../modules/moderation/moderation.service.js'
 import type { NotificationDeliveryService } from '../modules/notifications/notification-delivery.service.js'
 import type { SearchService } from '../modules/search/search.service.js'
+import type { KeyBackupService } from '../modules/auth/key-backup.service.js'
 
 declare module 'fastify' {
   interface FastifyInstance {
@@ -39,6 +40,7 @@ declare module 'fastify' {
     eventBus: RealtimeEventBus
     fileProcessingService: FileProcessingService
     fileService: FileService
+    keyBackupService: KeyBackupService
     metrics: Registry
     messageService: MessageService
     moderationService: ModerationService
