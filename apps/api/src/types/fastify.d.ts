@@ -25,11 +25,13 @@ import type { FileProcessingService } from '../modules/files/file-processing.ser
 import type { ModerationService } from '../modules/moderation/moderation.service.js'
 import type { NotificationDeliveryService } from '../modules/notifications/notification-delivery.service.js'
 import type { SearchService } from '../modules/search/search.service.js'
+import type { BotService } from '../modules/bots/bot.service.js'
 
 declare module 'fastify' {
   interface FastifyInstance {
     accountSecurityService: AccountSecurityService
     auditService: AuditService
+    botService: BotService
     authenticate: (request: FastifyRequest) => Promise<void>
     authService: AuthService
     channelManagementService: ChannelManagementService

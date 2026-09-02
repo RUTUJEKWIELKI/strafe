@@ -169,6 +169,7 @@ export const bots = pgTable(
       .defaultNow()
       .notNull(),
     id: uuid('id').primaryKey(),
+    lastUsedAt: timestamp('last_used_at', { withTimezone: true }),
     tokenHash: text('token_hash').notNull(),
     userId: uuid('user_id').references(() => users.id, {
       onDelete: 'set null',
