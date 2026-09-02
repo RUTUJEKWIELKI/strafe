@@ -1,12 +1,13 @@
-import type {
-  Channel,
-  CreateChannelBody,
-  CreateInviteBody,
-  CreateRoleBody,
-  CreateServerBody,
-  Server,
-  TransferServerOwnershipBody,
-  UpdateServerBody,
+import {
+  EncryptedChannelFlag,
+  type Channel,
+  type CreateChannelBody,
+  type CreateInviteBody,
+  type CreateRoleBody,
+  type CreateServerBody,
+  type Server,
+  type TransferServerOwnershipBody,
+  type UpdateServerBody,
 } from '@strafe/shared'
 import { and, eq, gt, inArray, isNull, lt, ne, or, sql } from 'drizzle-orm'
 import type { FastifyInstance } from 'fastify'
@@ -63,6 +64,7 @@ function mapServer(row: typeof servers.$inferSelect): Server {
 function mapChannel(row: typeof channels.$inferSelect): Channel {
   return {
     archivedAt: row.archivedAt?.toISOString() ?? null,
+    flags: row.flags,
     id: row.id,
     name: row.name,
     parentId: row.parentId,
@@ -540,6 +542,21 @@ export class ServerService {
         'INVALID_CHANNEL_TYPE',
       )
     }
+    if (
+      input.encrypted &&
+      ![
+        'announcement',
+        'forum',
+        'text',
+        'thread_private',
+        'thread_public',
+      ].includes(input.type)
+    ) {
+      throw new BadRequestError(
+        'Only message channels can be end-to-end encrypted',
+        'INVALID_CHANNEL_ENCRYPTION',
+      )
+    }
 
     const { db } = requireDatabase(this.#app)
     if (
@@ -584,6 +601,7 @@ export class ServerService {
         .insert(channels)
         .values({
           id,
+          flags: input.encrypted ? EncryptedChannelFlag : 0,
           name: input.name.trim(),
           parentId: input.parentId ?? null,
           positionKey: `z:${id}`,

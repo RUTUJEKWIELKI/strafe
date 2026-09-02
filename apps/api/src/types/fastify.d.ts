@@ -25,7 +25,10 @@ import type { FileProcessingService } from '../modules/files/file-processing.ser
 import type { ModerationService } from '../modules/moderation/moderation.service.js'
 import type { NotificationDeliveryService } from '../modules/notifications/notification-delivery.service.js'
 import type { SearchService } from '../modules/search/search.service.js'
+import type { AbusePreventionService } from '../modules/abuse/abuse-prevention.service.js'
 import type { BotService } from '../modules/bots/bot.service.js'
+import type { EncryptionService } from '../modules/encryption/encryption.service.js'
+import type { KeyBackupService } from '../modules/auth/key-backup.service.js'
 
 declare module 'fastify' {
   interface FastifyContextConfig {
@@ -33,6 +36,7 @@ declare module 'fastify' {
   }
 
   interface FastifyInstance {
+    abusePrevention: AbusePreventionService
     accountSecurityService: AccountSecurityService
     auditService: AuditService
     authenticate: (request: FastifyRequest) => Promise<void>
@@ -42,10 +46,13 @@ declare module 'fastify' {
     config: AppConfig
     database: DatabaseService | null
     directMessageService: DirectMessageService
+    encryptionService: EncryptionService
     eventBus: RealtimeEventBus
     fileProcessingService: FileProcessingService
     fileService: FileService
+    keyBackupService: KeyBackupService
     metrics: Registry
+    jwtSigningKey: { kid: string; privateKey: string }
     messageService: MessageService
     moderationService: ModerationService
     memberService: MemberService

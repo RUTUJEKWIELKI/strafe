@@ -6,6 +6,7 @@ import { join } from 'node:path'
 import env from '@fastify/env'
 import { envOptions } from './config.js'
 import { AppError } from './lib/errors.js'
+import { assertProductionSecurity } from './lib/production-security.js'
 
 const defaultLogger: Exclude<
   NonNullable<FastifyServerOptions['logger']>,
@@ -45,10 +46,16 @@ function validationDetails(error: FastifyError): ErrorDetail[] | undefined {
 export async function buildServer(options: FastifyServerOptions = {}) {
   const app = fastify({
     logger: options.logger ?? defaultLogger,
+    trustProxy:
+      options.trustProxy ??
+      (process.env.TRUST_PROXY_CIDRS
+        ? process.env.TRUST_PROXY_CIDRS.split(',').map((value) => value.trim())
+        : false),
     ...options,
   })
 
   await app.register(env, envOptions)
+  await assertProductionSecurity(app.config)
 
   await app.register(autoload, {
     dir: join(import.meta.dirname, 'plugins'),

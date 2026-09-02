@@ -4,7 +4,9 @@ import fp from 'fastify-plugin'
 import { BotService } from '../modules/bots/bot.service.js'
 
 const botServicePlugin: FastifyPluginAsync = async (app) => {
-  app.decorate('botService', new BotService(app))
+  const botService = new BotService(app)
+  app.decorate('botService', botService)
+  app.addHook('onClose', async () => botService.close())
 }
 
 export default fp(botServicePlugin, {

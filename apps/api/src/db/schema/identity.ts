@@ -196,6 +196,43 @@ export const userDevices = pgTable(
   (table) => [index('user_devices_user_id_idx').on(table.userId)],
 )
 
+export const encryptedKeyBackups = pgTable(
+  'encrypted_key_backups',
+  {
+    aead: text('aead').notNull(),
+    ciphertext: text('ciphertext').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+    deviceId: uuid('device_id').notNull(),
+    identityKeyFingerprint: text('identity_key_fingerprint').notNull(),
+    kdf: jsonb('kdf')
+      .$type<{
+        algorithm: 'argon2id'
+        iterations: number
+        memoryKiB: number
+        parallelism: number
+        salt: string
+      }>()
+      .notNull(),
+    nonce: text('nonce').notNull(),
+    previousDigest: text('previous_digest'),
+    uploadedAt: timestamp('uploaded_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    version: integer('version').notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.version] }),
+    index('encrypted_key_backups_latest_idx').on(
+      table.userId,
+      table.version.desc(),
+    ),
+    check('encrypted_key_backups_version_check', sql`${table.version} > 0`),
+  ],
+)
+
 export const userSessions = pgTable(
   'user_sessions',
   {

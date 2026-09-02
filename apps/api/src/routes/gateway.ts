@@ -5,6 +5,7 @@ import type { FastifyPluginAsync } from 'fastify'
 import { serverMembers } from '../db/schema.js'
 import { requireDatabase } from '../lib/database.js'
 import { createId } from '../lib/ids.js'
+import { parseGatewayFrame } from '../lib/gateway-frame.js'
 import { Permission } from '../lib/permissions.js'
 import { authorizeChannel } from '../modules/permissions/authorization.js'
 
@@ -213,16 +214,8 @@ const gatewayRoutes: FastifyPluginAsync = async (app) => {
           return
         }
         commandTimestamps.push(now)
-        let frame: JsonRecord
-        try {
-          frame = JSON.parse(String(raw)) as JsonRecord
-        } catch {
-          throw new Error('Frame is not valid JSON')
-        }
-        if (!isRecord(frame) || typeof frame.op !== 'string') {
-          throw new Error('Frame must contain an op')
-        }
-        const data = isRecord(frame.d) ? frame.d : {}
+        const frame = parseGatewayFrame(raw, app.config.GATEWAY_MAX_FRAME_BYTES)
+        const data = frame.d
 
         if (frame.op === 'identify') {
           await identify(data)

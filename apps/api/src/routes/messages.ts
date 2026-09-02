@@ -63,7 +63,10 @@ const messageRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/channels/:channelId/messages',
     {
-      config: { botScopes: ['messages:write'], rateLimit: { max: 30, timeWindow: '10 seconds' } },
+      config: {
+        botScopes: ['messages:write'],
+        rateLimit: { max: 30, timeWindow: '10 seconds' },
+      },
       preHandler: app.authenticate,
       schema: {
         body: CreateMessageBodySchema,
@@ -87,6 +90,7 @@ const messageRoutes: FastifyPluginAsync = async (app) => {
             request.auth.userId,
             request.params.channelId,
             request.body,
+            request.ip,
           ),
         ),
   )
@@ -118,6 +122,7 @@ const messageRoutes: FastifyPluginAsync = async (app) => {
         request.auth.userId,
         request.params.messageId,
         request.body,
+        request.ip,
       ),
   )
 
@@ -170,6 +175,7 @@ const messageRoutes: FastifyPluginAsync = async (app) => {
         request.params.messageId,
         request.body.emojiKey,
         true,
+        request.ip,
       ),
     }),
   )
@@ -199,6 +205,7 @@ const messageRoutes: FastifyPluginAsync = async (app) => {
         request.params.messageId,
         request.body.emojiKey,
         false,
+        request.ip,
       ),
     }),
   )

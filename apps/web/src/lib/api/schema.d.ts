@@ -502,6 +502,111 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/encryption/transparency/consistency": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getKeyTransparencyConsistencyProof"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/encryption/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["publishKeyBundle"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/encryption/users/{userId}/devices/{deviceId}/prekeys/consume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["consumePrekeyBundle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/encryption/devices/{deviceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    deviceId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/encryption/sessions/rotate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["rotateEncryptionSessions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/files/uploads": {
         parameters: {
             query?: never;
@@ -649,6 +754,24 @@ export interface paths {
         /** Report whether dependencies are ready */
         get: operations["getReadiness"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/@me/key-backup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fetch the latest opaque encrypted key backup */
+        get: operations["getCurrentUserKeyBackup"];
+        /** Append an opaque encrypted key backup version */
+        put: operations["putCurrentUserKeyBackup"];
         post?: never;
         delete?: never;
         options?: never;
@@ -2995,6 +3118,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         archivedAt: string | null;
+                        flags: number;
                         /** Format: uuid */
                         id: string;
                         name: string;
@@ -3116,6 +3240,7 @@ export interface operations {
                     "application/json": {
                         channels: {
                             archivedAt: string | null;
+                            flags: number;
                             /** Format: uuid */
                             id: string;
                             name: string;
@@ -3840,6 +3965,7 @@ export interface operations {
                     "application/json": {
                         channels: {
                             archivedAt: string | null;
+                            flags: number;
                             /** Format: uuid */
                             id: string;
                             name: string;
@@ -3879,6 +4005,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         archivedAt: string | null;
+                        flags: number;
                         /** Format: uuid */
                         id: string;
                         name: string;
@@ -3950,6 +4077,241 @@ export interface operations {
             };
         };
     };
+    getKeyTransparencyConsistencyProof: {
+        parameters: {
+            query: {
+                fromSize: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        checkpoint: {
+                            /** Format: date-time */
+                            createdAt: string;
+                            rootHash: string;
+                            signature: string;
+                            size: number;
+                        };
+                        consistencyProof: string[];
+                        fromSize: number;
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    publishKeyBundle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    identityKey: string;
+                    oneTimePrekeys: {
+                        keyId: number;
+                        publicKey: string;
+                    }[];
+                    signedPrekey: {
+                        keyId: number;
+                        publicKey: string;
+                    } & {
+                        signature: string;
+                    };
+                    version: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        checkpoint: {
+                            /** Format: date-time */
+                            createdAt: string;
+                            rootHash: string;
+                            signature: string;
+                            size: number;
+                        };
+                        leafIndex: number;
+                    };
+                };
+            };
+            /** @description Default Response */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    consumePrekeyBundle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                deviceId: string;
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        bundle: {
+                            /** Format: uuid */
+                            deviceId: string;
+                            identityKey: string;
+                            oneTimePrekey: {
+                                keyId: number;
+                                publicKey: string;
+                            } | null;
+                            signedPrekey: {
+                                keyId: number;
+                                publicKey: string;
+                            } & {
+                                signature: string;
+                                version: number;
+                            };
+                            /** Format: uuid */
+                            userId: string;
+                            version: number;
+                        };
+                        checkpoint: {
+                            /** Format: date-time */
+                            createdAt: string;
+                            rootHash: string;
+                            signature: string;
+                            size: number;
+                        };
+                        inclusionProof: string[];
+                        leafIndex: number;
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    rotateEncryptionSessions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    conversationIds: string[];
+                    reason: "device_compromise" | "membership_changed";
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        rotated: number;
+                    };
+                };
+            };
+        };
+    };
     initiateFileUpload: {
         parameters: {
             query?: never;
@@ -3960,8 +4322,11 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    mimeType: string;
-                    originalName: string;
+                    chunkSizeBytes?: number;
+                    /** @enum {string} */
+                    encryptionMode?: "e2ee-v1";
+                    mimeType?: string;
+                    originalName?: string;
                     purpose: "attachment" | "avatar" | "banner" | "server_icon" | "emoji";
                     /** Format: uuid */
                     serverId?: string;
@@ -4142,6 +4507,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        encryptionMode: "none" | "e2ee-v1";
                         /** Format: date-time */
                         createdAt: string;
                         durationMs: number | null;
@@ -4376,6 +4742,137 @@ export interface operations {
                         status: "ok" | "degraded";
                         /** Format: date-time */
                         timestamp: string;
+                    };
+                };
+            };
+        };
+    };
+    getCurrentUserKeyBackup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        backup: {
+                            /** @enum {string} */
+                            aead: "aes-256-gcm";
+                            ciphertext: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: uuid */
+                            deviceId: string;
+                            identityKeyFingerprint: string;
+                            kdf: {
+                                /** @enum {string} */
+                                algorithm: "argon2id";
+                                iterations: number;
+                                memoryKiB: number;
+                                parallelism: number;
+                                salt: string;
+                            };
+                            nonce: string;
+                            previousDigest: string | null;
+                            version: number;
+                        } | null;
+                        latestVersion: number;
+                    };
+                };
+            };
+        };
+    };
+    putCurrentUserKeyBackup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    aead: "aes-256-gcm";
+                    ciphertext: string;
+                    /** Format: date-time */
+                    createdAt: string;
+                    /** Format: uuid */
+                    deviceId: string;
+                    identityKeyFingerprint: string;
+                    kdf: {
+                        /** @enum {string} */
+                        algorithm: "argon2id";
+                        iterations: number;
+                        memoryKiB: number;
+                        parallelism: number;
+                        salt: string;
+                    };
+                    nonce: string;
+                    previousDigest: string | null;
+                    version: number;
+                } & {
+                    expectedPreviousVersion: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        backup: {
+                            /** @enum {string} */
+                            aead: "aes-256-gcm";
+                            ciphertext: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: uuid */
+                            deviceId: string;
+                            identityKeyFingerprint: string;
+                            kdf: {
+                                /** @enum {string} */
+                                algorithm: "argon2id";
+                                iterations: number;
+                                memoryKiB: number;
+                                parallelism: number;
+                                salt: string;
+                            };
+                            nonce: string;
+                            previousDigest: string | null;
+                            version: number;
+                        } | null;
+                        latestVersion: number;
+                    };
+                };
+            };
+            /** @description Default Response */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
                     };
                 };
             };
@@ -5151,6 +5648,11 @@ export interface operations {
                 content: {
                     "application/json": {
                         messages: {
+                            attachmentEnvelopes: {
+                                envelope: string;
+                                /** Format: uuid */
+                                fileId: string;
+                            }[];
                             attachmentIds: string[];
                             author: {
                                 avatarUrl: string | null;
@@ -5165,7 +5667,18 @@ export interface operations {
                             authorId: string | null;
                             /** Format: uuid */
                             channelId: string;
-                            content: string;
+                            envelope: {
+                                authenticationTag: string;
+                                ciphertext: string;
+                                contentType: string;
+                                epoch: number;
+                                nonce: string;
+                                /** @enum {number} */
+                                protocolVersion: 1;
+                                /** Format: uuid */
+                                senderDeviceId: string;
+                            } | null;
+                            migrationState: "encrypted" | "legacy_unconvertible";
                             /** Format: date-time */
                             createdAt: string;
                             deletedAt: string | null;
@@ -5233,9 +5746,22 @@ export interface operations {
             content: {
                 "application/json": {
                     attachmentIds?: string[];
+                    attachmentEnvelopes?: {
+                        [key: string]: string;
+                    };
                     /** Format: uuid */
                     clientNonce: string;
-                    content: string;
+                    envelope: {
+                        authenticationTag: string;
+                        ciphertext: string;
+                        contentType: string;
+                        epoch: number;
+                        nonce: string;
+                        /** @enum {number} */
+                        protocolVersion: 1;
+                        /** Format: uuid */
+                        senderDeviceId: string;
+                    };
                     /** Format: uuid */
                     replyToMessageId?: string;
                 };
@@ -5249,6 +5775,11 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        attachmentEnvelopes: {
+                            envelope: string;
+                            /** Format: uuid */
+                            fileId: string;
+                        }[];
                         attachmentIds: string[];
                         author: {
                             avatarUrl: string | null;
@@ -5263,7 +5794,18 @@ export interface operations {
                         authorId: string | null;
                         /** Format: uuid */
                         channelId: string;
-                        content: string;
+                        envelope: {
+                            authenticationTag: string;
+                            ciphertext: string;
+                            contentType: string;
+                            epoch: number;
+                            nonce: string;
+                            /** @enum {number} */
+                            protocolVersion: 1;
+                            /** Format: uuid */
+                            senderDeviceId: string;
+                        } | null;
+                        migrationState: "encrypted" | "legacy_unconvertible";
                         /** Format: date-time */
                         createdAt: string;
                         deletedAt: string | null;
@@ -5390,7 +5932,17 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    content: string;
+                    envelope: {
+                        authenticationTag: string;
+                        ciphertext: string;
+                        contentType: string;
+                        epoch: number;
+                        nonce: string;
+                        /** @enum {number} */
+                        protocolVersion: 1;
+                        /** Format: uuid */
+                        senderDeviceId: string;
+                    };
                 };
             };
         };
@@ -5402,6 +5954,11 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        attachmentEnvelopes: {
+                            envelope: string;
+                            /** Format: uuid */
+                            fileId: string;
+                        }[];
                         attachmentIds: string[];
                         author: {
                             avatarUrl: string | null;
@@ -5416,7 +5973,18 @@ export interface operations {
                         authorId: string | null;
                         /** Format: uuid */
                         channelId: string;
-                        content: string;
+                        envelope: {
+                            authenticationTag: string;
+                            ciphertext: string;
+                            contentType: string;
+                            epoch: number;
+                            nonce: string;
+                            /** @enum {number} */
+                            protocolVersion: 1;
+                            /** Format: uuid */
+                            senderDeviceId: string;
+                        } | null;
+                        migrationState: "encrypted" | "legacy_unconvertible";
                         /** Format: date-time */
                         createdAt: string;
                         deletedAt: string | null;
@@ -5751,6 +6319,36 @@ export interface operations {
                 "application/json": {
                     category: string;
                     description?: string;
+                    encryptedEvidence?: {
+                        context: {
+                            /** Format: uuid */
+                            authorId: string;
+                            /** Format: uuid */
+                            channelId: string;
+                            content: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: uuid */
+                            id: string;
+                        }[];
+                        cryptographicMaterial: {
+                            /** @enum {string} */
+                            algorithm: "Ed25519";
+                            authorPublicKey: string;
+                            signature: string;
+                        };
+                        message: {
+                            /** Format: uuid */
+                            authorId: string;
+                            /** Format: uuid */
+                            channelId: string;
+                            content: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: uuid */
+                            id: string;
+                        };
+                    };
                     /** Format: uuid */
                     serverId?: string;
                     /** Format: uuid */
@@ -5772,6 +6370,39 @@ export interface operations {
                         /** Format: date-time */
                         createdAt: string;
                         description: string | null;
+                        encryptedEvidence: {
+                            authorKeyFingerprint: string;
+                            context: {
+                                /** Format: uuid */
+                                authorId: string;
+                                /** Format: uuid */
+                                channelId: string;
+                                content: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: uuid */
+                                id: string;
+                            }[];
+                            cryptographicMaterial: {
+                                /** @enum {string} */
+                                algorithm: "Ed25519";
+                                authorPublicKey: string;
+                                signature: string;
+                            };
+                            message: {
+                                /** Format: uuid */
+                                authorId: string;
+                                /** Format: uuid */
+                                channelId: string;
+                                content: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: uuid */
+                                id: string;
+                            };
+                            /** @enum {string} */
+                            verification: "signature_valid";
+                        } | null;
                         /** Format: uuid */
                         id: string;
                         /** Format: uuid */
@@ -5836,6 +6467,39 @@ export interface operations {
                             /** Format: date-time */
                             createdAt: string;
                             description: string | null;
+                            encryptedEvidence: {
+                                authorKeyFingerprint: string;
+                                context: {
+                                    /** Format: uuid */
+                                    authorId: string;
+                                    /** Format: uuid */
+                                    channelId: string;
+                                    content: string;
+                                    /** Format: date-time */
+                                    createdAt: string;
+                                    /** Format: uuid */
+                                    id: string;
+                                }[];
+                                cryptographicMaterial: {
+                                    /** @enum {string} */
+                                    algorithm: "Ed25519";
+                                    authorPublicKey: string;
+                                    signature: string;
+                                };
+                                message: {
+                                    /** Format: uuid */
+                                    authorId: string;
+                                    /** Format: uuid */
+                                    channelId: string;
+                                    content: string;
+                                    /** Format: date-time */
+                                    createdAt: string;
+                                    /** Format: uuid */
+                                    id: string;
+                                };
+                                /** @enum {string} */
+                                verification: "signature_valid";
+                            } | null;
                             /** Format: uuid */
                             id: string;
                             /** Format: uuid */
@@ -5888,6 +6552,39 @@ export interface operations {
                         /** Format: date-time */
                         createdAt: string;
                         description: string | null;
+                        encryptedEvidence: {
+                            authorKeyFingerprint: string;
+                            context: {
+                                /** Format: uuid */
+                                authorId: string;
+                                /** Format: uuid */
+                                channelId: string;
+                                content: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: uuid */
+                                id: string;
+                            }[];
+                            cryptographicMaterial: {
+                                /** @enum {string} */
+                                algorithm: "Ed25519";
+                                authorPublicKey: string;
+                                signature: string;
+                            };
+                            message: {
+                                /** Format: uuid */
+                                authorId: string;
+                                /** Format: uuid */
+                                channelId: string;
+                                content: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: uuid */
+                                id: string;
+                            };
+                            /** @enum {string} */
+                            verification: "signature_valid";
+                        } | null;
                         /** Format: uuid */
                         id: string;
                         /** Format: uuid */
@@ -6245,6 +6942,7 @@ export interface operations {
                             enabled: boolean;
                             /** Format: uuid */
                             id: string;
+                            enforcementScope: "metadata" | "plaintext";
                             name: string;
                             /** Format: uuid */
                             serverId: string;
@@ -6296,6 +6994,7 @@ export interface operations {
                         enabled: boolean;
                         /** Format: uuid */
                         id: string;
+                        enforcementScope: "metadata" | "plaintext";
                         name: string;
                         /** Format: uuid */
                         serverId: string;
@@ -6375,6 +7074,7 @@ export interface operations {
                         enabled: boolean;
                         /** Format: uuid */
                         id: string;
+                        enforcementScope: "metadata" | "plaintext";
                         name: string;
                         /** Format: uuid */
                         serverId: string;
@@ -6889,6 +7589,7 @@ export interface operations {
                     "application/json": {
                         channels: {
                             archivedAt: string | null;
+                            flags: number;
                             /** Format: uuid */
                             id: string;
                             name: string;
@@ -6916,6 +7617,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    encrypted?: boolean;
                     name: string;
                     /** Format: uuid */
                     parentId?: string;
@@ -6934,6 +7636,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         archivedAt: string | null;
+                        flags: number;
                         /** Format: uuid */
                         id: string;
                         name: string;

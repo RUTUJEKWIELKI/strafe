@@ -156,6 +156,7 @@ export class FileProcessingService {
         and(
           eq(files.id, fileId),
           eq(files.ownerId, userId),
+          eq(files.encryptionMode, 'none'),
           inArray(files.status, ['quarantined', 'rejected']),
         ),
       )
@@ -227,6 +228,7 @@ export class FileProcessingService {
         .from(files)
         .where(
           and(
+            eq(files.encryptionMode, 'none'),
             eq(files.scanStatus, 'pending'),
             or(
               eq(files.status, 'quarantined'),

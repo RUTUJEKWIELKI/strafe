@@ -448,11 +448,16 @@ export class AuthService {
     if (token.startsWith('strafe_bot_')) {
       const bot = await this.#app.botService.authenticate(token)
       if (!bot.scopes.includes('servers:read')) {
-        throw new UnauthorizedError('Bot token requires the servers:read scope for gateway access')
+        throw new UnauthorizedError(
+          'Bot token requires the servers:read scope for gateway access',
+        )
       }
       return {
-        actorType: 'bot', botId: bot.botId, scopes: bot.scopes,
-        sessionId: bot.tokenId, userId: bot.userId,
+        actorType: 'bot',
+        botId: bot.botId,
+        scopes: bot.scopes,
+        sessionId: bot.tokenId,
+        userId: bot.userId,
       }
     }
     let payload: AccessTokenPayload
@@ -595,7 +600,11 @@ export class AuthService {
   #signAccessToken(userId: string, sessionId: string): string {
     return this.#app.jwt.sign(
       { sid: sessionId, sub: userId, typ: 'access' },
-      { expiresIn: this.#app.config.AUTH_ACCESS_TTL_SECONDS },
+      {
+        expiresIn: this.#app.config.AUTH_ACCESS_TTL_SECONDS,
+        key: this.#app.jwtSigningKey.privateKey,
+        kid: this.#app.jwtSigningKey.kid,
+      },
     )
   }
 

@@ -11,6 +11,10 @@ async function getHealth(
   let database: ServiceStatus = app.database ? 'available' : 'disabled'
   let redis: ServiceStatus = app.redis ? 'available' : 'disabled'
 
+  if (app.config.NODE_ENV === 'production' && !app.redis) {
+    redis = 'unavailable'
+  }
+
   if (app.database) {
     try {
       await app.database.pool.query('select 1')

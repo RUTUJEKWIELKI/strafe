@@ -4258,6 +4258,7 @@
                   "type": "object",
                   "required": [
                     "archivedAt",
+                    "flags",
                     "id",
                     "name",
                     "parentId",
@@ -4278,6 +4279,10 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "flags": {
+                      "type": "integer",
+                      "minimum": 0
                     },
                     "id": {
                       "type": "string",
@@ -4892,6 +4897,7 @@
                         "type": "object",
                         "required": [
                           "archivedAt",
+                          "flags",
                           "id",
                           "name",
                           "parentId",
@@ -4912,6 +4918,10 @@
                                 "type": "null"
                               }
                             ]
+                          },
+                          "flags": {
+                            "type": "integer",
+                            "minimum": 0
                           },
                           "id": {
                             "type": "string",
@@ -7016,6 +7026,7 @@
                         "type": "object",
                         "required": [
                           "archivedAt",
+                          "flags",
                           "id",
                           "name",
                           "parentId",
@@ -7036,6 +7047,10 @@
                                 "type": "null"
                               }
                             ]
+                          },
+                          "flags": {
+                            "type": "integer",
+                            "minimum": 0
                           },
                           "id": {
                             "type": "string",
@@ -7196,6 +7211,7 @@
                   "type": "object",
                   "required": [
                     "archivedAt",
+                    "flags",
                     "id",
                     "name",
                     "parentId",
@@ -7216,6 +7232,10 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "flags": {
+                      "type": "integer",
+                      "minimum": 0
                     },
                     "id": {
                       "type": "string",
@@ -7488,6 +7508,738 @@
         }
       }
     },
+    "/api/encryption/transparency/consistency": {
+      "get": {
+        "operationId": "getKeyTransparencyConsistencyProof",
+        "tags": [
+          "encryption"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "in": "query",
+            "name": "fromSize",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "checkpoint",
+                    "consistencyProof",
+                    "fromSize"
+                  ],
+                  "properties": {
+                    "checkpoint": {
+                      "type": "object",
+                      "required": [
+                        "createdAt",
+                        "rootHash",
+                        "signature",
+                        "size"
+                      ],
+                      "properties": {
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "rootHash": {
+                          "type": "string"
+                        },
+                        "signature": {
+                          "type": "string"
+                        },
+                        "size": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      }
+                    },
+                    "consistencyProof": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "fromSize": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "message"
+                            ],
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/encryption/keys": {
+      "put": {
+        "operationId": "publishKeyBundle",
+        "tags": [
+          "encryption"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "identityKey",
+                  "oneTimePrekeys",
+                  "signedPrekey",
+                  "version"
+                ],
+                "properties": {
+                  "identityKey": {
+                    "type": "string",
+                    "maxLength": 256,
+                    "minLength": 40,
+                    "pattern": "^[A-Za-z0-9_-]+$"
+                  },
+                  "oneTimePrekeys": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "keyId",
+                        "publicKey"
+                      ],
+                      "properties": {
+                        "keyId": {
+                          "type": "integer",
+                          "minimum": 0
+                        },
+                        "publicKey": {
+                          "type": "string",
+                          "maxLength": 256,
+                          "minLength": 40,
+                          "pattern": "^[A-Za-z0-9_-]+$"
+                        }
+                      }
+                    },
+                    "maxItems": 1000
+                  },
+                  "signedPrekey": {
+                    "allOf": [
+                      {
+                        "type": "object",
+                        "required": [
+                          "keyId",
+                          "publicKey"
+                        ],
+                        "properties": {
+                          "keyId": {
+                            "type": "integer",
+                            "minimum": 0
+                          },
+                          "publicKey": {
+                            "type": "string",
+                            "maxLength": 256,
+                            "minLength": 40,
+                            "pattern": "^[A-Za-z0-9_-]+$"
+                          }
+                        }
+                      },
+                      {
+                        "type": "object",
+                        "required": [
+                          "signature"
+                        ],
+                        "properties": {
+                          "signature": {
+                            "type": "string",
+                            "maxLength": 256,
+                            "minLength": 40
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "version": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "StrafeToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "checkpoint",
+                    "leafIndex"
+                  ],
+                  "properties": {
+                    "checkpoint": {
+                      "type": "object",
+                      "required": [
+                        "createdAt",
+                        "rootHash",
+                        "signature",
+                        "size"
+                      ],
+                      "properties": {
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "rootHash": {
+                          "type": "string"
+                        },
+                        "signature": {
+                          "type": "string"
+                        },
+                        "size": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      }
+                    },
+                    "leafIndex": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "message"
+                            ],
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "message"
+                            ],
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/encryption/users/{userId}/devices/{deviceId}/prekeys/consume": {
+      "post": {
+        "operationId": "consumePrekeyBundle",
+        "tags": [
+          "encryption"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "deviceId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "userId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "StrafeToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "bundle",
+                    "checkpoint",
+                    "inclusionProof",
+                    "leafIndex"
+                  ],
+                  "properties": {
+                    "bundle": {
+                      "type": "object",
+                      "required": [
+                        "deviceId",
+                        "identityKey",
+                        "oneTimePrekey",
+                        "signedPrekey",
+                        "userId",
+                        "version"
+                      ],
+                      "properties": {
+                        "deviceId": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "identityKey": {
+                          "type": "string",
+                          "maxLength": 256,
+                          "minLength": 40,
+                          "pattern": "^[A-Za-z0-9_-]+$"
+                        },
+                        "oneTimePrekey": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "required": [
+                                "keyId",
+                                "publicKey"
+                              ],
+                              "properties": {
+                                "keyId": {
+                                  "type": "integer",
+                                  "minimum": 0
+                                },
+                                "publicKey": {
+                                  "type": "string",
+                                  "maxLength": 256,
+                                  "minLength": 40,
+                                  "pattern": "^[A-Za-z0-9_-]+$"
+                                }
+                              }
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "signedPrekey": {
+                          "allOf": [
+                            {
+                              "type": "object",
+                              "required": [
+                                "keyId",
+                                "publicKey"
+                              ],
+                              "properties": {
+                                "keyId": {
+                                  "type": "integer",
+                                  "minimum": 0
+                                },
+                                "publicKey": {
+                                  "type": "string",
+                                  "maxLength": 256,
+                                  "minLength": 40,
+                                  "pattern": "^[A-Za-z0-9_-]+$"
+                                }
+                              }
+                            },
+                            {
+                              "type": "object",
+                              "required": [
+                                "signature",
+                                "version"
+                              ],
+                              "properties": {
+                                "signature": {
+                                  "type": "string"
+                                },
+                                "version": {
+                                  "type": "integer"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "userId": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "version": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "checkpoint": {
+                      "type": "object",
+                      "required": [
+                        "createdAt",
+                        "rootHash",
+                        "signature",
+                        "size"
+                      ],
+                      "properties": {
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "rootHash": {
+                          "type": "string"
+                        },
+                        "signature": {
+                          "type": "string"
+                        },
+                        "size": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      }
+                    },
+                    "inclusionProof": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "leafIndex": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "message"
+                            ],
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/encryption/devices/{deviceId}": {
+      "delete": {
+        "tags": [
+          "encryption"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "reason"
+                ],
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "maxLength": 256,
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "in": "path",
+            "name": "deviceId",
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "StrafeToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/api/encryption/sessions/rotate": {
+      "post": {
+        "operationId": "rotateEncryptionSessions",
+        "tags": [
+          "encryption"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "conversationIds",
+                  "reason"
+                ],
+                "properties": {
+                  "conversationIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "maxItems": 500,
+                    "minItems": 1
+                  },
+                  "reason": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "device_compromise"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "membership_changed"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "StrafeToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "rotated"
+                  ],
+                  "properties": {
+                    "rotated": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/files/uploads": {
       "post": {
         "operationId": "initiateFileUpload",
@@ -7502,12 +8254,21 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "mimeType",
-                  "originalName",
                   "purpose",
                   "sizeBytes"
                 ],
                 "properties": {
+                  "chunkSizeBytes": {
+                    "type": "integer",
+                    "maximum": 67108864,
+                    "minimum": 65536
+                  },
+                  "encryptionMode": {
+                    "type": "string",
+                    "enum": [
+                      "e2ee-v1"
+                    ]
+                  },
                   "mimeType": {
                     "type": "string",
                     "maxLength": 255,
@@ -8049,6 +8810,7 @@
                 "schema": {
                   "type": "object",
                   "required": [
+                    "encryptionMode",
                     "createdAt",
                     "durationMs",
                     "height",
@@ -8065,6 +8827,22 @@
                     "width"
                   ],
                   "properties": {
+                    "encryptionMode": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "none"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "e2ee-v1"
+                          ]
+                        }
+                      ]
+                    },
                     "createdAt": {
                       "type": "string",
                       "format": "date-time"
@@ -8937,6 +9715,468 @@
                     "timestamp": {
                       "type": "string",
                       "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/@me/key-backup": {
+      "get": {
+        "operationId": "getCurrentUserKeyBackup",
+        "summary": "Fetch the latest opaque encrypted key backup",
+        "tags": [
+          "key backup"
+        ],
+        "security": [
+          {
+            "StrafeToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "backup",
+                    "latestVersion"
+                  ],
+                  "properties": {
+                    "backup": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "required": [
+                            "aead",
+                            "ciphertext",
+                            "createdAt",
+                            "deviceId",
+                            "identityKeyFingerprint",
+                            "kdf",
+                            "nonce",
+                            "previousDigest",
+                            "version"
+                          ],
+                          "properties": {
+                            "aead": {
+                              "type": "string",
+                              "enum": [
+                                "aes-256-gcm"
+                              ]
+                            },
+                            "ciphertext": {
+                              "type": "string",
+                              "maxLength": 4000000,
+                              "minLength": 1
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "deviceId": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "identityKeyFingerprint": {
+                              "type": "string",
+                              "maxLength": 128,
+                              "minLength": 16
+                            },
+                            "kdf": {
+                              "type": "object",
+                              "required": [
+                                "algorithm",
+                                "iterations",
+                                "memoryKiB",
+                                "parallelism",
+                                "salt"
+                              ],
+                              "properties": {
+                                "algorithm": {
+                                  "type": "string",
+                                  "enum": [
+                                    "argon2id"
+                                  ]
+                                },
+                                "iterations": {
+                                  "type": "integer",
+                                  "maximum": 10,
+                                  "minimum": 1
+                                },
+                                "memoryKiB": {
+                                  "type": "integer",
+                                  "maximum": 1048576,
+                                  "minimum": 65536
+                                },
+                                "parallelism": {
+                                  "type": "integer",
+                                  "maximum": 8,
+                                  "minimum": 1
+                                },
+                                "salt": {
+                                  "type": "string",
+                                  "maxLength": 128,
+                                  "minLength": 22
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            "nonce": {
+                              "type": "string",
+                              "maxLength": 64,
+                              "minLength": 16
+                            },
+                            "previousDigest": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "maxLength": 128,
+                                  "minLength": 32
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": 1
+                            }
+                          },
+                          "additionalProperties": false,
+                          "title": "KeyBackupEnvelope"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "latestVersion": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "putCurrentUserKeyBackup",
+        "summary": "Append an opaque encrypted key backup version",
+        "tags": [
+          "key backup"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "aead",
+                      "ciphertext",
+                      "createdAt",
+                      "deviceId",
+                      "identityKeyFingerprint",
+                      "kdf",
+                      "nonce",
+                      "previousDigest",
+                      "version"
+                    ],
+                    "properties": {
+                      "aead": {
+                        "type": "string",
+                        "enum": [
+                          "aes-256-gcm"
+                        ]
+                      },
+                      "ciphertext": {
+                        "type": "string",
+                        "maxLength": 4000000,
+                        "minLength": 1
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "deviceId": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "identityKeyFingerprint": {
+                        "type": "string",
+                        "maxLength": 128,
+                        "minLength": 16
+                      },
+                      "kdf": {
+                        "type": "object",
+                        "required": [
+                          "algorithm",
+                          "iterations",
+                          "memoryKiB",
+                          "parallelism",
+                          "salt"
+                        ],
+                        "properties": {
+                          "algorithm": {
+                            "type": "string",
+                            "enum": [
+                              "argon2id"
+                            ]
+                          },
+                          "iterations": {
+                            "type": "integer",
+                            "maximum": 10,
+                            "minimum": 1
+                          },
+                          "memoryKiB": {
+                            "type": "integer",
+                            "maximum": 1048576,
+                            "minimum": 65536
+                          },
+                          "parallelism": {
+                            "type": "integer",
+                            "maximum": 8,
+                            "minimum": 1
+                          },
+                          "salt": {
+                            "type": "string",
+                            "maxLength": 128,
+                            "minLength": 22
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "nonce": {
+                        "type": "string",
+                        "maxLength": 64,
+                        "minLength": 16
+                      },
+                      "previousDigest": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 128,
+                            "minLength": 32
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "version": {
+                        "type": "integer",
+                        "minimum": 1
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "expectedPreviousVersion"
+                    ],
+                    "properties": {
+                      "expectedPreviousVersion": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "StrafeToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "backup",
+                    "latestVersion"
+                  ],
+                  "properties": {
+                    "backup": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "required": [
+                            "aead",
+                            "ciphertext",
+                            "createdAt",
+                            "deviceId",
+                            "identityKeyFingerprint",
+                            "kdf",
+                            "nonce",
+                            "previousDigest",
+                            "version"
+                          ],
+                          "properties": {
+                            "aead": {
+                              "type": "string",
+                              "enum": [
+                                "aes-256-gcm"
+                              ]
+                            },
+                            "ciphertext": {
+                              "type": "string",
+                              "maxLength": 4000000,
+                              "minLength": 1
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "deviceId": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "identityKeyFingerprint": {
+                              "type": "string",
+                              "maxLength": 128,
+                              "minLength": 16
+                            },
+                            "kdf": {
+                              "type": "object",
+                              "required": [
+                                "algorithm",
+                                "iterations",
+                                "memoryKiB",
+                                "parallelism",
+                                "salt"
+                              ],
+                              "properties": {
+                                "algorithm": {
+                                  "type": "string",
+                                  "enum": [
+                                    "argon2id"
+                                  ]
+                                },
+                                "iterations": {
+                                  "type": "integer",
+                                  "maximum": 10,
+                                  "minimum": 1
+                                },
+                                "memoryKiB": {
+                                  "type": "integer",
+                                  "maximum": 1048576,
+                                  "minimum": 65536
+                                },
+                                "parallelism": {
+                                  "type": "integer",
+                                  "maximum": 8,
+                                  "minimum": 1
+                                },
+                                "salt": {
+                                  "type": "string",
+                                  "maxLength": 128,
+                                  "minLength": 22
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            "nonce": {
+                              "type": "string",
+                              "maxLength": 64,
+                              "minLength": 16
+                            },
+                            "previousDigest": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "maxLength": 128,
+                                  "minLength": 32
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": 1
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "latestVersion": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "message"
+                            ],
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      }
                     }
                   }
                 }
@@ -11006,11 +12246,13 @@
                       "items": {
                         "type": "object",
                         "required": [
+                          "attachmentEnvelopes",
                           "attachmentIds",
                           "author",
                           "authorId",
                           "channelId",
-                          "content",
+                          "envelope",
+                          "migrationState",
                           "createdAt",
                           "deletedAt",
                           "editedAt",
@@ -11020,6 +12262,25 @@
                           "type"
                         ],
                         "properties": {
+                          "attachmentEnvelopes": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "envelope",
+                                "fileId"
+                              ],
+                              "properties": {
+                                "envelope": {
+                                  "type": "string"
+                                },
+                                "fileId": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                }
+                              }
+                            }
+                          },
                           "attachmentIds": {
                             "type": "array",
                             "items": {
@@ -11109,8 +12370,78 @@
                             "type": "string",
                             "format": "uuid"
                           },
-                          "content": {
-                            "type": "string"
+                          "envelope": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "required": [
+                                  "authenticationTag",
+                                  "ciphertext",
+                                  "contentType",
+                                  "epoch",
+                                  "nonce",
+                                  "protocolVersion",
+                                  "senderDeviceId"
+                                ],
+                                "properties": {
+                                  "authenticationTag": {
+                                    "type": "string",
+                                    "maxLength": 128,
+                                    "minLength": 16
+                                  },
+                                  "ciphertext": {
+                                    "type": "string",
+                                    "maxLength": 64000,
+                                    "minLength": 1
+                                  },
+                                  "contentType": {
+                                    "type": "string",
+                                    "maxLength": 128,
+                                    "minLength": 1
+                                  },
+                                  "epoch": {
+                                    "type": "integer",
+                                    "maximum": 2147483647,
+                                    "minimum": 0
+                                  },
+                                  "nonce": {
+                                    "type": "string",
+                                    "maxLength": 128,
+                                    "minLength": 16
+                                  },
+                                  "protocolVersion": {
+                                    "type": "number",
+                                    "enum": [
+                                      1
+                                    ]
+                                  },
+                                  "senderDeviceId": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  }
+                                },
+                                "title": "MessageEnvelope"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "migrationState": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "encrypted"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "legacy_unconvertible"
+                                ]
+                              }
+                            ]
                           },
                           "createdAt": {
                             "type": "string",
@@ -11297,7 +12628,7 @@
                 "type": "object",
                 "required": [
                   "clientNonce",
-                  "content"
+                  "envelope"
                 ],
                 "properties": {
                   "attachmentIds": {
@@ -11309,13 +12640,66 @@
                     "maxItems": 10,
                     "uniqueItems": true
                   },
+                  "attachmentEnvelopes": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string",
+                      "maxLength": 16384,
+                      "minLength": 1
+                    }
+                  },
                   "clientNonce": {
                     "type": "string",
                     "format": "uuid"
                   },
-                  "content": {
-                    "type": "string",
-                    "maxLength": 4000
+                  "envelope": {
+                    "type": "object",
+                    "required": [
+                      "authenticationTag",
+                      "ciphertext",
+                      "contentType",
+                      "epoch",
+                      "nonce",
+                      "protocolVersion",
+                      "senderDeviceId"
+                    ],
+                    "properties": {
+                      "authenticationTag": {
+                        "type": "string",
+                        "maxLength": 128,
+                        "minLength": 16
+                      },
+                      "ciphertext": {
+                        "type": "string",
+                        "maxLength": 64000,
+                        "minLength": 1
+                      },
+                      "contentType": {
+                        "type": "string",
+                        "maxLength": 128,
+                        "minLength": 1
+                      },
+                      "epoch": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0
+                      },
+                      "nonce": {
+                        "type": "string",
+                        "maxLength": 128,
+                        "minLength": 16
+                      },
+                      "protocolVersion": {
+                        "type": "number",
+                        "enum": [
+                          1
+                        ]
+                      },
+                      "senderDeviceId": {
+                        "type": "string",
+                        "format": "uuid"
+                      }
+                    }
                   },
                   "replyToMessageId": {
                     "type": "string",
@@ -11350,11 +12734,13 @@
                 "schema": {
                   "type": "object",
                   "required": [
+                    "attachmentEnvelopes",
                     "attachmentIds",
                     "author",
                     "authorId",
                     "channelId",
-                    "content",
+                    "envelope",
+                    "migrationState",
                     "createdAt",
                     "deletedAt",
                     "editedAt",
@@ -11364,6 +12750,25 @@
                     "type"
                   ],
                   "properties": {
+                    "attachmentEnvelopes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "envelope",
+                          "fileId"
+                        ],
+                        "properties": {
+                          "envelope": {
+                            "type": "string"
+                          },
+                          "fileId": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        }
+                      }
+                    },
                     "attachmentIds": {
                       "type": "array",
                       "items": {
@@ -11453,8 +12858,77 @@
                       "type": "string",
                       "format": "uuid"
                     },
-                    "content": {
-                      "type": "string"
+                    "envelope": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "required": [
+                            "authenticationTag",
+                            "ciphertext",
+                            "contentType",
+                            "epoch",
+                            "nonce",
+                            "protocolVersion",
+                            "senderDeviceId"
+                          ],
+                          "properties": {
+                            "authenticationTag": {
+                              "type": "string",
+                              "maxLength": 128,
+                              "minLength": 16
+                            },
+                            "ciphertext": {
+                              "type": "string",
+                              "maxLength": 64000,
+                              "minLength": 1
+                            },
+                            "contentType": {
+                              "type": "string",
+                              "maxLength": 128,
+                              "minLength": 1
+                            },
+                            "epoch": {
+                              "type": "integer",
+                              "maximum": 2147483647,
+                              "minimum": 0
+                            },
+                            "nonce": {
+                              "type": "string",
+                              "maxLength": 128,
+                              "minLength": 16
+                            },
+                            "protocolVersion": {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            "senderDeviceId": {
+                              "type": "string",
+                              "format": "uuid"
+                            }
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "migrationState": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "encrypted"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "legacy_unconvertible"
+                          ]
+                        }
+                      ]
                     },
                     "createdAt": {
                       "type": "string",
@@ -11679,13 +13153,57 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "content"
+                  "envelope"
                 ],
                 "properties": {
-                  "content": {
-                    "type": "string",
-                    "maxLength": 4000,
-                    "minLength": 1
+                  "envelope": {
+                    "type": "object",
+                    "required": [
+                      "authenticationTag",
+                      "ciphertext",
+                      "contentType",
+                      "epoch",
+                      "nonce",
+                      "protocolVersion",
+                      "senderDeviceId"
+                    ],
+                    "properties": {
+                      "authenticationTag": {
+                        "type": "string",
+                        "maxLength": 128,
+                        "minLength": 16
+                      },
+                      "ciphertext": {
+                        "type": "string",
+                        "maxLength": 64000,
+                        "minLength": 1
+                      },
+                      "contentType": {
+                        "type": "string",
+                        "maxLength": 128,
+                        "minLength": 1
+                      },
+                      "epoch": {
+                        "type": "integer",
+                        "maximum": 2147483647,
+                        "minimum": 0
+                      },
+                      "nonce": {
+                        "type": "string",
+                        "maxLength": 128,
+                        "minLength": 16
+                      },
+                      "protocolVersion": {
+                        "type": "number",
+                        "enum": [
+                          1
+                        ]
+                      },
+                      "senderDeviceId": {
+                        "type": "string",
+                        "format": "uuid"
+                      }
+                    }
                   }
                 }
               }
@@ -11716,11 +13234,13 @@
                 "schema": {
                   "type": "object",
                   "required": [
+                    "attachmentEnvelopes",
                     "attachmentIds",
                     "author",
                     "authorId",
                     "channelId",
-                    "content",
+                    "envelope",
+                    "migrationState",
                     "createdAt",
                     "deletedAt",
                     "editedAt",
@@ -11730,6 +13250,25 @@
                     "type"
                   ],
                   "properties": {
+                    "attachmentEnvelopes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "envelope",
+                          "fileId"
+                        ],
+                        "properties": {
+                          "envelope": {
+                            "type": "string"
+                          },
+                          "fileId": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        }
+                      }
+                    },
                     "attachmentIds": {
                       "type": "array",
                       "items": {
@@ -11819,8 +13358,77 @@
                       "type": "string",
                       "format": "uuid"
                     },
-                    "content": {
-                      "type": "string"
+                    "envelope": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "required": [
+                            "authenticationTag",
+                            "ciphertext",
+                            "contentType",
+                            "epoch",
+                            "nonce",
+                            "protocolVersion",
+                            "senderDeviceId"
+                          ],
+                          "properties": {
+                            "authenticationTag": {
+                              "type": "string",
+                              "maxLength": 128,
+                              "minLength": 16
+                            },
+                            "ciphertext": {
+                              "type": "string",
+                              "maxLength": 64000,
+                              "minLength": 1
+                            },
+                            "contentType": {
+                              "type": "string",
+                              "maxLength": 128,
+                              "minLength": 1
+                            },
+                            "epoch": {
+                              "type": "integer",
+                              "maximum": 2147483647,
+                              "minimum": 0
+                            },
+                            "nonce": {
+                              "type": "string",
+                              "maxLength": 128,
+                              "minLength": 16
+                            },
+                            "protocolVersion": {
+                              "type": "number",
+                              "enum": [
+                                1
+                              ]
+                            },
+                            "senderDeviceId": {
+                              "type": "string",
+                              "format": "uuid"
+                            }
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "migrationState": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "encrypted"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "legacy_unconvertible"
+                          ]
+                        }
+                      ]
                     },
                     "createdAt": {
                       "type": "string",
@@ -12774,6 +14382,111 @@
                     "type": "string",
                     "maxLength": 2000
                   },
+                  "encryptedEvidence": {
+                    "type": "object",
+                    "required": [
+                      "context",
+                      "cryptographicMaterial",
+                      "message"
+                    ],
+                    "properties": {
+                      "context": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "authorId",
+                            "channelId",
+                            "content",
+                            "createdAt",
+                            "id"
+                          ],
+                          "properties": {
+                            "authorId": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "channelId": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "content": {
+                              "type": "string",
+                              "maxLength": 16000
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "id": {
+                              "type": "string",
+                              "format": "uuid"
+                            }
+                          }
+                        },
+                        "maxItems": 20
+                      },
+                      "cryptographicMaterial": {
+                        "type": "object",
+                        "required": [
+                          "algorithm",
+                          "authorPublicKey",
+                          "signature"
+                        ],
+                        "properties": {
+                          "algorithm": {
+                            "type": "string",
+                            "enum": [
+                              "Ed25519"
+                            ]
+                          },
+                          "authorPublicKey": {
+                            "type": "string",
+                            "maxLength": 1024,
+                            "minLength": 1
+                          },
+                          "signature": {
+                            "type": "string",
+                            "maxLength": 1024,
+                            "minLength": 1
+                          }
+                        }
+                      },
+                      "message": {
+                        "type": "object",
+                        "required": [
+                          "authorId",
+                          "channelId",
+                          "content",
+                          "createdAt",
+                          "id"
+                        ],
+                        "properties": {
+                          "authorId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "channelId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "content": {
+                            "type": "string",
+                            "maxLength": 16000
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  },
                   "serverId": {
                     "type": "string",
                     "format": "uuid"
@@ -12833,6 +14546,7 @@
                     "category",
                     "createdAt",
                     "description",
+                    "encryptedEvidence",
                     "id",
                     "reporterId",
                     "resolutionNote",
@@ -12865,6 +14579,127 @@
                       "anyOf": [
                         {
                           "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "encryptedEvidence": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "required": [
+                            "authorKeyFingerprint",
+                            "context",
+                            "cryptographicMaterial",
+                            "message",
+                            "verification"
+                          ],
+                          "properties": {
+                            "authorKeyFingerprint": {
+                              "type": "string"
+                            },
+                            "context": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "authorId",
+                                  "channelId",
+                                  "content",
+                                  "createdAt",
+                                  "id"
+                                ],
+                                "properties": {
+                                  "authorId": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "channelId": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "content": {
+                                    "type": "string",
+                                    "maxLength": 16000
+                                  },
+                                  "createdAt": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                  },
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  }
+                                }
+                              }
+                            },
+                            "cryptographicMaterial": {
+                              "type": "object",
+                              "required": [
+                                "algorithm",
+                                "authorPublicKey",
+                                "signature"
+                              ],
+                              "properties": {
+                                "algorithm": {
+                                  "type": "string",
+                                  "enum": [
+                                    "Ed25519"
+                                  ]
+                                },
+                                "authorPublicKey": {
+                                  "type": "string",
+                                  "maxLength": 1024,
+                                  "minLength": 1
+                                },
+                                "signature": {
+                                  "type": "string",
+                                  "maxLength": 1024,
+                                  "minLength": 1
+                                }
+                              }
+                            },
+                            "message": {
+                              "type": "object",
+                              "required": [
+                                "authorId",
+                                "channelId",
+                                "content",
+                                "createdAt",
+                                "id"
+                              ],
+                              "properties": {
+                                "authorId": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "channelId": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "content": {
+                                  "type": "string",
+                                  "maxLength": 16000
+                                },
+                                "createdAt": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                }
+                              }
+                            },
+                            "verification": {
+                              "type": "string",
+                              "enum": [
+                                "signature_valid"
+                              ]
+                            }
+                          }
                         },
                         {
                           "type": "null"
@@ -13120,6 +14955,7 @@
                               "category",
                               "createdAt",
                               "description",
+                              "encryptedEvidence",
                               "id",
                               "reporterId",
                               "resolutionNote",
@@ -13152,6 +14988,127 @@
                                 "anyOf": [
                                   {
                                     "type": "string"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "encryptedEvidence": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "required": [
+                                      "authorKeyFingerprint",
+                                      "context",
+                                      "cryptographicMaterial",
+                                      "message",
+                                      "verification"
+                                    ],
+                                    "properties": {
+                                      "authorKeyFingerprint": {
+                                        "type": "string"
+                                      },
+                                      "context": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "required": [
+                                            "authorId",
+                                            "channelId",
+                                            "content",
+                                            "createdAt",
+                                            "id"
+                                          ],
+                                          "properties": {
+                                            "authorId": {
+                                              "type": "string",
+                                              "format": "uuid"
+                                            },
+                                            "channelId": {
+                                              "type": "string",
+                                              "format": "uuid"
+                                            },
+                                            "content": {
+                                              "type": "string",
+                                              "maxLength": 16000
+                                            },
+                                            "createdAt": {
+                                              "type": "string",
+                                              "format": "date-time"
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "format": "uuid"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "cryptographicMaterial": {
+                                        "type": "object",
+                                        "required": [
+                                          "algorithm",
+                                          "authorPublicKey",
+                                          "signature"
+                                        ],
+                                        "properties": {
+                                          "algorithm": {
+                                            "type": "string",
+                                            "enum": [
+                                              "Ed25519"
+                                            ]
+                                          },
+                                          "authorPublicKey": {
+                                            "type": "string",
+                                            "maxLength": 1024,
+                                            "minLength": 1
+                                          },
+                                          "signature": {
+                                            "type": "string",
+                                            "maxLength": 1024,
+                                            "minLength": 1
+                                          }
+                                        }
+                                      },
+                                      "message": {
+                                        "type": "object",
+                                        "required": [
+                                          "authorId",
+                                          "channelId",
+                                          "content",
+                                          "createdAt",
+                                          "id"
+                                        ],
+                                        "properties": {
+                                          "authorId": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                          },
+                                          "channelId": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                          },
+                                          "content": {
+                                            "type": "string",
+                                            "maxLength": 16000
+                                          },
+                                          "createdAt": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                          },
+                                          "id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                          }
+                                        }
+                                      },
+                                      "verification": {
+                                        "type": "string",
+                                        "enum": [
+                                          "signature_valid"
+                                        ]
+                                      }
+                                    }
                                   },
                                   {
                                     "type": "null"
@@ -13383,6 +15340,7 @@
                     "category",
                     "createdAt",
                     "description",
+                    "encryptedEvidence",
                     "id",
                     "reporterId",
                     "resolutionNote",
@@ -13415,6 +15373,127 @@
                       "anyOf": [
                         {
                           "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "encryptedEvidence": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "required": [
+                            "authorKeyFingerprint",
+                            "context",
+                            "cryptographicMaterial",
+                            "message",
+                            "verification"
+                          ],
+                          "properties": {
+                            "authorKeyFingerprint": {
+                              "type": "string"
+                            },
+                            "context": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "authorId",
+                                  "channelId",
+                                  "content",
+                                  "createdAt",
+                                  "id"
+                                ],
+                                "properties": {
+                                  "authorId": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "channelId": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "content": {
+                                    "type": "string",
+                                    "maxLength": 16000
+                                  },
+                                  "createdAt": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                  },
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  }
+                                }
+                              }
+                            },
+                            "cryptographicMaterial": {
+                              "type": "object",
+                              "required": [
+                                "algorithm",
+                                "authorPublicKey",
+                                "signature"
+                              ],
+                              "properties": {
+                                "algorithm": {
+                                  "type": "string",
+                                  "enum": [
+                                    "Ed25519"
+                                  ]
+                                },
+                                "authorPublicKey": {
+                                  "type": "string",
+                                  "maxLength": 1024,
+                                  "minLength": 1
+                                },
+                                "signature": {
+                                  "type": "string",
+                                  "maxLength": 1024,
+                                  "minLength": 1
+                                }
+                              }
+                            },
+                            "message": {
+                              "type": "object",
+                              "required": [
+                                "authorId",
+                                "channelId",
+                                "content",
+                                "createdAt",
+                                "id"
+                              ],
+                              "properties": {
+                                "authorId": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "channelId": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "content": {
+                                  "type": "string",
+                                  "maxLength": 16000
+                                },
+                                "createdAt": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                }
+                              }
+                            },
+                            "verification": {
+                              "type": "string",
+                              "enum": [
+                                "signature_valid"
+                              ]
+                            }
+                          }
                         },
                         {
                           "type": "null"
@@ -14578,6 +16657,7 @@
                           "createdAt",
                           "enabled",
                           "id",
+                          "enforcementScope",
                           "name",
                           "serverId",
                           "triggerType",
@@ -14620,6 +16700,22 @@
                           "id": {
                             "type": "string",
                             "format": "uuid"
+                          },
+                          "enforcementScope": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "metadata"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "plaintext"
+                                ]
+                              }
+                            ]
                           },
                           "name": {
                             "type": "string"
@@ -14798,6 +16894,7 @@
                     "createdAt",
                     "enabled",
                     "id",
+                    "enforcementScope",
                     "name",
                     "serverId",
                     "triggerType",
@@ -14840,6 +16937,22 @@
                     "id": {
                       "type": "string",
                       "format": "uuid"
+                    },
+                    "enforcementScope": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "metadata"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "plaintext"
+                          ]
+                        }
+                      ]
                     },
                     "name": {
                       "type": "string"
@@ -15021,6 +17134,7 @@
                     "createdAt",
                     "enabled",
                     "id",
+                    "enforcementScope",
                     "name",
                     "serverId",
                     "triggerType",
@@ -15063,6 +17177,22 @@
                     "id": {
                       "type": "string",
                       "format": "uuid"
+                    },
+                    "enforcementScope": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "metadata"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "plaintext"
+                          ]
+                        }
+                      ]
                     },
                     "name": {
                       "type": "string"
@@ -16678,6 +18808,7 @@
                         "type": "object",
                         "required": [
                           "archivedAt",
+                          "flags",
                           "id",
                           "name",
                           "parentId",
@@ -16698,6 +18829,10 @@
                                 "type": "null"
                               }
                             ]
+                          },
+                          "flags": {
+                            "type": "integer",
+                            "minimum": 0
                           },
                           "id": {
                             "type": "string",
@@ -16836,6 +18971,9 @@
                   "type"
                 ],
                 "properties": {
+                  "encrypted": {
+                    "type": "boolean"
+                  },
                   "name": {
                     "type": "string",
                     "maxLength": 100,
@@ -16948,6 +19086,7 @@
                   "type": "object",
                   "required": [
                     "archivedAt",
+                    "flags",
                     "id",
                     "name",
                     "parentId",
@@ -16968,6 +19107,10 @@
                           "type": "null"
                         }
                       ]
+                    },
+                    "flags": {
+                      "type": "integer",
+                      "minimum": 0
                     },
                     "id": {
                       "type": "string",
