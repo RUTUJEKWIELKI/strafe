@@ -53,6 +53,7 @@ declare module 'fastify' {
     keyBackupService: KeyBackupService
     metrics: Registry
     jwtSigningKey: { kid: string; privateKey: string }
+    jwtVerificationKeys: ReadonlyMap<string, string>
     messageService: MessageService
     moderationService: ModerationService
     memberService: MemberService

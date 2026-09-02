@@ -38,14 +38,14 @@ const authPlugin: FastifyPluginAsync = async (app) => {
   )
 
   await app.register(jwt, {
+    decode: { complete: true },
     secret: async (
       _request: FastifyRequest,
       token: { header?: { kid?: string }; kid?: string },
     ) => {
-      const header = token.header ?? token
       const key =
-        typeof header.kid === 'string'
-          ? acceptedKeys.get(header.kid)
+        typeof token.header?.kid === 'string'
+          ? acceptedKeys.get(token.header.kid)
           : undefined
       if (!key)
         throw new Error(
@@ -60,6 +60,7 @@ const authPlugin: FastifyPluginAsync = async (app) => {
     kid: activeKey.kid,
     privateKey: activeKey.privateKey!,
   })
+  app.decorate('jwtVerificationKeys', acceptedKeys)
 
   const dummyPasswordHash = await hash(randomBytes(32), {
     hashLength: 32,

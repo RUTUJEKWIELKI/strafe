@@ -462,7 +462,13 @@ export class AuthService {
     }
     let payload: AccessTokenPayload
     try {
-      payload = this.#app.jwt.verify<AccessTokenPayload>(token)
+      const decoded = this.#app.jwt.decode(token, { complete: true }) as {
+        header?: { kid?: string }
+      } | null
+      const kid = decoded?.header?.kid
+      const key = kid ? this.#app.jwtVerificationKeys.get(kid) : undefined
+      if (!key) throw new Error('JWT signing key is not accepted')
+      payload = this.#app.jwt.verify<AccessTokenPayload>(token, { key })
     } catch {
       throw new UnauthorizedError('Access token is invalid or expired')
     }
