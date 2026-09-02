@@ -3,13 +3,33 @@ import { Type, type Static } from 'typebox'
 import { DateTimeSchema, IdSchema } from './common.js'
 import { UserSchema } from './users.js'
 
+export const MESSAGE_PROTOCOL_VERSION = 1
+
+/** An opaque, client-produced AEAD envelope. All binary fields are base64url. */
+export const MessageEnvelopeSchema = Type.Object(
+  {
+    authenticationTag: Type.String({ maxLength: 128, minLength: 16 }),
+    ciphertext: Type.String({ maxLength: 64_000, minLength: 1 }),
+    contentType: Type.String({ maxLength: 128, minLength: 1 }),
+    epoch: Type.Integer({ maximum: 2_147_483_647, minimum: 0 }),
+    nonce: Type.String({ maxLength: 128, minLength: 16 }),
+    protocolVersion: Type.Literal(MESSAGE_PROTOCOL_VERSION),
+    senderDeviceId: IdSchema,
+  },
+  { $id: 'MessageEnvelope' },
+)
+
 export const MessageSchema = Type.Object(
   {
     attachmentIds: Type.Array(IdSchema),
     author: Type.Union([UserSchema, Type.Null()]),
     authorId: Type.Union([IdSchema, Type.Null()]),
     channelId: IdSchema,
-    content: Type.String(),
+    envelope: Type.Union([MessageEnvelopeSchema, Type.Null()]),
+    migrationState: Type.Union([
+      Type.Literal('encrypted'),
+      Type.Literal('legacy_unconvertible'),
+    ]),
     createdAt: DateTimeSchema,
     deletedAt: Type.Union([DateTimeSchema, Type.Null()]),
     editedAt: Type.Union([DateTimeSchema, Type.Null()]),
@@ -27,7 +47,7 @@ export const CreateMessageBodySchema = Type.Object(
       Type.Array(IdSchema, { maxItems: 10, uniqueItems: true }),
     ),
     clientNonce: IdSchema,
-    content: Type.String({ maxLength: 4_000 }),
+    envelope: MessageEnvelopeSchema,
     replyToMessageId: Type.Optional(IdSchema),
   },
   { $id: 'CreateMessageBody' },
@@ -35,7 +55,7 @@ export const CreateMessageBodySchema = Type.Object(
 
 export const UpdateMessageBodySchema = Type.Object(
   {
-    content: Type.String({ maxLength: 4_000, minLength: 1 }),
+    envelope: MessageEnvelopeSchema,
   },
   { $id: 'UpdateMessageBody' },
 )
@@ -89,6 +109,7 @@ export const ReadStateSchema = Type.Object(
 export type CreateMessageBody = Static<typeof CreateMessageBodySchema>
 export type ListMessagesQuery = Static<typeof ListMessagesQuerySchema>
 export type Message = Static<typeof MessageSchema>
+export type MessageEnvelope = Static<typeof MessageEnvelopeSchema>
 export type ReactionBody = Static<typeof ReactionBodySchema>
 export type ReadStateBody = Static<typeof ReadStateBodySchema>
 export type UpdateMessageBody = Static<typeof UpdateMessageBodySchema>

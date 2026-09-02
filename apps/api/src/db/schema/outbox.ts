@@ -18,6 +18,8 @@ export interface OutboxPayload {
     userIds?: string[]
   }
   data: Record<string, unknown>
+  /** Version of the opaque message-envelope event shape, when applicable. */
+  envelopeVersion?: number
 }
 
 export const outboxEvents = pgTable(

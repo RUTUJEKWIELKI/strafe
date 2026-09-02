@@ -64,6 +64,13 @@
       "when": 1788111294810,
       "tag": "0008_file_scan_status",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1788366335619,
+      "tag": "0009_encrypted_message_envelopes",
+      "breakpoints": true
     }
   ]
 }
