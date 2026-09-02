@@ -27,15 +27,15 @@ The current launchpad provides foundations for accounts, communities, realtime m
 
 ## Highlights
 
-| Area | What is included |
-| --- | --- |
+| Area            | What is included                                                                                                    |
+| --------------- | ------------------------------------------------------------------------------------------------------------------- |
 | **Communities** | Servers, channels, roles, permission overwrites, invites, ownership transfer, bans, kicks, timeouts, and audit logs |
-| **Messaging** | Cursor pagination, typing, presence, transactional outbox delivery, and a resumable WebSocket gateway |
-| **Accounts** | Rotating refresh sessions, device management, password recovery, verified email changes, and security events |
-| **Files** | Multipart uploads, quarantine, MIME validation, malware scanning, metadata removal, derivatives, and quotas |
-| **Safety** | Blocks, reports, appeals, Redis-backed automod, permission-aware search, and moderation tools |
-| **Operations** | Redacted structured logs, health probes, Prometheus metrics, OpenAPI, and optional Sentry reporting |
-| **Clients** | Responsive SolidJS web app and a Tauri desktop shell sharing typed contracts |
+| **Messaging**   | Cursor pagination, typing, presence, transactional outbox delivery, and a resumable WebSocket gateway               |
+| **Accounts**    | Rotating refresh sessions, device management, password recovery, verified email changes, and security events        |
+| **Files**       | Multipart uploads, quarantine, MIME validation, malware scanning, metadata removal, derivatives, and quotas         |
+| **Safety**      | Blocks, reports, appeals, Redis-backed automod, permission-aware search, and moderation tools                       |
+| **Operations**  | Redacted structured logs, health probes, Prometheus metrics, OpenAPI, and optional Sentry reporting                 |
+| **Clients**     | Responsive SolidJS web app and a Tauri desktop shell sharing typed contracts                                        |
 
 ## Technology
 
@@ -54,13 +54,13 @@ The development stack also uses Drizzle ORM, TypeBox, Vite, VitePress, Meilisear
 
 ## Workspace
 
-| Path | Package | Responsibility |
-| --- | --- | --- |
-| [`apps/web`](apps/web) | `@strafe/web` | SolidJS web client |
-| [`apps/api`](apps/api) | `@strafe/api` | Fastify API and WebSocket gateway |
-| [`apps/docs`](apps/docs) | `@strafe/docs` | VitePress documentation |
-| [`apps/desktop`](apps/desktop) | `@strafe/desktop` | Tauri native shell |
-| [`packages/shared`](packages/shared) | `@strafe/shared` | Shared contracts and domain types |
+| Path                                 | Package           | Responsibility                    |
+| ------------------------------------ | ----------------- | --------------------------------- |
+| [`apps/web`](apps/web)               | `@strafe/web`     | SolidJS web client                |
+| [`apps/api`](apps/api)               | `@strafe/api`     | Fastify API and WebSocket gateway |
+| [`apps/docs`](apps/docs)             | `@strafe/docs`    | VitePress documentation           |
+| [`apps/desktop`](apps/desktop)       | `@strafe/desktop` | Tauri native shell                |
+| [`packages/shared`](packages/shared) | `@strafe/shared`  | Shared contracts and domain types |
 
 ```text
 strafe/
@@ -114,27 +114,27 @@ pnpm web:dev
 pnpm docs:dev
 ```
 
-| Service | Address |
-| --- | --- |
-| Web client | [http://127.0.0.1:5173](http://127.0.0.1:5173) |
-| API | [http://localhost:3000](http://localhost:3000) |
-| OpenAPI UI | [http://localhost:3000/docs](http://localhost:3000/docs) |
-| Health | [http://localhost:3000/api/health](http://localhost:3000/api/health) |
-| WebSocket gateway | `ws://localhost:3000/api/gateway` |
+| Service           | Address                                                              |
+| ----------------- | -------------------------------------------------------------------- |
+| Web client        | [http://127.0.0.1:5173](http://127.0.0.1:5173)                       |
+| API               | [http://localhost:3000](http://localhost:3000)                       |
+| OpenAPI UI        | [http://localhost:3000/docs](http://localhost:3000/docs)             |
+| Health            | [http://localhost:3000/api/health](http://localhost:3000/api/health) |
+| WebSocket gateway | `ws://localhost:3000/api/gateway`                                    |
 
 Run the desktop shell with `pnpm --filter @strafe/desktop dev`.
 
 ## Commands
 
-| Command | Purpose |
-| --- | --- |
-| `pnpm check` | Formatting, linting, types, tests, docs checks, and production builds |
-| `pnpm test` | Run workspace tests |
-| `pnpm typecheck` | Type-check workspace packages |
-| `pnpm contracts:generate` | Refresh OpenAPI output and the typed client schema |
-| `pnpm db:migrate` | Apply checked-in Drizzle migrations |
-| `pnpm db:studio` | Open Drizzle Studio |
-| `pnpm build` | Build contracts, API, web client, and documentation |
+| Command                   | Purpose                                                               |
+| ------------------------- | --------------------------------------------------------------------- |
+| `pnpm check`              | Formatting, linting, types, tests, docs checks, and production builds |
+| `pnpm test`               | Run workspace tests                                                   |
+| `pnpm typecheck`          | Type-check workspace packages                                         |
+| `pnpm contracts:generate` | Refresh OpenAPI output and the typed client schema                    |
+| `pnpm db:migrate`         | Apply checked-in Drizzle migrations                                   |
+| `pnpm db:studio`          | Open Drizzle Studio                                                   |
+| `pnpm build`              | Build contracts, API, web client, and documentation                   |
 
 Shared TypeBox contracts live in [`packages/shared/src/contracts`](packages/shared/src/contracts). API plugins and routes load automatically from `apps/api/src/plugins` and `apps/api/src/routes`; route modules receive the `/api` prefix.
 
