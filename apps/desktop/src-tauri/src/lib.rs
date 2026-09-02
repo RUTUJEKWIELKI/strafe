@@ -1,5 +1,7 @@
 use tauri::Manager;
 
+pub mod e2ee;
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let mut builder = tauri::Builder::default();
@@ -39,9 +41,8 @@ pub fn run() {
                 .expect("could not resolve app local data path")
                 .join("salt.txt");
 
-            app.handle().plugin(
-                tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build(),
-            )?;
+            app.handle()
+                .plugin(tauri_plugin_stronghold::Builder::with_argon2(&salt_path).build())?;
 
             #[cfg(desktop)]
             {
@@ -52,9 +53,8 @@ pub fn run() {
                 app.handle().plugin(tauri_plugin_positioner::init())?;
                 app.handle()
                     .plugin(tauri_plugin_updater::Builder::new().build())?;
-                app.handle().plugin(
-                    tauri_plugin_window_state::Builder::default().build(),
-                )?;
+                app.handle()
+                    .plugin(tauri_plugin_window_state::Builder::default().build())?;
             }
 
             Ok(())

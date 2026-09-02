@@ -13,6 +13,9 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
+aes-gcm = "0.10"
+ed25519-dalek = "2"
+hex = "0.4"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tauri = { version = "2", features = ["tray-icon"] }
@@ -38,6 +41,9 @@ tauri-plugin-updater = "2"
 tauri-plugin-upload = "2"
 tauri-plugin-websocket = "2"
 tauri-plugin-window-state = "2"
+
+[dev-dependencies]
+proptest = "1"
 
 [profile.dev.package.scrypt]
 opt-level = 3
