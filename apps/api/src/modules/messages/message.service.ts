@@ -60,10 +60,20 @@ interface MessageProjection {
 
 function mapMessage(
   row: MessageProjection,
-  attachmentIds: string[] = [],
+  attachments: Array<{ encryptedEnvelope: string | null; fileId: string }> = [],
 ): Message {
   return {
-    attachmentIds,
+    attachmentEnvelopes: attachments.flatMap((attachment) =>
+      attachment.encryptedEnvelope
+        ? [
+            {
+              envelope: attachment.encryptedEnvelope,
+              fileId: attachment.fileId,
+            },
+          ]
+        : [],
+    ),
+    attachmentIds: attachments.map((attachment) => attachment.fileId),
     author:
       row.authorId &&
       row.authorCreatedAt &&
@@ -189,7 +199,10 @@ export class MessageService {
           message,
           attachmentRows
             .filter((attachment) => attachment.messageId === message.id)
-            .map((attachment) => attachment.fileId),
+            .map((attachment) => ({
+              encryptedEnvelope: attachment.encryptedEnvelope,
+              fileId: attachment.fileId,
+            })),
         ),
       ),
       nextCursor:
@@ -247,6 +260,7 @@ export class MessageService {
         ? []
         : await db
             .select({
+              encryptionMode: files.encryptionMode,
               id: files.id,
               purpose: files.purpose,
               serverId: files.serverId,
@@ -268,6 +282,21 @@ export class MessageService {
       throw new BadRequestError(
         'Every attachment must be ready, owned by the author and scoped to this conversation',
         'INVALID_MESSAGE_ATTACHMENT',
+      )
+    }
+    if (
+      attachmentRows.some(
+        (file) =>
+          file.encryptionMode === 'e2ee-v1' &&
+          !input.attachmentEnvelopes?.[file.id],
+      ) ||
+      Object.keys(input.attachmentEnvelopes ?? {}).some(
+        (fileId) => !attachmentIds.includes(fileId),
+      )
+    ) {
+      throw new BadRequestError(
+        'Encrypted attachments require exactly one opaque message envelope',
+        'INVALID_ATTACHMENT_ENVELOPE',
       )
     }
 
@@ -368,6 +397,7 @@ export class MessageService {
       if (attachmentIds.length > 0) {
         await tx.insert(messageAttachments).values(
           attachmentIds.map((fileId, position) => ({
+            encryptedEnvelope: input.attachmentEnvelopes?.[fileId] ?? null,
             fileId,
             messageId: created.id,
             position,
@@ -452,14 +482,14 @@ export class MessageService {
       Permission.ReadMessageHistory,
     )
     const attachments = await db
-      .select({ fileId: messageAttachments.fileId })
+      .select({
+        encryptedEnvelope: messageAttachments.encryptedEnvelope,
+        fileId: messageAttachments.fileId,
+      })
       .from(messageAttachments)
       .where(eq(messageAttachments.messageId, messageId))
       .orderBy(messageAttachments.position)
-    return mapMessage(
-      row,
-      attachments.map((attachment) => attachment.fileId),
-    )
+    return mapMessage(row, attachments)
   }
 
   async update(

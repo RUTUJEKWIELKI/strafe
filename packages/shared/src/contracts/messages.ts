@@ -5,6 +5,12 @@ import { UserSchema } from './users.js'
 
 export const MessageSchema = Type.Object(
   {
+    attachmentEnvelopes: Type.Array(
+      Type.Object({
+        envelope: Type.String(),
+        fileId: IdSchema,
+      }),
+    ),
     attachmentIds: Type.Array(IdSchema),
     author: Type.Union([UserSchema, Type.Null()]),
     authorId: Type.Union([IdSchema, Type.Null()]),
@@ -25,6 +31,9 @@ export const CreateMessageBodySchema = Type.Object(
   {
     attachmentIds: Type.Optional(
       Type.Array(IdSchema, { maxItems: 10, uniqueItems: true }),
+    ),
+    attachmentEnvelopes: Type.Optional(
+      Type.Record(IdSchema, Type.String({ maxLength: 16_384, minLength: 1 })),
     ),
     clientNonce: IdSchema,
     content: Type.String({ maxLength: 4_000 }),

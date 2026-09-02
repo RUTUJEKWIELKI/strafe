@@ -3658,8 +3658,11 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    mimeType: string;
-                    originalName: string;
+                    chunkSizeBytes?: number;
+                    /** @enum {string} */
+                    encryptionMode?: "e2ee-v1";
+                    mimeType?: string;
+                    originalName?: string;
                     purpose: "attachment" | "avatar" | "banner" | "server_icon" | "emoji";
                     /** Format: uuid */
                     serverId?: string;
@@ -3840,6 +3843,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        encryptionMode: "none" | "e2ee-v1";
                         /** Format: date-time */
                         createdAt: string;
                         durationMs: number | null;
@@ -4849,6 +4853,11 @@ export interface operations {
                 content: {
                     "application/json": {
                         messages: {
+                            attachmentEnvelopes: {
+                                envelope: string;
+                                /** Format: uuid */
+                                fileId: string;
+                            }[];
                             attachmentIds: string[];
                             author: {
                                 avatarUrl: string | null;
@@ -4931,6 +4940,9 @@ export interface operations {
             content: {
                 "application/json": {
                     attachmentIds?: string[];
+                    attachmentEnvelopes?: {
+                        [key: string]: string;
+                    };
                     /** Format: uuid */
                     clientNonce: string;
                     content: string;
@@ -4947,6 +4959,11 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        attachmentEnvelopes: {
+                            envelope: string;
+                            /** Format: uuid */
+                            fileId: string;
+                        }[];
                         attachmentIds: string[];
                         author: {
                             avatarUrl: string | null;
@@ -5100,6 +5117,11 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        attachmentEnvelopes: {
+                            envelope: string;
+                            /** Format: uuid */
+                            fileId: string;
+                        }[];
                         attachmentIds: string[];
                         author: {
                             avatarUrl: string | null;

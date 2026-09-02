@@ -69,3 +69,31 @@ ownership and conversation scope. Downloads use
 
 Abort an unfinished upload with `DELETE /api/files/uploads/{uploadId}`. A cleanup
 worker also expires abandoned multipart uploads.
+
+## End-to-end encrypted attachments
+
+Message attachments can use `encryptionMode: "e2ee-v1"`. The client must first
+check the asserted MIME type and plaintext size against its local allowlist,
+show an explicit warning for executable or script-like names, and then create a
+fresh random 256-bit file key for every file. It encrypts independent chunks
+with AES-256-GCM. The binary format contains a random 64-bit nonce prefix and a
+monotonic 32-bit chunk counter, so a nonce is never reused under a file key and
+a recipient can authenticate and release one downloaded chunk at a time.
+
+Only the resulting octet-stream, its ciphertext size, `e2ee-v1`, and the chunk
+size are supplied when initiating the upload. The API deliberately stores an
+empty original name, the generic `application/octet-stream` type, and an opaque
+object key. The file key, original name and MIME type, plaintext SHA-256, size,
+and optional preview metadata belong in the attachment's encrypted message
+envelope (`attachmentEnvelopes[fileId]`), never in file-upload fields, logs,
+storage metadata, push text, or other unprotected notifications.
+
+An E2EE upload becomes `ready` after the object store confirms its declared
+ciphertext length. It never enters `file-processing.service.ts`: the server
+cannot decrypt it, validate its claimed content, scan it for malware, remove
+metadata, generate thumbnails/waveforms, or transcode it. Consequently clients
+must treat decrypted downloads as untrusted, repeat type/size checks after
+authenticated decryption, verify the envelope's plaintext hash, warn before
+opening dangerous formats, and render previews from the encrypted envelope.
+This privacy-versus-server-moderation tradeoff is fundamental; deployments that
+require server malware scanning must use the existing unencrypted upload mode.

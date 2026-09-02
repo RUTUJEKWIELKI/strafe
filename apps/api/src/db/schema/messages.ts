@@ -95,6 +95,7 @@ export const messageAttachments = pgTable(
     fileId: uuid('file_id')
       .notNull()
       .references(() => files.id, { onDelete: 'restrict' }),
+    encryptedEnvelope: text('encrypted_envelope'),
     messageId: uuid('message_id')
       .notNull()
       .references(() => messages.id, { onDelete: 'cascade' }),

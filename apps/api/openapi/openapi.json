@@ -6842,12 +6842,21 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "mimeType",
-                  "originalName",
                   "purpose",
                   "sizeBytes"
                 ],
                 "properties": {
+                  "chunkSizeBytes": {
+                    "type": "integer",
+                    "maximum": 67108864,
+                    "minimum": 65536
+                  },
+                  "encryptionMode": {
+                    "type": "string",
+                    "enum": [
+                      "e2ee-v1"
+                    ]
+                  },
                   "mimeType": {
                     "type": "string",
                     "maxLength": 255,
@@ -7389,6 +7398,7 @@
                 "schema": {
                   "type": "object",
                   "required": [
+                    "encryptionMode",
                     "createdAt",
                     "durationMs",
                     "height",
@@ -7405,6 +7415,22 @@
                     "width"
                   ],
                   "properties": {
+                    "encryptionMode": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "none"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "e2ee-v1"
+                          ]
+                        }
+                      ]
+                    },
                     "createdAt": {
                       "type": "string",
                       "format": "date-time"
@@ -10346,6 +10372,7 @@
                       "items": {
                         "type": "object",
                         "required": [
+                          "attachmentEnvelopes",
                           "attachmentIds",
                           "author",
                           "authorId",
@@ -10360,6 +10387,25 @@
                           "type"
                         ],
                         "properties": {
+                          "attachmentEnvelopes": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "envelope",
+                                "fileId"
+                              ],
+                              "properties": {
+                                "envelope": {
+                                  "type": "string"
+                                },
+                                "fileId": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                }
+                              }
+                            }
+                          },
                           "attachmentIds": {
                             "type": "array",
                             "items": {
@@ -10649,6 +10695,14 @@
                     "maxItems": 10,
                     "uniqueItems": true
                   },
+                  "attachmentEnvelopes": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string",
+                      "maxLength": 16384,
+                      "minLength": 1
+                    }
+                  },
                   "clientNonce": {
                     "type": "string",
                     "format": "uuid"
@@ -10690,6 +10744,7 @@
                 "schema": {
                   "type": "object",
                   "required": [
+                    "attachmentEnvelopes",
                     "attachmentIds",
                     "author",
                     "authorId",
@@ -10704,6 +10759,25 @@
                     "type"
                   ],
                   "properties": {
+                    "attachmentEnvelopes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "envelope",
+                          "fileId"
+                        ],
+                        "properties": {
+                          "envelope": {
+                            "type": "string"
+                          },
+                          "fileId": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        }
+                      }
+                    },
                     "attachmentIds": {
                       "type": "array",
                       "items": {
@@ -11056,6 +11130,7 @@
                 "schema": {
                   "type": "object",
                   "required": [
+                    "attachmentEnvelopes",
                     "attachmentIds",
                     "author",
                     "authorId",
@@ -11070,6 +11145,25 @@
                     "type"
                   ],
                   "properties": {
+                    "attachmentEnvelopes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "envelope",
+                          "fileId"
+                        ],
+                        "properties": {
+                          "envelope": {
+                            "type": "string"
+                          },
+                          "fileId": {
+                            "type": "string",
+                            "format": "uuid"
+                          }
+                        }
+                      }
+                    },
                     "attachmentIds": {
                       "type": "array",
                       "items": {
