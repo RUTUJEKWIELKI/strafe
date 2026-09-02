@@ -206,6 +206,7 @@ export class MessageService {
     userId: string,
     channelId: string,
     input: CreateMessageBody,
+    ip = 'unknown',
   ): Promise<Message> {
     const authorization = await authorizeChannel(
       this.#app,
@@ -231,7 +232,12 @@ export class MessageService {
 
     const { db } = requireDatabase(this.#app)
     const [existing] = await db
-      .select({ id: messages.id })
+      .select({
+        channelId: messages.channelId,
+        content: messages.content,
+        id: messages.id,
+        replyToMessageId: messages.replyToMessageId,
+      })
       .from(messages)
       .where(
         and(
@@ -240,7 +246,42 @@ export class MessageService {
         ),
       )
       .limit(1)
-    if (existing) return this.get(userId, existing.id)
+    if (existing) {
+      this.#app.abusePrevention.assertSameNonce(existing, {
+        channelId,
+        content,
+        replyToMessageId: input.replyToMessageId,
+      })
+      return this.get(userId, existing.id)
+    }
+
+    await this.#app.abusePrevention.check({
+      action: 'message.create',
+      actorId: userId,
+      channelId,
+      clientNonce: input.clientNonce,
+      ip,
+      serverId: authorization.channel.serverId,
+    })
+    const mentionCount = content.match(/<@[0-9a-f-]{36}>/gi)?.length ?? 0
+    if (mentionCount > 0) {
+      await this.#app.abusePrevention.check({
+        action: 'message.mention',
+        actorId: userId,
+        channelId,
+        cost: mentionCount,
+        ip,
+        serverId: authorization.channel.serverId,
+      })
+      await this.#app.abusePrevention.check({
+        action: 'notification.fanout',
+        actorId: userId,
+        channelId,
+        cost: mentionCount,
+        ip,
+        serverId: authorization.channel.serverId,
+      })
+    }
 
     const attachmentRows =
       attachmentIds.length === 0
@@ -466,6 +507,7 @@ export class MessageService {
     userId: string,
     messageId: string,
     input: UpdateMessageBody,
+    ip = 'unknown',
   ): Promise<Message> {
     const { db } = requireDatabase(this.#app)
     const [message] = await db
@@ -499,6 +541,14 @@ export class MessageService {
         'EMPTY_MESSAGE',
       )
     }
+
+    await this.#app.abusePrevention.check({
+      action: 'message.edit',
+      actorId: userId,
+      channelId: message.channelId,
+      ip,
+      serverId: authorization.channel.serverId,
+    })
 
     const automod = await this.#app.moderationService.evaluateMessage(
       authorization.channel.serverId,
@@ -607,6 +657,7 @@ export class MessageService {
     messageId: string,
     emojiKey: string,
     active: boolean,
+    ip = 'unknown',
   ): Promise<boolean> {
     const { db } = requireDatabase(this.#app)
     const [message] = await db
@@ -626,6 +677,13 @@ export class MessageService {
       message.channelId,
       Permission.AddReactions,
     )
+    await this.#app.abusePrevention.check({
+      action: 'reaction.change',
+      actorId: userId,
+      channelId: message.channelId,
+      ip,
+      serverId: authorization.channel.serverId,
+    })
     const normalizedEmoji = emojiKey.trim()
     if (!normalizedEmoji) {
       throw new BadRequestError('Emoji key cannot be empty', 'INVALID_EMOJI')

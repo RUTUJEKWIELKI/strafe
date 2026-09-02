@@ -46,7 +46,13 @@ export class DirectMessageService {
   async create(
     userId: string,
     input: CreateDirectMessageBody,
+    ip = 'unknown',
   ): Promise<Channel> {
+    await this.#app.abusePrevention.check({
+      action: 'dm.create',
+      actorId: userId,
+      ip,
+    })
     if (userId === input.recipientId) {
       throw new BadRequestError(
         'A direct conversation requires another user',

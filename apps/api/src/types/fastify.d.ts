@@ -25,9 +25,11 @@ import type { FileProcessingService } from '../modules/files/file-processing.ser
 import type { ModerationService } from '../modules/moderation/moderation.service.js'
 import type { NotificationDeliveryService } from '../modules/notifications/notification-delivery.service.js'
 import type { SearchService } from '../modules/search/search.service.js'
+import type { AbusePreventionService } from '../modules/abuse/abuse-prevention.service.js'
 
 declare module 'fastify' {
   interface FastifyInstance {
+    abusePrevention: AbusePreventionService
     accountSecurityService: AccountSecurityService
     auditService: AuditService
     authenticate: (request: FastifyRequest) => Promise<void>
