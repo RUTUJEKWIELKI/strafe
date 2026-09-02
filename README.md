@@ -2,7 +2,7 @@
 
 # Strafe
 
-### A modern, self-hostable community platform built in the open
+<strong>A modern, self-hostable community platform built in the open</strong>
 
 Fast realtime communication, typed APIs, secure account flows, and polished cross-platform clients in one TypeScript monorepo.
 
