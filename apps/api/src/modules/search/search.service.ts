@@ -10,7 +10,6 @@ import { Meilisearch } from 'meilisearch'
 import {
   channelMembers,
   channels,
-  messages,
   serverMembers,
   servers,
 } from '../../db/schema.js'
