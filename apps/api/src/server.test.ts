@@ -67,7 +67,7 @@ describe('API server', () => {
     expect(
       specification.components?.securitySchemes?.StrafeToken,
     ).toMatchObject({
-      bearerFormat: 'JWT',
+      bearerFormat: 'JWT or Strafe bot token',
       scheme: 'bearer',
       type: 'http',
     })

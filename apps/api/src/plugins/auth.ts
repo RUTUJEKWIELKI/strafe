@@ -6,6 +6,7 @@ import { randomBytes } from 'node:crypto'
 
 import { strafeTokenSecurityRequirement } from '../lib/strafe-token.js'
 import { AuthService } from '../modules/auth/auth.service.js'
+import { ForbiddenError } from '../lib/errors.js'
 
 const authPlugin: FastifyPluginAsync = async (app) => {
   if (app.config.NODE_ENV === 'production' && !app.config.AUTH_JWT_SECRET) {
@@ -35,6 +36,12 @@ const authPlugin: FastifyPluginAsync = async (app) => {
   app.decorateRequest('auth')
   app.decorate('authenticate', async (request) => {
     request.auth = await authService.authenticateRequest(request)
+    if (request.auth.actorType === 'bot') {
+      const requiredScopes = request.routeOptions.config.botScopes
+      if (!requiredScopes?.some((scope) => request.auth.scopes?.includes(scope))) {
+        throw new ForbiddenError('This endpoint is not available to this bot token')
+      }
+    }
   })
   app.addHook('onRoute', (routeOptions) => {
     const preHandlers = Array.isArray(routeOptions.preHandler)
@@ -51,6 +58,6 @@ const authPlugin: FastifyPluginAsync = async (app) => {
 }
 
 export default fp(authPlugin, {
-  dependencies: ['database'],
+  dependencies: ['bot-service', 'database'],
   name: 'auth',
 })

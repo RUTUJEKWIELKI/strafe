@@ -11,9 +11,9 @@ const openApiPlugin: FastifyPluginAsync = async (app) => {
       components: {
         securitySchemes: {
           [STRAFE_TOKEN_SECURITY_SCHEME]: {
-            bearerFormat: 'JWT',
+            bearerFormat: 'JWT or Strafe bot token',
             description:
-              'Strafe access token returned by register, login, or refresh. Paste only the token; Swagger adds the Bearer prefix.',
+              'User access token returned by register, login, or refresh, or a scoped bot token. Paste only the token; Swagger adds the Bearer prefix.',
             scheme: 'bearer',
             type: 'http',
           },
