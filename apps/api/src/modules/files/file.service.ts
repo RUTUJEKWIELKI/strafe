@@ -54,6 +54,12 @@ export function isMimeAllowed(purpose: string, mimeType: string): boolean {
   return allowedMimeTypes.get(purpose)?.has(mimeType.toLowerCase()) === true
 }
 
+function encryptedUploadState(encryptionMode: string, now: Date) {
+  return encryptionMode === 'e2ee-v1'
+    ? { scanStatus: 'skipped', status: 'ready', updatedAt: now }
+    : { scanStatus: 'pending', status: 'quarantined', updatedAt: now }
+}
+
 function mapFile(
   row: typeof files.$inferSelect,
   variants: Array<typeof fileVariants.$inferSelect>,
@@ -63,6 +69,7 @@ function mapFile(
     durationMs: row.durationMs,
     height: row.height,
     id: row.id,
+    encryptionMode: row.encryptionMode as FileResource['encryptionMode'],
     mimeType: row.mimeType,
     originalName: row.originalName,
     purpose: row.purpose as FileResource['purpose'],
@@ -91,8 +98,42 @@ export class FileService {
   }
 
   async initiate(userId: string, input: InitiateFileUploadBody) {
+    const encrypted = input.encryptionMode === 'e2ee-v1'
+    if (encrypted && input.purpose !== 'attachment') {
+      throw new BadRequestError(
+        'E2EE is only available for message attachments',
+        'INVALID_ENCRYPTION_MODE',
+      )
+    }
+    if (encrypted && !input.chunkSizeBytes) {
+      throw new BadRequestError(
+        'Encrypted uploads require a chunk size',
+        'INVALID_ENCRYPTION_PARAMETERS',
+      )
+    }
+    if (
+      encrypted &&
+      (input.mimeType !== undefined || input.originalName !== undefined)
+    ) {
+      throw new BadRequestError(
+        'Encrypted uploads must not disclose a file name or MIME type',
+        'SENSITIVE_FILE_METADATA',
+      )
+    }
+    if (!encrypted && input.chunkSizeBytes !== undefined) {
+      throw new BadRequestError(
+        'Chunk encryption parameters require E2EE mode',
+        'INVALID_ENCRYPTION_PARAMETERS',
+      )
+    }
+    if (!encrypted && (!input.mimeType || !input.originalName)) {
+      throw new BadRequestError(
+        'Unencrypted uploads require a name and MIME type',
+        'INVALID_FILE_METADATA',
+      )
+    }
     const allowed = allowedMimeTypes.get(input.purpose)
-    if (!allowed?.has(input.mimeType.toLowerCase())) {
+    if (!encrypted && !allowed?.has(input.mimeType!.toLowerCase())) {
       throw new BadRequestError(
         'This file type is not allowed for the selected purpose',
         'FILE_TYPE_NOT_ALLOWED',
@@ -159,10 +200,12 @@ export class FileService {
 
     const fileId = createId()
     const uploadId = createId()
-    const objectKey = `quarantine/${userId}/${fileId}`
+    const objectKey = encrypted
+      ? `encrypted/${userId}/${fileId}`
+      : `quarantine/${userId}/${fileId}`
     const providerUploadId = await this.#app.objectStorage.createMultipart(
       objectKey,
-      input.mimeType,
+      encrypted ? 'application/octet-stream' : input.mimeType!,
     )
     const expiresAt = new Date(Date.now() + 60 * 60 * 1_000)
     const partSizeBytes = this.#app.config.FILE_PART_SIZE_BYTES
@@ -194,10 +237,16 @@ export class FileService {
           )
         }
         await tx.insert(files).values({
+          encryptionChunkSizeBytes: input.chunkSizeBytes,
+          encryptionMode: input.encryptionMode ?? 'none',
           id: fileId,
-          mimeType: input.mimeType.toLowerCase(),
+          mimeType: encrypted
+            ? 'application/octet-stream'
+            : input.mimeType!.toLowerCase(),
           objectKey,
-          originalName: sanitizeFilename(input.originalName.trim()) || 'upload',
+          originalName: encrypted
+            ? ''
+            : sanitizeFilename(input.originalName!.trim()) || 'upload',
           ownerId: userId,
           purpose: input.purpose,
           serverId: input.serverId,
@@ -343,7 +392,7 @@ export class FileService {
         .where(eq(fileUploads.id, uploadId))
       await tx
         .update(files)
-        .set({ scanStatus: 'pending', status: 'quarantined', updatedAt: now })
+        .set(encryptedUploadState(upload.file.encryptionMode, now))
         .where(eq(files.id, upload.file.id))
       await tx.insert(outboxEvents).values({
         aggregateId: upload.file.id,
@@ -351,11 +400,19 @@ export class FileService {
         id: createId(),
         payload: {
           audience: { userIds: [userId] },
-          data: { fileId: upload.file.id, status: 'quarantined' },
+          data: {
+            fileId: upload.file.id,
+            status:
+              upload.file.encryptionMode === 'e2ee-v1'
+                ? 'ready'
+                : 'quarantined',
+          },
         },
         topic: 'file.upload_completed',
       })
-      return { fileId: upload.file.id, status: 'quarantined' as const }
+      return upload.file.encryptionMode === 'e2ee-v1'
+        ? { fileId: upload.file.id, status: 'ready' as const }
+        : { fileId: upload.file.id, status: 'quarantined' as const }
     })
   }
 
@@ -392,7 +449,10 @@ export class FileService {
   async download(userId: string, fileId: string, variantType?: string) {
     const file = await this.#authorizeFile(userId, fileId, true)
     let objectKey = file.objectKey
-    let filename = file.originalName
+    let filename =
+      file.encryptionMode === 'e2ee-v1'
+        ? `${file.id}.encrypted`
+        : file.originalName
     if (variantType) {
       const { db } = requireDatabase(this.#app)
       const [variant] = await db

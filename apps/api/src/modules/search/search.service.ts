@@ -10,7 +10,6 @@ import { Meilisearch } from 'meilisearch'
 import {
   channelMembers,
   channels,
-  messages,
   serverMembers,
   servers,
 } from '../../db/schema.js'
@@ -20,15 +19,6 @@ import {
   authorizeChannel,
   authorizeServer,
 } from '../permissions/authorization.js'
-
-interface MessageDocument {
-  authorId: string | null
-  channelId: string
-  content: string
-  createdAt: string
-  id: string
-  serverId: string | null
-}
 
 interface ServerDocument {
   description: string | null
@@ -79,16 +69,7 @@ export class SearchService {
 
   async handleEvent(event: RealtimeEvent): Promise<void> {
     if (!this.#client || !this.#available || !event.aggregateId) return
-    if (event.type.startsWith('message.')) {
-      if (event.type === 'message.deleted') {
-        await this.#client.index('messages').deleteDocument(event.aggregateId)
-        return
-      }
-      const document = await this.#messageDocument(event.aggregateId)
-      if (document)
-        await this.#client.index('messages').addDocuments([document])
-      return
-    }
+    // Encrypted message bodies are intentionally never indexed server-side.
     if (event.type.startsWith('server.')) {
       if (event.type === 'server.deleted') {
         await this.#client.index('servers').deleteDocument(event.aggregateId)
@@ -100,74 +81,14 @@ export class SearchService {
   }
 
   async messages(userId: string, query: SearchMessagesQuery) {
-    const limit = query.limit ?? 25
-    const offset = query.offset ?? 0
-    const channelIds = await this.#visibleChannelIds(
-      userId,
-      query.serverId,
-      query.channelId,
-    )
-    if (channelIds.length === 0) {
-      return { estimatedTotalHits: 0, hits: [], limit, offset }
-    }
-    if (this.#client && this.#available) {
-      const result = await this.#client
-        .index<MessageDocument>('messages')
-        .search(query.q.trim(), {
-          filter: `channelId IN [${channelIds.map((id) => JSON.stringify(id)).join(',')}]`,
-          limit,
-          offset,
-        })
-      return {
-        estimatedTotalHits: result.estimatedTotalHits ?? result.hits.length,
-        hits: result.hits.map((hit) => ({
-          authorId: hit.authorId,
-          channelId: hit.channelId,
-          content: hit.content,
-          createdAt: hit.createdAt,
-          id: hit.id,
-          serverId: hit.serverId,
-        })),
-        limit,
-        offset,
-      }
-    }
-
-    const escaped = query.q
-      .trim()
-      .replaceAll('\\', '\\\\')
-      .replaceAll('%', '\\%')
-      .replaceAll('_', '\\_')
-    const { db } = requireDatabase(this.#app)
-    const rows = await db
-      .select({
-        authorId: messages.authorId,
-        channelId: messages.channelId,
-        content: messages.content,
-        createdAt: messages.createdAt,
-        id: messages.id,
-        serverId: channels.serverId,
-      })
-      .from(messages)
-      .innerJoin(channels, eq(channels.id, messages.channelId))
-      .where(
-        and(
-          inArray(messages.channelId, channelIds),
-          isNull(messages.deletedAt),
-          ilike(messages.content, `%${escaped}%`),
-        ),
-      )
-      .orderBy(messages.createdAt)
-      .limit(limit)
-      .offset(offset)
+    // Search is performed over decrypted local indexes by clients. Authorization is
+    // still evaluated so this endpoint cannot be used to probe channel membership.
+    await this.#visibleChannelIds(userId, query.serverId, query.channelId)
     return {
-      estimatedTotalHits: rows.length,
-      hits: rows.map((row) => ({
-        ...row,
-        createdAt: row.createdAt.toISOString(),
-      })),
-      limit,
-      offset,
+      estimatedTotalHits: 0,
+      hits: [],
+      limit: query.limit ?? 25,
+      offset: query.offset ?? 0,
     }
   }
 
@@ -294,26 +215,6 @@ export class SearchService {
       }
     }
     return visible
-  }
-
-  async #messageDocument(messageId: string): Promise<MessageDocument | null> {
-    const { db } = requireDatabase(this.#app)
-    const [row] = await db
-      .select({
-        authorId: messages.authorId,
-        channelId: messages.channelId,
-        content: messages.content,
-        createdAt: messages.createdAt,
-        deletedAt: messages.deletedAt,
-        id: messages.id,
-        serverId: channels.serverId,
-      })
-      .from(messages)
-      .innerJoin(channels, eq(channels.id, messages.channelId))
-      .where(eq(messages.id, messageId))
-      .limit(1)
-    if (!row || row.deletedAt) return null
-    return { ...row, createdAt: row.createdAt.toISOString() }
   }
 
   async #serverDocument(serverId: string): Promise<ServerDocument | null> {

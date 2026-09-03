@@ -25,6 +25,7 @@ import { createId } from '../../lib/ids.js'
 function mapChannel(row: typeof channels.$inferSelect): Channel {
   return {
     archivedAt: row.archivedAt?.toISOString() ?? null,
+    flags: row.flags,
     id: row.id,
     name: row.name,
     parentId: row.parentId,
@@ -46,7 +47,13 @@ export class DirectMessageService {
   async create(
     userId: string,
     input: CreateDirectMessageBody,
+    ip = 'unknown',
   ): Promise<Channel> {
+    await this.#app.abusePrevention.check({
+      action: 'dm.create',
+      actorId: userId,
+      ip,
+    })
     if (userId === input.recipientId) {
       throw new BadRequestError(
         'A direct conversation requires another user',

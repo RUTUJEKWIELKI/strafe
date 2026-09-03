@@ -1,6 +1,7 @@
 import type {
   CreateMessageBody,
   Message,
+  MessageEnvelope,
   UpdateMessageBody,
 } from '@strafe/shared'
 import {
@@ -48,22 +49,39 @@ interface MessageProjection {
   authorId: string | null
   authorStatus: string | null
   channelId: string
-  content: string
+  authenticationTag: string | null
+  ciphertext: string | null
+  contentType: string | null
   createdAt: Date
   deletedAt: Date | null
   editedAt: Date | null
   flags: number
+  messageEpoch: number | null
+  migrationState: 'encrypted' | 'legacy_unconvertible'
+  nonce: string | null
+  protocolVersion: number | null
   id: string
   replyToMessageId: string | null
+  senderDeviceId: string | null
   type: string
 }
 
 function mapMessage(
   row: MessageProjection,
-  attachmentIds: string[] = [],
+  attachments: Array<{ encryptedEnvelope: string | null; fileId: string }> = [],
 ): Message {
   return {
-    attachmentIds,
+    attachmentEnvelopes: attachments.flatMap((attachment) =>
+      attachment.encryptedEnvelope
+        ? [
+            {
+              envelope: attachment.encryptedEnvelope,
+              fileId: attachment.fileId,
+            },
+          ]
+        : [],
+    ),
+    attachmentIds: attachments.map((attachment) => attachment.fileId),
     author:
       row.authorId &&
       row.authorCreatedAt &&
@@ -85,7 +103,19 @@ function mapMessage(
         : null,
     authorId: row.authorId,
     channelId: row.channelId,
-    content: row.content,
+    envelope:
+      row.migrationState === 'encrypted'
+        ? {
+            authenticationTag: row.authenticationTag!,
+            ciphertext: row.ciphertext!,
+            contentType: row.contentType!,
+            epoch: row.messageEpoch!,
+            nonce: row.nonce!,
+            protocolVersion: 1,
+            senderDeviceId: row.senderDeviceId!,
+          }
+        : null,
+    migrationState: row.migrationState,
     createdAt: row.createdAt.toISOString(),
     deletedAt: row.deletedAt?.toISOString() ?? null,
     editedAt: row.editedAt?.toISOString() ?? null,
@@ -105,13 +135,22 @@ function projection() {
     authorId: messages.authorId,
     authorStatus: users.status,
     channelId: messages.channelId,
-    content: messages.content,
+    authenticationTag: messages.authenticationTag,
+    ciphertext: messages.ciphertext,
+    contentType: messages.contentType,
     createdAt: messages.createdAt,
     deletedAt: messages.deletedAt,
     editedAt: messages.editedAt,
     flags: messages.flags,
+    messageEpoch: messages.messageEpoch,
+    migrationState: sql<
+      'encrypted' | 'legacy_unconvertible'
+    >`${messages.migrationState}`,
+    nonce: messages.nonce,
+    protocolVersion: messages.protocolVersion,
     id: messages.id,
     replyToMessageId: messages.replyToMessageId,
+    senderDeviceId: messages.senderDeviceId,
     type: messages.type,
   }
 }
@@ -125,6 +164,27 @@ const messageChannelTypes = new Set([
   'dm',
   'group_dm',
 ])
+
+function validateEnvelope(envelope: MessageEnvelope): void {
+  const base64Url = /^[A-Za-z0-9_-]+$/
+  if (
+    !base64Url.test(envelope.ciphertext) ||
+    !base64Url.test(envelope.nonce) ||
+    !base64Url.test(envelope.authenticationTag)
+  ) {
+    throw new BadRequestError(
+      'Envelope binary fields must be base64url',
+      'INVALID_MESSAGE_ENVELOPE',
+    )
+  }
+  const ciphertextBytes = Math.floor((envelope.ciphertext.length * 3) / 4)
+  if (ciphertextBytes > 48_000) {
+    throw new BadRequestError(
+      'Encrypted message exceeds 48 KiB',
+      'MESSAGE_TOO_LARGE',
+    )
+  }
+}
 
 export class MessageService {
   readonly #app: FastifyInstance
@@ -189,7 +249,10 @@ export class MessageService {
           message,
           attachmentRows
             .filter((attachment) => attachment.messageId === message.id)
-            .map((attachment) => attachment.fileId),
+            .map((attachment) => ({
+              encryptedEnvelope: attachment.encryptedEnvelope,
+              fileId: attachment.fileId,
+            })),
         ),
       ),
       nextCursor:
@@ -206,6 +269,7 @@ export class MessageService {
     userId: string,
     channelId: string,
     input: CreateMessageBody,
+    ip = 'unknown',
   ): Promise<Message> {
     const authorization = await authorizeChannel(
       this.#app,
@@ -220,9 +284,9 @@ export class MessageService {
       )
     }
 
-    const content = input.content.trim()
+    validateEnvelope(input.envelope)
     const attachmentIds = input.attachmentIds ?? []
-    if (!content && attachmentIds.length === 0) {
+    if (!input.envelope.ciphertext && attachmentIds.length === 0) {
       throw new BadRequestError(
         'Message content and attachments cannot both be empty',
         'EMPTY_MESSAGE',
@@ -231,7 +295,12 @@ export class MessageService {
 
     const { db } = requireDatabase(this.#app)
     const [existing] = await db
-      .select({ id: messages.id })
+      .select({
+        channelId: messages.channelId,
+        ciphertext: messages.ciphertext,
+        id: messages.id,
+        replyToMessageId: messages.replyToMessageId,
+      })
       .from(messages)
       .where(
         and(
@@ -240,13 +309,37 @@ export class MessageService {
         ),
       )
       .limit(1)
-    if (existing) return this.get(userId, existing.id)
+    if (existing) {
+      this.#app.abusePrevention.assertSameNonce(
+        {
+          channelId: existing.channelId,
+          content: existing.ciphertext ?? '',
+          replyToMessageId: existing.replyToMessageId,
+        },
+        {
+          channelId,
+          content: input.envelope.ciphertext,
+          replyToMessageId: input.replyToMessageId,
+        },
+      )
+      return this.get(userId, existing.id)
+    }
+
+    await this.#app.abusePrevention.check({
+      action: 'message.create',
+      actorId: userId,
+      channelId,
+      clientNonce: input.clientNonce,
+      ip,
+      serverId: authorization.channel.serverId,
+    })
 
     const attachmentRows =
       attachmentIds.length === 0
         ? []
         : await db
             .select({
+              encryptionMode: files.encryptionMode,
               id: files.id,
               purpose: files.purpose,
               serverId: files.serverId,
@@ -268,6 +361,21 @@ export class MessageService {
       throw new BadRequestError(
         'Every attachment must be ready, owned by the author and scoped to this conversation',
         'INVALID_MESSAGE_ATTACHMENT',
+      )
+    }
+    if (
+      attachmentRows.some(
+        (file) =>
+          file.encryptionMode === 'e2ee-v1' &&
+          !input.attachmentEnvelopes?.[file.id],
+      ) ||
+      Object.keys(input.attachmentEnvelopes ?? {}).some(
+        (fileId) => !attachmentIds.includes(fileId),
+      )
+    ) {
+      throw new BadRequestError(
+        'Encrypted attachments require exactly one opaque message envelope',
+        'INVALID_ATTACHMENT_ENVELOPE',
       )
     }
 
@@ -316,19 +424,6 @@ export class MessageService {
     }
 
     const id = createId()
-    const automod = await this.#app.moderationService.evaluateMessage(
-      authorization.channel.serverId,
-      channelId,
-      userId,
-      id,
-      content,
-    )
-    if (automod.blocked) {
-      throw new BadRequestError(
-        'Message was blocked by a server moderation rule',
-        'AUTOMOD_BLOCKED',
-      )
-    }
     const messageId = await db.transaction(async (tx) => {
       const [created] = await tx
         .insert(messages)
@@ -336,8 +431,15 @@ export class MessageService {
           authorId: userId,
           channelId,
           clientNonce: input.clientNonce,
-          content,
+          authenticationTag: input.envelope.authenticationTag,
+          ciphertext: input.envelope.ciphertext,
+          contentType: input.envelope.contentType,
           id,
+          messageEpoch: input.envelope.epoch,
+          migrationState: 'encrypted',
+          nonce: input.envelope.nonce,
+          protocolVersion: input.envelope.protocolVersion,
+          senderDeviceId: input.envelope.senderDeviceId,
           replyToMessageId: input.replyToMessageId ?? null,
           type: input.replyToMessageId ? 'reply' : 'default',
         })
@@ -368,6 +470,7 @@ export class MessageService {
       if (attachmentIds.length > 0) {
         await tx.insert(messageAttachments).values(
           attachmentIds.map((fileId, position) => ({
+            encryptedEnvelope: input.attachmentEnvelopes?.[fileId] ?? null,
             fileId,
             messageId: created.id,
             position,
@@ -385,7 +488,8 @@ export class MessageService {
               ? { serverId: authorization.channel.serverId }
               : {}),
           },
-          data: { channelId, messageId: created.id },
+          data: { channelId, envelope: input.envelope, messageId: created.id },
+          envelopeVersion: 1,
         },
         topic: 'message.created',
       })
@@ -452,20 +556,21 @@ export class MessageService {
       Permission.ReadMessageHistory,
     )
     const attachments = await db
-      .select({ fileId: messageAttachments.fileId })
+      .select({
+        encryptedEnvelope: messageAttachments.encryptedEnvelope,
+        fileId: messageAttachments.fileId,
+      })
       .from(messageAttachments)
       .where(eq(messageAttachments.messageId, messageId))
       .orderBy(messageAttachments.position)
-    return mapMessage(
-      row,
-      attachments.map((attachment) => attachment.fileId),
-    )
+    return mapMessage(row, attachments)
   }
 
   async update(
     userId: string,
     messageId: string,
     input: UpdateMessageBody,
+    ip = 'unknown',
   ): Promise<Message> {
     const { db } = requireDatabase(this.#app)
     const [message] = await db
@@ -492,38 +597,48 @@ export class MessageService {
       )
     }
 
-    const content = input.content.trim()
-    if (!content) {
+    validateEnvelope(input.envelope)
+    if (!input.envelope.ciphertext) {
       throw new BadRequestError(
-        'Message content cannot be empty',
+        'Message ciphertext cannot be empty',
         'EMPTY_MESSAGE',
       )
     }
 
-    const automod = await this.#app.moderationService.evaluateMessage(
-      authorization.channel.serverId,
-      message.channelId,
-      userId,
-      messageId,
-      content,
-    )
-    if (automod.blocked) {
-      throw new BadRequestError(
-        'Message was blocked by a server moderation rule',
-        'AUTOMOD_BLOCKED',
-      )
-    }
-
+    await this.#app.abusePrevention.check({
+      action: 'message.edit',
+      actorId: userId,
+      channelId: message.channelId,
+      ip,
+      serverId: authorization.channel.serverId,
+    })
     await db.transaction(async (tx) => {
       await tx.insert(messageEdits).values({
-        content: message.content,
+        authenticationTag: message.authenticationTag,
+        ciphertext: message.ciphertext,
+        contentType: message.contentType,
         editorId: userId,
+        messageEpoch: message.messageEpoch,
+        migrationState: message.migrationState,
+        nonce: message.nonce,
+        protocolVersion: message.protocolVersion,
+        senderDeviceId: message.senderDeviceId,
         id: createId(),
         messageId,
       })
       await tx
         .update(messages)
-        .set({ content, editedAt: new Date() })
+        .set({
+          authenticationTag: input.envelope.authenticationTag,
+          ciphertext: input.envelope.ciphertext,
+          contentType: input.envelope.contentType,
+          editedAt: new Date(),
+          messageEpoch: input.envelope.epoch,
+          migrationState: 'encrypted',
+          nonce: input.envelope.nonce,
+          protocolVersion: input.envelope.protocolVersion,
+          senderDeviceId: input.envelope.senderDeviceId,
+        })
         .where(and(eq(messages.id, messageId), isNull(messages.deletedAt)))
       await tx.insert(outboxEvents).values({
         aggregateId: messageId,
@@ -537,7 +652,12 @@ export class MessageService {
               ? { serverId: authorization.channel.serverId }
               : {}),
           },
-          data: { channelId: message.channelId, messageId },
+          data: {
+            channelId: message.channelId,
+            envelope: input.envelope,
+            messageId,
+          },
+          envelopeVersion: 1,
         },
         topic: 'message.updated',
       })
@@ -573,14 +693,32 @@ export class MessageService {
     const deletedAt = new Date()
     await db.transaction(async (tx) => {
       await tx.insert(messageEdits).values({
-        content: message.content,
+        authenticationTag: message.authenticationTag,
+        ciphertext: message.ciphertext,
+        contentType: message.contentType,
         editorId: userId,
+        messageEpoch: message.messageEpoch,
+        migrationState: message.migrationState,
+        nonce: message.nonce,
+        protocolVersion: message.protocolVersion,
+        senderDeviceId: message.senderDeviceId,
         id: createId(),
         messageId,
       })
       await tx
         .update(messages)
-        .set({ content: '', deletedAt, editedAt: null })
+        .set({
+          authenticationTag: null,
+          ciphertext: null,
+          contentType: null,
+          deletedAt,
+          editedAt: null,
+          messageEpoch: null,
+          migrationState: 'legacy_unconvertible',
+          nonce: null,
+          protocolVersion: null,
+          senderDeviceId: null,
+        })
         .where(and(eq(messages.id, messageId), isNull(messages.deletedAt)))
       await tx.insert(outboxEvents).values({
         aggregateId: messageId,
@@ -607,6 +745,7 @@ export class MessageService {
     messageId: string,
     emojiKey: string,
     active: boolean,
+    ip = 'unknown',
   ): Promise<boolean> {
     const { db } = requireDatabase(this.#app)
     const [message] = await db
@@ -626,6 +765,13 @@ export class MessageService {
       message.channelId,
       Permission.AddReactions,
     )
+    await this.#app.abusePrevention.check({
+      action: 'reaction.change',
+      actorId: userId,
+      channelId: message.channelId,
+      ip,
+      serverId: authorization.channel.serverId,
+    })
     const normalizedEmoji = emojiKey.trim()
     if (!normalizedEmoji) {
       throw new BadRequestError('Emoji key cannot be empty', 'INVALID_EMOJI')

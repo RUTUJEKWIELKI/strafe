@@ -102,6 +102,8 @@ export const userReports = pgTable(
       .defaultNow()
       .notNull(),
     description: text('description'),
+    encryptedEvidence:
+      jsonb('encrypted_evidence').$type<Record<string, unknown>>(),
     id: uuid('id').primaryKey(),
     reporterId: uuid('reporter_id')
       .notNull()

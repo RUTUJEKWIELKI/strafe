@@ -30,6 +30,7 @@ export const FileVariantSchema = Type.Object({
 
 export const FileSchema = Type.Object(
   {
+    encryptionMode: Type.Union([Type.Literal('none'), Type.Literal('e2ee-v1')]),
     createdAt: DateTimeSchema,
     durationMs: Type.Union([Type.Integer(), Type.Null()]),
     height: Type.Union([Type.Integer(), Type.Null()]),
@@ -50,8 +51,12 @@ export const FileSchema = Type.Object(
 
 export const InitiateFileUploadBodySchema = Type.Object(
   {
-    mimeType: Type.String({ maxLength: 255, minLength: 1 }),
-    originalName: Type.String({ maxLength: 255, minLength: 1 }),
+    chunkSizeBytes: Type.Optional(
+      Type.Integer({ maximum: 67_108_864, minimum: 65_536 }),
+    ),
+    encryptionMode: Type.Optional(Type.Literal('e2ee-v1')),
+    mimeType: Type.Optional(Type.String({ maxLength: 255, minLength: 1 })),
+    originalName: Type.Optional(Type.String({ maxLength: 255, minLength: 1 })),
     purpose: FilePurposeSchema,
     serverId: Type.Optional(IdSchema),
     sizeBytes: Type.Integer({ maximum: 2_147_483_647, minimum: 1 }),

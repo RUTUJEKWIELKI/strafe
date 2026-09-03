@@ -110,7 +110,15 @@ describe.skipIf(!databaseUrl)('community API integration', () => {
         method: 'POST',
         payload: {
           clientNonce: uuidv7(),
-          content: 'Hello from the integration test',
+          envelope: {
+            authenticationTag: 'dGVzdC1hdXRoLXRhZw',
+            ciphertext: 'SGVsbG8tZnJvbS10aGUtaW50ZWdyYXRpb24tdGVzdA',
+            contentType: 'text/plain',
+            epoch: 0,
+            nonce: 'dGVzdC1ub25jZS0xMg',
+            protocolVersion: 1,
+            senderDeviceId: memberRegistration.json().tokens.deviceId,
+          },
         },
         url: `/api/channels/${community.defaultChannelId}/messages`,
       })
@@ -131,7 +139,15 @@ describe.skipIf(!databaseUrl)('community API integration', () => {
         method: 'POST',
         payload: {
           clientNonce: uuidv7(),
-          content: 'Welcome to the server',
+          envelope: {
+            authenticationTag: 'dGVzdC1hdXRoLXRhZw',
+            ciphertext: 'V2VsY29tZS10by10aGUtc2VydmVy',
+            contentType: 'text/plain',
+            epoch: 0,
+            nonce: 'dGVzdC1ub25jZS0xMg',
+            protocolVersion: 1,
+            senderDeviceId: owner.tokens.deviceId,
+          },
           replyToMessageId: firstMessage.id,
         },
         url: `/api/channels/${community.defaultChannelId}/messages`,
@@ -175,10 +191,18 @@ describe.skipIf(!databaseUrl)('community API integration', () => {
       expect(history.json()).toMatchObject({
         messages: [
           {
-            content: 'Welcome to the server',
+            envelope: {
+              ciphertext: 'V2VsY29tZS10by10aGUtc2VydmVy',
+              protocolVersion: 1,
+            },
+            migrationState: 'encrypted',
           },
           {
-            content: 'Hello from the integration test',
+            envelope: {
+              ciphertext: 'SGVsbG8tZnJvbS10aGUtaW50ZWdyYXRpb24tdGVzdA',
+              protocolVersion: 1,
+            },
+            migrationState: 'encrypted',
           },
         ],
       })

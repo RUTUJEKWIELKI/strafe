@@ -1,4 +1,5 @@
 export * from './channels.js'
+export * from './encryption.js'
 export * from './files.js'
 export * from './identity.js'
 export * from './messages.js'

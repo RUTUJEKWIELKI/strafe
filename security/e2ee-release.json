@@ -1,0 +1,12 @@
+{
+  "status": "experimental",
+  "protocolVersion": 1,
+  "independentAudit": null,
+  "requiredBeforeStable": [
+    "independent cryptographic design and implementation audit",
+    "remediation of every critical and high finding",
+    "continuous envelope and gateway fuzzing",
+    "production-backed plaintext residue scan",
+    "limiter load test at the documented deployment capacity"
+  ]
+}

@@ -1,0 +1,11 @@
+title = "Strafe gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Known non-secret integration fixtures and the public CI-only JWT test value"
+regexes = [
+  '''^dGVzdC1hdXRoLXRhZw$''',
+  '''^ci-integration-secret-with-at-least-32-characters$''',
+]
