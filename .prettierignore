@@ -6,8 +6,9 @@ target
 .github/dependabot.yml
 SECURITY.md
 apps/api/drizzle/meta
-apps/api/openapi/openapi.json
+apps/api/openapi/**
 apps/web/src/lib/api/schema.d.ts
+packages/bot-sdk/src/schema.d.ts
 apps/docs/public/openapi.json
 apps/docs/guide
 apps/docs/api/generated
