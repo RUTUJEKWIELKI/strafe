@@ -13,6 +13,9 @@ import {
   userSettings,
   users,
 } from '../../db/schema.js'
+
+import { authorizeServer } from '../permissions/authorization.js'
+import { Permission } from '../../lib/permissions.js'
 import { requireDatabase, isPostgresError } from '../../lib/database.js'
 import {
   ConflictError,
@@ -131,21 +134,26 @@ export class BotService {
     if (input.description !== undefined) updates.description = input.description
     if (input.isPublic !== undefined) updates.isPublic = input.isPublic
 
+    let updatedBot: typeof botApplications.$inferSelect | undefined
     if (Object.keys(updates).length > 0) {
       const [updated] = await db
         .update(botApplications)
         .set(updates)
         .where(eq(botApplications.id, botId))
         .returning()
+      updatedBot = updated
+    }
         
-      if (input.name !== undefined) {
-        await db.update(userProfiles)
-          .set({ displayName: input.name })
-          .where(eq(userProfiles.userId, existing.botUserId))
-      }
-      return this.present(updated!)
+    if (input.name !== undefined || input.avatarFileId !== undefined) {
+      await db.update(userProfiles)
+        .set({ 
+          ...(input.name !== undefined ? { displayName: input.name } : {}),
+          ...(input.avatarFileId !== undefined ? { avatarFileId: input.avatarFileId } : {})
+        })
+        .where(eq(userProfiles.userId, existing.botUserId))
     }
     
+    if (updatedBot) return this.present(updatedBot)
     const [bot] = await db.select().from(botApplications).where(eq(botApplications.id, botId)).limit(1)
     return this.present(bot!)
   }
@@ -192,6 +200,13 @@ export class BotService {
 
 
   async install(installerId: string, botId: string, serverId: string) {
+    await authorizeServer(
+      this.app,
+      installerId,
+      serverId,
+      Permission.ManageServer,
+    )
+
     const { db } = requireDatabase(this.app)
     return db.transaction(async (tx) => {
       const [bot] = await tx
@@ -204,21 +219,6 @@ export class BotService {
       if (!bot.isPublic && bot.ownerId !== installerId) {
         throw new NotFoundError('Bot application is not public')
       }
-
-      // Check if installer is the server owner
-      const [server] = await tx
-        .select({ id: servers.id })
-        .from(servers)
-        .where(
-          and(
-            eq(servers.id, serverId),
-            eq(servers.ownerId, installerId),
-            isNull(servers.deletedAt),
-          ),
-        )
-        .limit(1)
-      if (!server)
-        throw new NotFoundError('Owned server not found')
 
       const [existing] = await tx
         .select({ id: serverMembers.id, state: serverMembers.state })

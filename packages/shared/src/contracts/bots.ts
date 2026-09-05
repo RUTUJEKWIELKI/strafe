@@ -67,6 +67,7 @@ export const UpdateBotBodySchema = Type.Object(
     description: Type.Optional(Type.Union([Type.String({ maxLength: 500 }), Type.Null()])),
     isPublic: Type.Optional(Type.Boolean()),
     name: Type.Optional(Type.String({ maxLength: 64, minLength: 1 })),
+    avatarFileId: Type.Optional(Type.Union([IdSchema, Type.Null()])),
   },
   { additionalProperties: false },
 )
