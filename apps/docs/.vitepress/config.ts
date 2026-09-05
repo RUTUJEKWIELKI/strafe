@@ -89,6 +89,7 @@ export default withMermaid(
                 link: '/guide/guides/files',
               },
               { text: 'Voice', link: '/guide/guides/voice' },
+              { text: 'Bots and Applications', link: '/guide/guides/bots-and-applications' },
             ],
             text: 'Guides',
           },
