@@ -1,2 +1,0 @@
-DROP INDEX "notifications_user_time_idx";--> statement-breakpoint
-CREATE INDEX "notifications_user_time_idx" ON "notifications" USING btree ("user_id","created_at" DESC NULLS LAST,"id" DESC NULLS LAST);

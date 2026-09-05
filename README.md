@@ -1,184 +1,155 @@
-<div align="center">
+# Strafe Bot API
 
-# Strafe
+This library provides convenient access to the Strafe Bot API from TypeScript or JavaScript.
 
-<strong>A modern, self-hostable community platform built in the open</strong>
+The full API of this library can be found in [api.md](./api.md).
 
-Fast realtime communication, typed APIs, secure account flows, and polished cross-platform clients in one TypeScript monorepo.
+<br />
 
-[![CI](https://github.com/RUTUJEKWIELKI/strafe/actions/workflows/ci.yml/badge.svg)](https://github.com/RUTUJEKWIELKI/strafe/actions/workflows/ci.yml)
-[![Docs](https://github.com/RUTUJEKWIELKI/strafe/actions/workflows/docs.yml/badge.svg)](https://github.com/RUTUJEKWIELKI/strafe/actions/workflows/docs.yml)
-[![License](https://img.shields.io/github/license/RUTUJEKWIELKI/strafe?style=flat-square&color=9bb85b)](https://github.com/RUTUJEKWIELKI/strafe/blob/main/LICENSE)
-[![Node.js](https://img.shields.io/badge/Node.js-24%2B-5FA04E?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![pnpm](https://img.shields.io/badge/pnpm-11-F69220?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
+## Contents
 
-[Documentation](https://rutujekwielki.github.io/strafe/) · [Roadmap](ROADMAP.md) · [Security](https://github.com/RUTUJEKWIELKI/strafe/blob/main/SECURITY.md) · [Issues](https://github.com/RUTUJEKWIELKI/strafe/issues)
+- [Installation](#installation)
+- [Usage](#usage)
+- [API Reference](./api.md)
+- [Authentication](#authentication)
+- [Errors](#errors)
+- [Client Options](#client-options)
+- [Request Options](#request-options)
+- [Retries and Timeouts](#retries-and-timeouts)
+- [Helpers](#helpers)
+- [Logging](#logging)
+- [Requirements](#requirements)
 
-</div>
+<br />
 
-> [!IMPORTANT]
-> This is an independent clean-room rewrite, not the official Strafe project, and is not affiliated with the [StrafeChat organization](https://github.com/StrafeChat). The original project, source code, brand, design, assets, and infrastructure remain the work of Bryden and its original contributors.
+## Installation
 
-## About Strafe
-
-Strafe is an open-source communication platform for communities that want control over their infrastructure and data. It combines a responsive SolidJS web client, a typed Fastify backend, a Tauri desktop shell, and generated API documentation.
-
-The current launchpad provides foundations for accounts, communities, realtime messaging, moderation, file delivery, search, notifications, and operational observability. Development is active and the native desktop application remains an early shell.
-
-## Highlights
-
-| Area            | What is included                                                                                                    |
-| --------------- | ------------------------------------------------------------------------------------------------------------------- |
-| **Communities** | Servers, channels, roles, permission overwrites, invites, ownership transfer, bans, kicks, timeouts, and audit logs |
-| **Messaging**   | Cursor pagination, typing, presence, transactional outbox delivery, and a resumable WebSocket gateway               |
-| **Accounts**    | Rotating refresh sessions, device management, password recovery, verified email changes, and security events        |
-| **Files**       | Multipart uploads, quarantine, MIME validation, malware scanning, metadata removal, derivatives, and quotas         |
-| **Safety**      | Blocks, reports, appeals, Redis-backed automod, permission-aware search, and moderation tools                       |
-| **Operations**  | Redacted structured logs, health probes, Prometheus metrics, OpenAPI, and optional Sentry reporting                 |
-| **Clients**     | Responsive SolidJS web app and a Tauri desktop shell sharing typed contracts                                        |
-
-## Technology
-
-<div align="center">
-
-[![SolidJS](https://img.shields.io/badge/SolidJS-1.9-2C4F7C?style=for-the-badge&logo=solid&logoColor=white)](https://www.solidjs.com/)
-[![Fastify](https://img.shields.io/badge/Fastify-5-111111?style=for-the-badge&logo=fastify&logoColor=white)](https://fastify.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
-[![Tauri](https://img.shields.io/badge/Tauri-24C8DB?style=for-the-badge&logo=tauri&logoColor=white)](https://tauri.app/)
-
-</div>
-
-The development stack also uses Drizzle ORM, TypeBox, Vite, VitePress, Meilisearch, MinIO, ClamAV, Mailpit, Vitest, Playwright, ESLint, Prettier, and Turborepo.
-
-## Workspace
-
-| Path                                                                                   | Package           | Responsibility                    |
-| -------------------------------------------------------------------------------------- | ----------------- | --------------------------------- |
-| [`apps/web`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/apps/web)               | `@strafe/web`     | SolidJS web client                |
-| [`apps/api`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/apps/api)               | `@strafe/api`     | Fastify API and WebSocket gateway |
-| [`apps/docs`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/apps/docs)             | `@strafe/docs`    | VitePress documentation           |
-| [`apps/desktop`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/apps/desktop)       | `@strafe/desktop` | Tauri native shell                |
-| [`packages/shared`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/packages/shared) | `@strafe/shared`  | Shared contracts and domain types |
-
-```text
-strafe/
-├── apps/
-│   ├── api/
-│   ├── desktop/
-│   ├── docs/
-│   └── web/
-├── packages/
-│   └── shared/
-├── compose.yaml
-├── package.json
-└── pnpm-workspace.yaml
+```sh
+npm install @strafe/strafe-bot-api
 ```
 
-## Quick start
+<br />
 
-### Requirements
+## Usage
 
-- Node.js 24 or newer
-- pnpm 11
-- Docker with Compose for local infrastructure
-- Rust toolchain and platform dependencies only for the desktop client
+```ts
+import StrafeBotAPI from '@strafe/strafe-bot-api';
 
-### Install
+const client = new StrafeBotAPI();
 
-```bash
-git clone https://github.com/RUTUJEKWIELKI/strafe.git
-cd strafe
-corepack enable
-pnpm install
-cp apps/api/.env.example apps/api/.env
+const user = await client.users.listCurrent();
+
+console.log(user);
 ```
 
-### Start infrastructure
+The examples in the following sections assume a `client` configured as shown above.
 
-```bash
-docker compose -f compose.yaml -f compose.dev.yaml up -d postgres redis minio meilisearch clamav mailpit
-pnpm db:migrate
+See the [API reference](./api.md) for every available operation.
+
+<br />
+
+## Authentication
+
+Pass credentials to the generated client constructor. Environment variables are read automatically when supported by the target runtime.
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `strafeBotToken` | `string \| provider` | - | Authenticate using a scoped Strafe bot token with Bearer authorization. Defaults to STRAFE_BOT_TOKEN. |
+
+Declared schemes:
+
+- `StrafeBotToken` bearer token
+
+<br />
+
+## Errors
+
+Non-success responses throw generated API errors. Error objects expose status, headers, response body, and request metadata where the target runtime supports it.
+
+```ts
+import { APIError } from '@strafe/strafe-bot-api';
+
+try {
+  const user = await client.users.listCurrent();
+} catch (err) {
+  if (err instanceof APIError) {
+    console.log(err.status, err.name, err.headers);
+  }
+  throw err;
+}
 ```
 
-The base `compose.yaml` keeps services on a private network. The development override publishes them on loopback for an API running locally.
+Documented error statuses: `400`, `401`, `403`, `404`, `503`.
 
-### Run Strafe
+<br />
 
-Use separate terminals:
+## Client Options
 
-```bash
-pnpm api:dev
-pnpm web:dev
-pnpm docs:dev
+Configure the generated client by setting any of these options when you create it.
+
+```ts
+import StrafeBotAPI from '@strafe/strafe-bot-api';
+
+const client = new StrafeBotAPI({
+  timeout: 60000,
+  maxRetries: 2,
+  logLevel: 'debug',
+});
 ```
 
-| Service           | Address                            |
-| ----------------- | ---------------------------------- |
-| Web client        | `http://127.0.0.1:5173`            |
-| API               | `http://localhost:3000`            |
-| OpenAPI UI        | `http://localhost:3000/docs`       |
-| Health            | `http://localhost:3000/api/health` |
-| WebSocket gateway | `ws://localhost:3000/api/gateway`  |
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `strafeBotToken` | `string \| AuthTokenProvider` | `process.env["STRAFE_BOT_TOKEN"]` | Authenticate using a scoped Strafe bot token with Bearer authorization. |
+| `baseURL` | `string \| null` | `process.env["DEFAULT_TEAM_JHY69_BASE_URL"]` | Override the default API base URL. Pass `null` when selecting a configured environment. |
+| `timeout` | `number` | `60000` | Maximum time in milliseconds to wait for a response before aborting a request. |
+| `maxRetries` | `number` | `2` | Number of retries for temporary failures. |
+| `defaultHeaders` | `HeadersInit` | - | Headers sent with every request. |
+| `defaultQuery` | `Record<string, string \| undefined>` | - | Query parameters sent with every request. |
+| `fetchOptions` | `RequestInit` | - | Additional fetch options sent with every request. |
+| `fetch` | `Fetch` | - | Custom fetch implementation. |
+| `logLevel` | `"off" \| "error" \| "warn" \| "info" \| "debug" \| null` | `process.env["DEFAULT_TEAM_JHY69_LOG"]` | Controls request and retry debug logging. |
+| `logger` | `Logger \| null` | `console` | Custom logger implementation. |
 
-Run the desktop shell with `pnpm --filter @strafe/desktop dev`.
+<br />
 
-## Commands
+## Request Options
 
-| Command                   | Purpose                                                               |
-| ------------------------- | --------------------------------------------------------------------- |
-| `pnpm check`              | Formatting, linting, types, tests, docs checks, and production builds |
-| `pnpm test`               | Run workspace tests                                                   |
-| `pnpm typecheck`          | Type-check workspace packages                                         |
-| `pnpm contracts:generate` | Refresh OpenAPI output and the typed client schema                    |
-| `pnpm db:migrate`         | Apply checked-in Drizzle migrations                                   |
-| `pnpm db:studio`          | Open Drizzle Studio                                                   |
-| `pnpm build`              | Build contracts, API, web client, and documentation                   |
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `headers` | `HeadersInit` | - | Per-request headers. |
+| `query` | `Record<string, unknown>` | - | Per-request query parameters. |
+| `body` | `unknown` | - | Override the generated request body. |
+| `timeout` | `number` | - | Per-request timeout in milliseconds. |
+| `maxRetries` | `number` | - | Per-request retry count. |
+| `signal` | `AbortSignal` | - | Abort an in-flight request. |
+| `fetchOptions` | `RequestInit` | - | Per-request fetch options. |
+| `idempotencyKey` | `string` | - | Idempotency key for retry-safe operations. Applies to this request and its retries. |
 
-Shared TypeBox contracts live in [`packages/shared/src/contracts`](https://github.com/RUTUJEKWIELKI/strafe/tree/main/packages/shared/src/contracts). API plugins and routes load automatically from `apps/api/src/plugins` and `apps/api/src/routes`; route modules receive the `/api` prefix.
+<br />
 
-## Realtime protocol
+## Retries and Timeouts
 
-The gateway at `/api/gateway` starts with a `hello` frame. Clients answer with `identify`, including an access token, then send heartbeats at the advertised interval. Reconnectable sessions and transactional outbox delivery keep realtime events consistent with PostgreSQL mutations.
+Generated clients support request timeouts and retry temporary failures such as network errors, 408, 409, 429, and 5xx responses. Retry delays honor `Retry-After` headers when present. Tune the retry and timeout client options shown above, or override them per request.
 
-See the [backend API guide](docs/backend-api.md) and [generated documentation](https://rutujekwielki.github.io/strafe/) for endpoint and environment details.
+<br />
 
-## Project status
+## Helpers
 
-Strafe is under active development and is not yet a stable production release. The public [roadmap](ROADMAP.md) tracks implemented foundations and upcoming work.
+- Use `.withResponse()` on any request to inspect both parsed data and the raw `Response` object.
+- Every operation returns an `APIPromise`, so you can `await` it directly or chain `.withResponse()`.
 
-Before opening a pull request:
+<br />
 
-- keep changes focused and reviewable;
-- keep application ownership boundaries clear;
-- put cross-package contracts in `@strafe/shared`;
-- avoid unused dependencies and speculative infrastructure;
-- regenerate contracts after changing route schemas;
-- run `pnpm check`.
+## Logging
 
-## Clean-room policy
+- Set `logLevel: "debug"` to log request URLs, options, response status, response headers, and retry attempts.
+- Pass a custom `logger` to route logs into your own observability pipeline.
+- Set `logLevel: null` to disable environment-driven logging.
 
-This repository began from an empty codebase and does not reuse source code, assets, or private implementation details from the original Strafe repositories. References to Strafe describe the rewrite target and technical direction, not ownership of the original project.
+<br />
 
-Contributors must implement behavior independently, never copy upstream code or assets, never present this repository as an official release, and preserve attribution to Bryden and StrafeChat.
+## Requirements
 
-## Security
+- Node.js 20+, a modern browser, or any runtime with `fetch` support
 
-Do not disclose vulnerabilities in public issues. Follow [SECURITY.md](https://github.com/RUTUJEKWIELKI/strafe/blob/main/SECURITY.md) to report security problems responsibly.
-
-## License
-
-Copyright © 2026 RUTUJEKWIELKI.
-
-Licensed under the [GNU Affero General Public License v3.0](https://github.com/RUTUJEKWIELKI/strafe/blob/main/LICENSE). If you run a modified version as a network service, you must offer its corresponding source code to the users of that service under the same license.
-
-## Attribution
-
-The official Strafe project and active repositories live under the [StrafeChat GitHub organization](https://github.com/StrafeChat). All credit for the original project belongs to Bryden and its contributors.
-
-<div align="center">
-
-Built openly, one carefully reviewed change at a time.
-
-</div>
+Powered by Scalar.

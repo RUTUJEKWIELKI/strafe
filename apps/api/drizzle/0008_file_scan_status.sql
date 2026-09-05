@@ -1,2 +1,0 @@
-ALTER TABLE "files" DROP CONSTRAINT "files_scan_status_check";--> statement-breakpoint
-ALTER TABLE "files" ADD CONSTRAINT "files_scan_status_check" CHECK ("files"."scan_status" in ('pending', 'clean', 'skipped', 'blocked', 'failed'));

@@ -1,3 +1,0 @@
-ALTER TABLE "user_sessions" ADD COLUMN "previous_refresh_token_hash" text;--> statement-breakpoint
-ALTER TABLE "user_sessions" ADD COLUMN "rotated_at" timestamp with time zone;--> statement-breakpoint
-CREATE INDEX "user_sessions_previous_refresh_idx" ON "user_sessions" USING btree ("previous_refresh_token_hash") WHERE "user_sessions"."previous_refresh_token_hash" is not null and "user_sessions"."revoked_at" is null;

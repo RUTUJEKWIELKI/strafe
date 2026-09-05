@@ -1,1 +1,0 @@
--- Custom migration checkpoint retained for Drizzle journal continuity.

@@ -1,30 +1,19 @@
 # Security Policy
 
-## Project status
+## Reporting Security Issues
 
-Strafe is an early-stage, independent rewrite. Until tagged releases exist, only the current `main` branch receives security fixes.
+This is a generated TypeScript SDK for Strafe Bot API, produced by the Scalar SDK Generator (https://scalar.com).
 
-| Version | Supported |
-| --- | --- |
-| `main` | Yes |
-| Tagged releases | Not yet available |
+If the issue is in the generated SDK itself — its runtime, authentication handling, path construction, or serialization — report it to the Scalar team at support@scalar.com. We will acknowledge the report, triage it for severity and impact, and communicate a timeline for a fix or an explanation if we decline it.
 
-## Reporting a vulnerability
+## Responsible Disclosure
 
-Do not disclose a suspected vulnerability in a public issue, discussion, or pull request.
+Please allow us reasonable time to investigate and address the issue before disclosing it publicly. Do not include credentials, tokens, or private API payloads in a public issue.
 
-Use GitHub's private vulnerability reporting for this repository. Open the **Security** tab, select **Advisories**, then choose **Report a vulnerability**. If private reporting is unavailable, open a public issue requesting a private contact channel without including technical details.
+## Reporting Non-SDK Security Issues
 
-Include the following information when possible:
+If the issue is in the Strafe Bot API or service rather than in this SDK, report it through the security process Strafe Bot API has published.
 
-- the affected package or component;
-- the impact and realistic attack scenario;
-- reproducible steps or a minimal proof of concept;
-- affected versions or commits;
-- any known mitigation.
+---
 
-Reports will be acknowledged and assessed as availability permits. Confirmed vulnerabilities will be handled privately until a fix or mitigation is ready.
-
-## Scope
-
-This policy covers only code maintained in this repository. The original Strafe project and the repositories under [StrafeChat](https://github.com/StrafeChat) are separate projects and are not covered by this policy.
+Generated code validates emitted paths and escapes spec-derived strings, but OpenAPI documents should still be treated as untrusted input before generation.

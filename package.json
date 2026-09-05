@@ -1,71 +1,51 @@
 {
-  "name": "strafe",
-  "version": "0.0.0",
-  "private": true,
-  "description": "Independent clean-room rewrite scaffold for Strafe.",
+  "name": "@strafe/strafe-bot-api",
+  "version": "0.1.0",
+  "description": "Official scoped OpenAPI specification for Strafe Bots and Automated Integrations. Use a bot token (strafe_bot_...) as a Bearer token.",
+  "author": "Strafe Bot API",
   "type": "module",
-  "packageManager": "pnpm@11.24.0",
-  "engines": {
-    "node": ">=24.0.0",
-    "pnpm": ">=11.0.0"
+  "sideEffects": false,
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/esm/index.js"
+    },
+    "./*.mjs": {
+      "types": "./dist/esm/*.d.ts",
+      "import": "./dist/esm/*.js",
+      "default": "./dist/esm/*.js"
+    },
+    "./*.js": {
+      "types": "./dist/esm/*.d.ts",
+      "require": "./dist/cjs/*.js",
+      "default": "./dist/cjs/*.js"
+    },
+    "./*": {
+      "types": "./dist/esm/*.d.ts",
+      "import": "./dist/esm/*.js",
+      "require": "./dist/cjs/*.js",
+      "default": "./dist/esm/*.js"
+    },
+    "./package.json": "./package.json"
   },
-  "devDependencies": {
-    "@axe-core/playwright": "^4.13.0",
-    "@commitlint/cli": "^21.2.2",
-    "@commitlint/config-conventional": "^21.2.2",
-    "@eslint/js": "^10.0.1",
-    "@faker-js/faker": "^10.6.0",
-    "@playwright/test": "^1.62.1",
-    "@vitest/coverage-v8": "^4.1.11",
-    "eslint": "^10.9.1",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import-x": "^4.17.1",
-    "eslint-plugin-promise": "^7.3.0",
-    "eslint-plugin-security": "^4.0.1",
-    "eslint-plugin-solid": "^0.17.0",
-    "eslint-plugin-unicorn": "^73.0.0",
-    "knip": "^6.33.0",
-    "lint-staged": "^17.4.1",
-    "msw": "^2.15.0",
-    "openapi-typescript": "^7.13.0",
-    "prettier": "^3.9.6",
-    "prettier-plugin-tailwindcss": "^0.8.1",
-    "simple-git-hooks": "^2.14.0",
-    "syncpack": "^15.3.3",
-    "testcontainers": "^12.1.0",
-    "tsx": "^4.23.12",
-    "turbo": "^2.10.12",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.68.0",
-    "vitest": "^4.1.11"
-  },
+  "files": [
+    "dist",
+    "api.md",
+    "SKILL.md"
+  ],
   "scripts": {
-    "build": "pnpm shared:build && pnpm api:build && pnpm web:build && pnpm docs:build",
-    "api:build": "pnpm --filter @strafe/api build",
-    "api:dev": "pnpm --filter @strafe/api dev",
-    "api:start": "pnpm --filter @strafe/api start",
-    "api:test": "pnpm --filter @strafe/api test",
-    "api:typecheck": "pnpm --filter @strafe/api typecheck",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm docs:lint && pnpm build",
-    "contracts:generate": "pnpm --filter @strafe/api openapi:generate",
-    "db:generate": "pnpm --filter @strafe/api db:generate",
-    "db:migrate": "pnpm --filter @strafe/api db:migrate",
-    "db:studio": "pnpm --filter @strafe/api db:studio",
-    "docs:build": "pnpm --filter @strafe/docs build",
-    "docs:dev": "pnpm --filter @strafe/docs dev",
-    "docs:generate": "pnpm --filter @strafe/docs generate",
-    "docs:lint": "pnpm --filter @strafe/docs lint",
-    "docs:preview": "pnpm --filter @strafe/docs preview",
-    "docs:sync": "pnpm --filter @strafe/docs sync",
-    "docs:test": "playwright test --config playwright.docs.config.ts",
-    "docs:typedoc": "pnpm --filter @strafe/docs typedoc",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "lint": "eslint .",
-    "shared:build": "pnpm --filter @strafe/shared build",
-    "test": "pnpm -r --if-present test",
-    "typecheck": "pnpm -r --if-present typecheck",
-    "web:build": "pnpm --filter @strafe/web build",
-    "web:dev": "pnpm --filter @strafe/web dev"
-  }
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig.cjs.json && node scripts/finalize-build.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.cjs.json --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^6.0.0"
+  },
+  "license": "Apache-2.0"
 }
