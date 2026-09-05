@@ -11,25 +11,24 @@ import { AppError } from '../lib/errors.js'
 
 const defaultRateLimit = { max: 300, timeWindow: '1 minute' } as const
 
-const sensitiveRateLimits: Record<string, { max: number; timeWindow: string }> =
-  {
-    addMessageReaction: { max: 60, timeWindow: '1 minute' },
-    completeFileUpload: { max: 20, timeWindow: '1 minute' },
-    completePasswordReset: { max: 5, timeWindow: '30 minutes' },
-    createAutomodRule: { max: 20, timeWindow: '1 minute' },
-    createDirectMessage: { max: 20, timeWindow: '1 minute' },
-    createInvite: { max: 20, timeWindow: '1 minute' },
-    createMessage: { max: 30, timeWindow: '10 seconds' },
-    initiateFileUpload: { max: 20, timeWindow: '1 minute' },
-    login: { max: 10, timeWindow: '15 minutes' },
-    refreshSession: { max: 30, timeWindow: '15 minutes' },
-    register: { max: 5, timeWindow: '15 minutes' },
-    removeMessageReaction: { max: 60, timeWindow: '1 minute' },
-    requestPasswordReset: { max: 5, timeWindow: '30 minutes' },
-    searchMessages: { max: 60, timeWindow: '1 minute' },
-    searchServers: { max: 60, timeWindow: '1 minute' },
-    updateAutomodRule: { max: 20, timeWindow: '1 minute' },
-  }
+const sensitiveRateLimits: Record<string, { max: number; timeWindow: string }> = {
+  addMessageReaction: { max: 60, timeWindow: '1 minute' },
+  completeFileUpload: { max: 20, timeWindow: '1 minute' },
+  completePasswordReset: { max: 5, timeWindow: '30 minutes' },
+  createAutomodRule: { max: 20, timeWindow: '1 minute' },
+  createDirectMessage: { max: 20, timeWindow: '1 minute' },
+  createInvite: { max: 20, timeWindow: '1 minute' },
+  createMessage: { max: 30, timeWindow: '10 seconds' },
+  initiateFileUpload: { max: 20, timeWindow: '1 minute' },
+  login: { max: 10, timeWindow: '15 minutes' },
+  refreshSession: { max: 30, timeWindow: '15 minutes' },
+  register: { max: 5, timeWindow: '15 minutes' },
+  removeMessageReaction: { max: 60, timeWindow: '1 minute' },
+  requestPasswordReset: { max: 5, timeWindow: '30 minutes' },
+  searchMessages: { max: 60, timeWindow: '1 minute' },
+  searchServers: { max: 60, timeWindow: '1 minute' },
+  updateAutomodRule: { max: 20, timeWindow: '1 minute' },
+}
 
 function sensitiveDefault(id: string | undefined, url: string) {
   if (id && sensitiveRateLimits[id]) return sensitiveRateLimits[id]
@@ -46,7 +45,8 @@ function sensitiveDefault(id: string | undefined, url: string) {
 
 function operationId(request: FastifyRequest) {
   const schema = request.routeOptions.schema as
-    { operationId?: string } | undefined
+    | { operationId?: string }
+    | undefined
   return schema?.operationId ?? request.routeOptions.url ?? 'unmatched'
 }
 
@@ -91,11 +91,13 @@ export const httpPlugin: FastifyPluginAsync = async (app) => {
     hook: 'preHandler',
     keyGenerator: async (request) => {
       const schema = request.routeOptions.schema as
-        { security?: Array<Record<string, unknown>> } | undefined
+        | { security?: Array<Record<string, unknown>> }
+        | undefined
       if (schema?.security && !request.auth) await app.authenticate(request)
 
       const auth = request.auth as
-        { botId?: string; sessionId?: string; userId?: string } | undefined
+        | { botId?: string; sessionId?: string; userId?: string }
+        | undefined
       const principal = auth?.botId
         ? `bot:${auth.botId}`
         : auth?.userId
