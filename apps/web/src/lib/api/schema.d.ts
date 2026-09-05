@@ -2707,6 +2707,7 @@ export interface operations {
                     description?: string | null;
                     isPublic?: boolean;
                     name?: string;
+                    avatarFileId?: string | null;
                 };
             };
         };

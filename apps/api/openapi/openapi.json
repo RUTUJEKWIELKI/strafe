@@ -2963,6 +2963,17 @@
                     "type": "string",
                     "maxLength": 64,
                     "minLength": 1
+                  },
+                  "avatarFileId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 },
                 "additionalProperties": false
