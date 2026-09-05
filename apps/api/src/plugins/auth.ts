@@ -43,9 +43,10 @@ const authPlugin: FastifyPluginAsync = async (app) => {
       _request: FastifyRequest,
       token: { header?: { kid?: string }; kid?: string },
     ) => {
+      const header = token.header ?? token
       const key =
-        typeof token.header?.kid === 'string'
-          ? acceptedKeys.get(token.header.kid)
+        typeof header.kid === 'string'
+          ? acceptedKeys.get(header.kid)
           : undefined
       if (!key)
         throw new Error(
