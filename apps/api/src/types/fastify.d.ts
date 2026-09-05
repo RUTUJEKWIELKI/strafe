@@ -30,12 +30,15 @@ import type { BotService } from '../modules/bots/bot.service.js'
 import type { EncryptionService } from '../modules/encryption/encryption.service.js'
 import type { KeyBackupService } from '../modules/auth/key-backup.service.js'
 
+import type { UserService } from '../modules/users/user.service.js'
+
 declare module 'fastify' {
   interface FastifyContextConfig {
     botScopes?: string[]
   }
 
   interface FastifyInstance {
+    userService: UserService
     abusePrevention: AbusePreventionService
     accountSecurityService: AccountSecurityService
     auditService: AuditService

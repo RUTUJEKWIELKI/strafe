@@ -80,6 +80,30 @@ export class SearchService {
     }
   }
 
+
+  async reindexAll(): Promise<void> {
+    if (!this.#client || !this.#available) return
+    const { db } = requireDatabase(this.#app)
+    
+    // Clear existing indexes
+    await this.#client.index('servers').deleteAllDocuments()
+    
+    // Reindex all non-deleted servers
+    const rows = await db.select().from(servers).where(isNull(servers.deletedAt))
+    const documents: ServerDocument[] = rows.map(r => ({
+      description: r.description,
+      id: r.id,
+      name: r.name,
+      slug: r.slug,
+      visibility: r.visibility,
+      memberCount: 1, // simplified for bulk sync
+    }))
+    
+    if (documents.length > 0) {
+      await this.#client.index('servers').addDocuments(documents)
+    }
+  }
+
   async messages(userId: string, query: SearchMessagesQuery) {
     // Search is performed over decrypted local indexes by clients. Authorization is
     // still evaluated so this endpoint cannot be used to probe channel membership.
