@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   db:
@@ -9,11 +9,11 @@ services:
       POSTGRES_PASSWORD: strafe_password
       POSTGRES_DB: strafe
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - strafe_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U strafe -d strafe"]
+      test: ['CMD-SHELL', 'pg_isready -U strafe -d strafe']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -22,12 +22,12 @@ services:
     image: redis:7-alpine
     restart: always
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - strafe_redisdata:/data
     command: redis-server --appendonly yes
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -39,11 +39,11 @@ services:
       MEILI_MASTER_KEY: strafe_search_master_key
       MEILI_ENV: development
     ports:
-      - "7700:7700"
+      - '7700:7700'
     volumes:
       - strafe_meilidata:/meili_data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:7700/health']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -55,13 +55,13 @@ services:
       MINIO_ROOT_USER: strafe_s3_admin
       MINIO_ROOT_PASSWORD: strafe_s3_password
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - '9000:9000'
+      - '9001:9001'
     volumes:
       - strafe_miniodata:/data
     command: server /data --console-address ":9001"
     healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
+      test: ['CMD', 'mc', 'ready', 'local']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -70,7 +70,7 @@ services:
     image: clamav/clamav:1.4
     restart: always
     ports:
-      - "3310:3310"
+      - '3310:3310'
 
 volumes:
   strafe_pgdata:

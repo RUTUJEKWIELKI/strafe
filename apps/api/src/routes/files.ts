@@ -30,7 +30,10 @@ const fileRoutes: FastifyPluginAsync = async (app) => {
   app.post<{ Body: InitiateFileUploadBody }>(
     '/files/uploads',
     {
-      config: { rateLimit: { max: 30, timeWindow: '1 minute' }, botScopes: ['messages:write'] },
+      config: {
+        rateLimit: { max: 30, timeWindow: '1 minute' },
+        botScopes: ['messages:write'],
+      },
       preHandler: app.authenticate,
       schema: {
         body: InitiateFileUploadBodySchema,
@@ -58,7 +61,10 @@ const fileRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/files/uploads/:uploadId/parts',
     {
-      config: { rateLimit: { max: 120, timeWindow: '1 minute' }, botScopes: ['messages:write'] },
+      config: {
+        rateLimit: { max: 120, timeWindow: '1 minute' },
+        botScopes: ['messages:write'],
+      },
       preHandler: app.authenticate,
       schema: {
         body: PresignUploadPartBodySchema,
@@ -83,7 +89,10 @@ const fileRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/files/uploads/:uploadId/complete',
     {
-      config: { rateLimit: { max: 30, timeWindow: '1 minute' }, botScopes: ['messages:write'] },
+      config: {
+        rateLimit: { max: 30, timeWindow: '1 minute' },
+        botScopes: ['messages:write'],
+      },
       preHandler: app.authenticate,
       schema: {
         body: CompleteFileUploadBodySchema,
@@ -142,7 +151,10 @@ const fileRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/files/:fileId/download',
     {
-      config: { rateLimit: { max: 120, timeWindow: '1 minute' }, botScopes: ['messages:read'] },
+      config: {
+        rateLimit: { max: 120, timeWindow: '1 minute' },
+        botScopes: ['messages:read'],
+      },
       preHandler: app.authenticate,
       schema: {
         operationId: 'downloadFile',

@@ -44,15 +44,18 @@ const authRoutes: FastifyPluginAsync = async (app) => {
             statusCode: 400,
           })
         }
-        const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            secret: app.config.TURNSTILE_SECRET_KEY,
-            response: request.body.captchaToken,
-            remoteip: request.ip,
-          }),
-        })
+        const verifyRes = await fetch(
+          'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              secret: app.config.TURNSTILE_SECRET_KEY,
+              response: request.body.captchaToken,
+              remoteip: request.ip,
+            }),
+          },
+        )
         const outcome = await verifyRes.json()
         if (!outcome.success) {
           throw new AppError({

@@ -191,10 +191,14 @@ describe.skipIf(!databaseUrl)('community API integration', () => {
       expect(history.json()).toMatchObject({
         messages: [
           {
-            content: 'Welcome to the server',
+            envelope: {
+              ciphertext: 'V2VsY29tZS10by10aGUtc2VydmVy',
+            },
           },
           {
-            content: 'Hello from the integration test',
+            envelope: {
+              ciphertext: 'SGVsbG8tZnJvbS10aGUtaW50ZWdyYXRpb24tdGVzdA',
+            },
           },
         ],
       })

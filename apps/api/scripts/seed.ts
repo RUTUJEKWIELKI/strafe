@@ -1,5 +1,3 @@
-import { eq } from 'drizzle-orm'
-import { randomBytes } from 'node:crypto'
 import { hash, argon2id } from 'argon2'
 
 import {
@@ -11,7 +9,7 @@ import {
   userProfiles,
   userSettings,
   users,
-  authIdentities
+  authIdentities,
 } from './src/db/schema/index.js'
 import { createId } from './src/lib/ids.js'
 import { db } from './src/db/connection.js' // We'll assume a standard Drizzle connection
@@ -37,7 +35,7 @@ async function seed() {
     status: 'active',
     createdAt: new Date(),
     updatedAt: new Date(),
-    emailVerifiedAt: new Date()
+    emailVerifiedAt: new Date(),
   })
 
   await db.insert(userProfiles).values({
@@ -56,8 +54,10 @@ async function seed() {
     providerSubject: 'admin@strafe.app',
     passwordHash,
   })
-  
-  console.log('✅ Created admin user (admin@strafe.app / strafe_admin_password)')
+
+  console.log(
+    '✅ Created admin user (admin@strafe.app / strafe_admin_password)',
+  )
 
   // 2. Create an official Strafe Community server
   const serverId = createId()
@@ -71,7 +71,7 @@ async function seed() {
   // 3. Create server roles (Owner, Moderator, Member)
   const ownerRoleId = createId()
   const modRoleId = createId()
-  
+
   await db.insert(roles).values([
     {
       id: ownerRoleId,
@@ -88,7 +88,7 @@ async function seed() {
       color: '#00ff00',
       position: 90,
       permissions: '6', // MANAGE_MESSAGES etc
-    }
+    },
   ])
 
   // 4. Add admin to the server
@@ -127,9 +127,9 @@ async function seed() {
       name: 'Voice Lounge',
       type: 'voice',
       positionKey: 'c',
-    }
+    },
   ])
-  
+
   console.log('✅ Created "Strafe Community" server with channels and roles')
   console.log('🌱 Seeding complete!')
   process.exit(0)

@@ -4,10 +4,11 @@ Strafe oferuje potężne API i oficjalne wsparcie dla botów, umożliwiając dew
 
 ## Wstęp i Architektura
 
-W przeciwieństwie do tradycyjnych komunikatorów, bot w Strafe to nie tylko "skrypt uderzający po API". 
+W przeciwieństwie do tradycyjnych komunikatorów, bot w Strafe to nie tylko "skrypt uderzający po API".
 Boty posiadają własne ID użytkownika (`botUserId`) oraz korzystają z tych samych węzłów Realtime Gateway. Kiedy dodajesz bota do serwera, inni członkowie wymieniają z nim klucze kryptograficzne, aby bot mógł odszyfrować wiadomości.
 
 ### Główne różnice między botem a zwykłym użytkownikiem:
+
 1. **Brak logowania hasłem:** Boty nie posiadają loginu i hasła. Uwierzytelniają się wyłącznie przez kryptograficznie bezpieczne tokeny dostępowe (np. `strafe_bot_XYZ...`).
 2. **Uprawnienia i Scopes:** Każdy token bota posiada zdefiniowane `scopes` (zakresy dostępu, np. `messages:read`, `messages:write`). Bot nie przeczyta wiadomości, jeśli właściciel nie nadał mu na to odpowiedniego uprawnienia przy generowaniu tokenu.
 3. **Limitowanie ruchu (Rate Limiting):** API Strafe posiada dedykowane koszyki limitów zapobiegania nadużyciom (Abuse Prevention) skonfigurowane specjalnie pod boty, aby umożliwić im płynną, automatyczną pracę (np. szybkie wysyłanie kilkudziesięciu powiadomień).
@@ -16,7 +17,7 @@ Boty posiadają własne ID użytkownika (`botUserId`) oraz korzystają z tych sa
 
 ## Zarządzanie aplikacjami (Bot Management API)
 
-Aby stworzyć bota, musisz zarejestrować aplikację. Twój zwykły użytkownik będzie jej właścicielem (`ownerId`). 
+Aby stworzyć bota, musisz zarejestrować aplikację. Twój zwykły użytkownik będzie jej właścicielem (`ownerId`).
 
 ### Tworzenie nowej aplikacji Bota
 
@@ -36,6 +37,7 @@ Content-Type: application/json
 Odpowiedź zawiera identyfikator bota oraz jego początkowy token (np. `strafe_bot_...`), który należy skopiować, gdyż jest ukazywany **tylko raz**.
 
 ### Zarządzanie (Z poziomu właściciela)
+
 Możesz listować wszystkie swoje boty wywołując `GET /api/bots`, obracać tokenem (generować nowy, niszcząc stary) przy pomocy `POST /api/bots/:botId/token`, lub całkowicie zawiesić boty i cofnąć im uprawnienia przez `DELETE /api/bots/:botId/token`.
 
 Dzięki tej architekturze, jeśli token bota wycieknie (np. wrzucisz go przez pomyłkę do publicznego repozytorium), możesz natychmiast go unieważnić w API.
@@ -69,7 +71,7 @@ import { StrafeBot } from '@strafe/bot-sdk'
 // Inicjalizacja SDK
 const bot = new StrafeBot({
   token: process.env.STRAFE_BOT_TOKEN!, // np. strafe_bot_8a2f...
-  baseUrl: 'https://api.strafe.app'
+  baseUrl: 'https://api.strafe.app',
 })
 
 // Przykładowe wywołanie - sprawdzenie tożsamości bota
@@ -93,11 +95,15 @@ Dlatego w SDK nie wysyłamy płaskiego tekstu. Deweloper budujący bota musi naj
 import { createCipheriv, randomBytes } from 'node:crypto'
 import { randomUUID } from 'node:crypto'
 
-async function sendEncrypted(channelId: string, plainText: string, groupKey: Buffer) {
+async function sendEncrypted(
+  channelId: string,
+  plainText: string,
+  groupKey: Buffer,
+) {
   // 1. Wygenerowanie wektora inicjującego (IV) i przygotowanie wiadomości
   const nonce = randomBytes(12)
   const cipher = createCipheriv('aes-256-gcm', groupKey, nonce)
-  
+
   // 2. Szyfrowanie
   let ciphertext = cipher.update(plainText, 'utf8', 'base64')
   ciphertext += cipher.final('base64')
@@ -113,8 +119,8 @@ async function sendEncrypted(channelId: string, plainText: string, groupKey: Buf
       ciphertext: ciphertext,
       authenticationTag: authTag.toString('base64'),
       senderDeviceId: 'bot-device-id',
-      epoch: 0
-    }
+      epoch: 0,
+    },
   })
 }
 ```

@@ -27,7 +27,7 @@ export function decryptPII(cipherText: string, key: Buffer): string {
     throw new Error('Invalid cipher format')
   }
   const [iv64, authTag64, encrypted] = parts as [string, string, string]
-  
+
   const decipher = createDecipheriv(ALGO, key, Buffer.from(iv64, 'base64'))
   decipher.setAuthTag(Buffer.from(authTag64, 'base64'))
   let decrypted = decipher.update(encrypted, 'base64', 'utf8')

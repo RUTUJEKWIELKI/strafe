@@ -5,7 +5,6 @@ import {
   CreateBotBodySchema,
   ErrorResponseSchema,
   RevokeBotResponseSchema,
-
   UpdateBotBodySchema,
   BotApplicationSchema,
   type UpdateBotBody,
@@ -74,7 +73,6 @@ const botRoutes: FastifyPluginAsync = async (app) => {
     }),
   )
 
-
   app.get<{ Params: { botId: string } }>(
     '/bots/public/:botId',
     {
@@ -86,7 +84,7 @@ const botRoutes: FastifyPluginAsync = async (app) => {
         tags: ['bots'],
       },
     },
-    async (request) => app.botService.getPublic(request.params.botId)
+    async (request) => app.botService.getPublic(request.params.botId),
   )
 
   app.patch<{ Body: UpdateBotBody; Params: { botId: string } }>(
@@ -102,7 +100,12 @@ const botRoutes: FastifyPluginAsync = async (app) => {
         tags: ['bots'],
       },
     },
-    async (request) => app.botService.update(request.auth.userId, request.params.botId, request.body)
+    async (request) =>
+      app.botService.update(
+        request.auth.userId,
+        request.params.botId,
+        request.body,
+      ),
   )
 
   app.post<{ Body: RotateBotTokenBody; Params: { botId: string } }>(

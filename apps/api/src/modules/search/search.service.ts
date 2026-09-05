@@ -80,17 +80,19 @@ export class SearchService {
     }
   }
 
-
   async reindexAll(): Promise<void> {
     if (!this.#client || !this.#available) return
     const { db } = requireDatabase(this.#app)
-    
+
     // Clear existing indexes
     await this.#client.index('servers').deleteAllDocuments()
-    
+
     // Reindex all non-deleted servers
-    const rows = await db.select().from(servers).where(isNull(servers.deletedAt))
-    const documents: ServerDocument[] = rows.map(r => ({
+    const rows = await db
+      .select()
+      .from(servers)
+      .where(isNull(servers.deletedAt))
+    const documents: ServerDocument[] = rows.map((r) => ({
       description: r.description,
       id: r.id,
       name: r.name,
@@ -98,7 +100,7 @@ export class SearchService {
       visibility: r.visibility,
       memberCount: 1, // simplified for bulk sync
     }))
-    
+
     if (documents.length > 0) {
       await this.#client.index('servers').addDocuments(documents)
     }

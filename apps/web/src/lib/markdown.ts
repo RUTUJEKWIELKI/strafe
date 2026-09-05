@@ -32,6 +32,6 @@ export function renderSafeMarkdown(rawMarkdown: string): string {
       'del',
     ],
   })
-  
+
   return sanitized.trim()
 }

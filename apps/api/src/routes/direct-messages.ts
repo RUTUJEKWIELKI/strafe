@@ -28,7 +28,10 @@ const directMessageRoutes: FastifyPluginAsync = async (app) => {
   app.post<{ Body: CreateDirectMessageBody }>(
     '/users/@me/dms',
     {
-      config: { rateLimit: { max: 20, timeWindow: '1 minute' }, botScopes: ['messages:write'] },
+      config: {
+        rateLimit: { max: 20, timeWindow: '1 minute' },
+        botScopes: ['messages:write'],
+      },
       preHandler: app.authenticate,
       schema: {
         body: CreateDirectMessageBodySchema,

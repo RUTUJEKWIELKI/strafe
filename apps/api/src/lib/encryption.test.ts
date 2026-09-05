@@ -9,10 +9,10 @@ describe('PII Encryption Utilities', () => {
   it('encrypts and decrypts string correctly', () => {
     const plaintext = 'user@example.com'
     const encrypted = encryptPII(plaintext, dummyKey)
-    
+
     expect(encrypted).not.toBe(plaintext)
     expect(encrypted.split(':').length).toBe(3)
-    
+
     const decrypted = decryptPII(encrypted, dummyKey)
     expect(decrypted).toBe(plaintext)
   })
@@ -30,14 +30,18 @@ describe('PII Encryption Utilities', () => {
     // Modify encrypted payload
     parts[2] = Buffer.from('tampered').toString('base64')
     const tampered = parts.join(':')
-    
-    expect(() => decryptPII(tampered, dummyKey)).toThrowError(/Unsupported state or unable to authenticate data/)
+
+    expect(() => decryptPII(tampered, dummyKey)).toThrowError(
+      /Unsupported state or unable to authenticate data/,
+    )
   })
 
   it('fails on wrong key', () => {
     const encrypted = encryptPII('data', dummyKey)
     const wrongKey = randomBytes(32)
-    
-    expect(() => decryptPII(encrypted, wrongKey)).toThrowError(/Unsupported state or unable to authenticate data/)
+
+    expect(() => decryptPII(encrypted, wrongKey)).toThrowError(
+      /Unsupported state or unable to authenticate data/,
+    )
   })
 })

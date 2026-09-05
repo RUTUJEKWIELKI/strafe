@@ -87,7 +87,10 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/servers/:serverId/transfer-ownership',
     {
-      config: { rateLimit: { max: 5, timeWindow: '1 hour' }, botScopes: ['servers:write'] },
+      config: {
+        rateLimit: { max: 5, timeWindow: '1 hour' },
+        botScopes: ['servers:write'],
+      },
       preHandler: app.authenticate,
       schema: {
         body: TransferServerOwnershipBodySchema,
@@ -115,7 +118,10 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   app.delete<{ Params: { serverId: string } }>(
     '/servers/:serverId',
     {
-      config: { rateLimit: { max: 3, timeWindow: '1 hour' }, botScopes: ['servers:write'] },
+      config: {
+        rateLimit: { max: 3, timeWindow: '1 hour' },
+        botScopes: ['servers:write'],
+      },
       preHandler: app.authenticate,
       schema: {
         operationId: 'deleteServer',

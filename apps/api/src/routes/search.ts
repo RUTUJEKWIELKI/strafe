@@ -60,7 +60,7 @@ const searchRoutes: FastifyPluginAsync = async (app) => {
       // In reality we'd require admin rights here.
       await app.searchService.reindexAll()
       return reply.code(204).send()
-    }
+    },
   )
 }
 

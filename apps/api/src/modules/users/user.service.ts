@@ -1,5 +1,10 @@
-import type { UpdateUserBody, UpdateUserSettingsBody, UserSettings, UserRelationship, WebPushSubscriptionBody } from '@strafe/shared'
-import { and, eq, or, sql } from 'drizzle-orm'
+import type {
+  UpdateUserBody,
+  UpdateUserSettingsBody,
+  UserSettings,
+  WebPushSubscriptionBody,
+} from '@strafe/shared'
+import { and, eq, or } from 'drizzle-orm'
 import type { FastifyInstance } from 'fastify'
 
 import {
@@ -45,11 +50,17 @@ export class UserService {
     await db
       .update(userProfiles)
       .set({
-        ...(data.displayName !== undefined ? { displayName: data.displayName } : {}),
+        ...(data.displayName !== undefined
+          ? { displayName: data.displayName }
+          : {}),
         ...(data.bio !== undefined ? { bio: data.bio } : {}),
         ...(data.pronouns !== undefined ? { pronouns: data.pronouns } : {}),
-        ...(data.avatarFileId !== undefined ? { avatarFileId: data.avatarFileId } : {}),
-        ...(data.bannerFileId !== undefined ? { bannerFileId: data.bannerFileId } : {}),
+        ...(data.avatarFileId !== undefined
+          ? { avatarFileId: data.avatarFileId }
+          : {}),
+        ...(data.bannerFileId !== undefined
+          ? { bannerFileId: data.bannerFileId }
+          : {}),
         updatedAt: new Date(),
       })
       .where(eq(userProfiles.userId, userId))
@@ -61,7 +72,9 @@ export class UserService {
       .update(userSettings)
       .set({
         ...data,
-        customStatusExpiresAt: data.customStatusExpiresAt ? new Date(data.customStatusExpiresAt) : null,
+        customStatusExpiresAt: data.customStatusExpiresAt
+          ? new Date(data.customStatusExpiresAt)
+          : null,
         updatedAt: new Date(),
       })
       .where(eq(userSettings.userId, userId))
@@ -86,64 +99,75 @@ export class UserService {
       throw new ConflictError('Cannot befriend yourself')
     }
 
-    await db.insert(userRelationships).values({
-      addresseeId,
-      requesterId,
-      status: 'pending',
-    }).onConflictDoNothing()
+    await db
+      .insert(userRelationships)
+      .values({
+        addresseeId,
+        requesterId,
+        status: 'pending',
+      })
+      .onConflictDoNothing()
   }
 
-  async updateRelationshipStatus(userId: string, relationId: string, status: 'accepted' | 'declined') {
+  async updateRelationshipStatus(
+    userId: string,
+    relationId: string,
+    status: 'accepted' | 'declined',
+  ) {
     const { db } = requireDatabase(this.#app)
-    const res = await db.update(userRelationships)
+    const res = await db
+      .update(userRelationships)
       .set({ status, acceptedAt: status === 'accepted' ? new Date() : null })
       .where(
         and(
           or(
             eq(userRelationships.requesterId, userId),
-            eq(userRelationships.addresseeId, userId)
+            eq(userRelationships.addresseeId, userId),
           ),
           or(
             eq(userRelationships.requesterId, relationId),
-            eq(userRelationships.addresseeId, relationId)
-          )
-        )
+            eq(userRelationships.addresseeId, relationId),
+          ),
+        ),
       )
     if (res.rowCount === 0) throw new NotFoundError('Relationship not found')
   }
 
   async deleteRelationship(userId: string, relationId: string) {
     const { db } = requireDatabase(this.#app)
-    await db.delete(userRelationships)
+    await db
+      .delete(userRelationships)
       .where(
         and(
           or(
             eq(userRelationships.requesterId, userId),
-            eq(userRelationships.addresseeId, userId)
+            eq(userRelationships.addresseeId, userId),
           ),
           or(
             eq(userRelationships.requesterId, relationId),
-            eq(userRelationships.addresseeId, relationId)
-          )
-        )
+            eq(userRelationships.addresseeId, relationId),
+          ),
+        ),
       )
   }
 
   async listRelationships(userId: string) {
     const { db } = requireDatabase(this.#app)
-    return await db.select()
+    return await db
+      .select()
       .from(userRelationships)
       .where(
         or(
           eq(userRelationships.requesterId, userId),
-          eq(userRelationships.addresseeId, userId)
-        )
+          eq(userRelationships.addresseeId, userId),
+        ),
       )
   }
 
   async addPushSubscription(userId: string, data: WebPushSubscriptionBody) {
     const { db } = requireDatabase(this.#app)
-    await db.insert(pushSubscriptions)
+    await db
+      .insert(pushSubscriptions)
       .values({
         id: createId(),
         userId,
@@ -153,7 +177,7 @@ export class UserService {
       })
       .onConflictDoUpdate({
         target: pushSubscriptions.endpoint,
-        set: { keys: data.keys, revokedAt: null }
+        set: { keys: data.keys, revokedAt: null },
       })
   }
 }

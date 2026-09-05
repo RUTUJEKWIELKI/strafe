@@ -4,13 +4,12 @@ import {
   UpdateUserBodySchema,
   UserSettingsSchema,
   UpdateUserSettingsBodySchema,
-  UserRelationshipSchema,
   CreateRelationshipBodySchema,
   WebPushSubscriptionBodySchema,
   type UpdateUserBody,
   type UpdateUserSettingsBody,
   type CreateRelationshipBody,
-  type WebPushSubscriptionBody
+  type WebPushSubscriptionBody,
 } from '@strafe/shared'
 import type { FastifyPluginAsync } from 'fastify'
 import { Type } from 'typebox'
@@ -97,9 +96,12 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      await app.userService.addPushSubscription(request.auth.userId, request.body)
+      await app.userService.addPushSubscription(
+        request.auth.userId,
+        request.body,
+      )
       return reply.code(204).send()
-    }
+    },
   )
 
   app.post<{ Body: CreateRelationshipBody }>(
@@ -115,9 +117,12 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      await app.userService.createRelationship(request.auth.userId, request.body.targetId)
+      await app.userService.createRelationship(
+        request.auth.userId,
+        request.body.targetId,
+      )
       return reply.code(204).send()
-    }
+    },
   )
 
   app.put<{ Params: { id: string } }>(
@@ -133,9 +138,13 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      await app.userService.updateRelationshipStatus(request.auth.userId, request.params.id, 'accepted')
+      await app.userService.updateRelationshipStatus(
+        request.auth.userId,
+        request.params.id,
+        'accepted',
+      )
       return reply.code(204).send()
-    }
+    },
   )
 
   app.delete<{ Params: { id: string } }>(
@@ -151,9 +160,12 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
-      await app.userService.deleteRelationship(request.auth.userId, request.params.id)
+      await app.userService.deleteRelationship(
+        request.auth.userId,
+        request.params.id,
+      )
       return reply.code(204).send()
-    }
+    },
   )
 }
 
