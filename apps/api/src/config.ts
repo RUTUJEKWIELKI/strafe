@@ -45,6 +45,7 @@ export interface AppConfig {
   SMTP_PORT: number
   SMTP_SECURE: boolean
   SMTP_USERNAME?: string
+  TURNSTILE_SECRET_KEY?: string
   S3_ACCESS_KEY_ID?: string
   S3_BUCKET?: string
   S3_ENDPOINT?: string
@@ -244,6 +245,7 @@ export const envOptions: FastifyEnvOptions = {
       },
       SMTP_SECURE: { type: 'boolean', default: false },
       SMTP_USERNAME: { type: 'string', minLength: 1 },
+      TURNSTILE_SECRET_KEY: { type: 'string', minLength: 1 },
       S3_ACCESS_KEY_ID: { type: 'string', minLength: 1 },
       S3_BUCKET: { type: 'string', minLength: 3 },
       S3_ENDPOINT: { type: 'string', minLength: 1 },
