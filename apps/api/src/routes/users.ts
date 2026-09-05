@@ -19,6 +19,7 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { userId: string } }>(
     '/users/:userId',
     {
+      config: { botScopes: ['users:read'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'getUser',
@@ -34,6 +35,7 @@ const usersRoutes: FastifyPluginAsync = async (app) => {
   app.patch<{ Body: UpdateUserBody }>(
     '/users/@me',
     {
+      config: { botScopes: ['users:write'] },
       preHandler: app.authenticate,
       schema: {
         body: UpdateUserBodySchema,

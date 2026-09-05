@@ -10,6 +10,7 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
+  boolean,
 } from 'drizzle-orm/pg-core'
 
 export const users = pgTable(
@@ -54,6 +55,7 @@ export const botApplications = pgTable(
       .notNull(),
     description: text('description'),
     id: uuid('id').primaryKey(),
+    isPublic: boolean('is_public').default(false).notNull(),
     name: text('name').notNull(),
     ownerId: uuid('owner_id')
       .notNull()

@@ -97,6 +97,59 @@ export class BotService {
     }
   }
 
+
+  async getPublic(botId: string) {
+    const { db } = requireDatabase(this.app)
+    const [bot] = await db
+      .select()
+      .from(botApplications)
+      .where(and(eq(botApplications.id, botId), eq(botApplications.isPublic, true)))
+      .limit(1)
+
+    if (!bot) {
+      throw new NotFoundError('Public bot not found')
+    }
+    return this.present(bot)
+  }
+
+  async update(ownerId: string, botId: string, input: import('@strafe/shared').UpdateBotBody) {
+    const { db } = requireDatabase(this.app)
+    
+    // Check ownership
+    const [existing] = await db
+      .select({ id: botApplications.id, botUserId: botApplications.botUserId })
+      .from(botApplications)
+      .where(and(eq(botApplications.id, botId), eq(botApplications.ownerId, ownerId)))
+      .limit(1)
+
+    if (!existing) {
+      throw new NotFoundError('Bot application not found or you do not have permission')
+    }
+
+    const updates: Partial<typeof botApplications.$inferInsert> = {}
+    if (input.name !== undefined) updates.name = input.name
+    if (input.description !== undefined) updates.description = input.description
+    if (input.isPublic !== undefined) updates.isPublic = input.isPublic
+
+    if (Object.keys(updates).length > 0) {
+      const [updated] = await db
+        .update(botApplications)
+        .set(updates)
+        .where(eq(botApplications.id, botId))
+        .returning()
+        
+      if (input.name !== undefined) {
+        await db.update(userProfiles)
+          .set({ displayName: input.name })
+          .where(eq(userProfiles.userId, existing.botUserId))
+      }
+      return this.present(updated!)
+    }
+    
+    const [bot] = await db.select().from(botApplications).where(eq(botApplications.id, botId)).limit(1)
+    return this.present(bot!)
+  }
+
   async list(ownerId: string) {
     const { db } = requireDatabase(this.app)
     const rows = await db
@@ -137,32 +190,36 @@ export class BotService {
     return rawToken
   }
 
-  async install(ownerId: string, botId: string, serverId: string) {
+
+  async install(installerId: string, botId: string, serverId: string) {
     const { db } = requireDatabase(this.app)
     return db.transaction(async (tx) => {
       const [bot] = await tx
-        .select({ userId: botApplications.botUserId })
+        .select({ userId: botApplications.botUserId, ownerId: botApplications.ownerId, isPublic: botApplications.isPublic })
         .from(botApplications)
-        .where(
-          and(
-            eq(botApplications.id, botId),
-            eq(botApplications.ownerId, ownerId),
-          ),
-        )
+        .where(eq(botApplications.id, botId))
         .limit(1)
+        
+      if (!bot) throw new NotFoundError('Bot application not found')
+      if (!bot.isPublic && bot.ownerId !== installerId) {
+        throw new NotFoundError('Bot application is not public')
+      }
+
+      // Check if installer is the server owner
       const [server] = await tx
         .select({ id: servers.id })
         .from(servers)
         .where(
           and(
             eq(servers.id, serverId),
-            eq(servers.ownerId, ownerId),
+            eq(servers.ownerId, installerId),
             isNull(servers.deletedAt),
           ),
         )
         .limit(1)
-      if (!bot || !server)
-        throw new NotFoundError('Bot application or owned server not found')
+      if (!server)
+        throw new NotFoundError('Owned server not found')
+
       const [existing] = await tx
         .select({ id: serverMembers.id, state: serverMembers.state })
         .from(serverMembers)
@@ -197,7 +254,7 @@ export class BotService {
         .where(eq(servers.id, serverId))
       await tx.insert(auditLog).values({
         action: 'bot.installed',
-        actorId: ownerId,
+        actorId: installerId,
         id: createId(),
         metadata: { botId },
         serverId,

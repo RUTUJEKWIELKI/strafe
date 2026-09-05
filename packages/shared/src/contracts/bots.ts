@@ -6,7 +6,15 @@ export const BotScopeSchema = Type.Union([
   Type.Literal('messages:read'),
   Type.Literal('messages:write'),
   Type.Literal('servers:read'),
+  Type.Literal('servers:write'),
   Type.Literal('members:read'),
+  Type.Literal('members:write'),
+  Type.Literal('channels:read'),
+  Type.Literal('channels:write'),
+  Type.Literal('roles:read'),
+  Type.Literal('roles:write'),
+  Type.Literal('users:read'),
+  Type.Literal('users:write'),
 ])
 
 export const BotApplicationSchema = Type.Object({
@@ -14,6 +22,7 @@ export const BotApplicationSchema = Type.Object({
   createdAt: DateTimeSchema,
   description: Type.Union([Type.String(), Type.Null()]),
   id: IdSchema,
+  isPublic: Type.Boolean(),
   name: Type.String(),
 })
 
@@ -47,14 +56,25 @@ export const BotListResponseSchema = Type.Object({
 })
 export const RotateBotTokenBodySchema = Type.Object({
   scopes: Type.Array(BotScopeSchema, {
-    maxItems: 4,
+    maxItems: 10,
     minItems: 1,
     uniqueItems: true,
   }),
 })
+
+export const UpdateBotBodySchema = Type.Object(
+  {
+    description: Type.Optional(Type.Union([Type.String({ maxLength: 500 }), Type.Null()])),
+    isPublic: Type.Optional(Type.Boolean()),
+    name: Type.Optional(Type.String({ maxLength: 64, minLength: 1 })),
+  },
+  { additionalProperties: false },
+)
+
 export const BotTokenResponseSchema = Type.Object({ token: Type.String() })
 export const RevokeBotResponseSchema = Type.Object({ revoked: Type.Boolean() })
 
 export type BotScope = Static<typeof BotScopeSchema>
 export type CreateBotBody = Static<typeof CreateBotBodySchema>
 export type RotateBotTokenBody = Static<typeof RotateBotTokenBodySchema>
+export type UpdateBotBody = Static<typeof UpdateBotBodySchema>

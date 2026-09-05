@@ -169,6 +169,7 @@ const memberRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/servers/:serverId/members/:userId/roles',
     {
+      config: { botScopes: ['roles:write'] },
       preHandler: app.authenticate,
       schema: {
         body: UpdateMemberRolesBodySchema,

@@ -56,6 +56,7 @@ const serverRoutes: FastifyPluginAsync = async (app) => {
   app.get(
     '/users/@me/servers',
     {
+      config: { botScopes: ['servers:read'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'listCurrentUserServers',
@@ -72,6 +73,7 @@ const serverRoutes: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { serverId: string } }>(
     '/servers/:serverId',
     {
+      config: { botScopes: ['servers:read'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'getServer',
@@ -93,6 +95,7 @@ const serverRoutes: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { serverId: string } }>(
     '/servers/:serverId/channels',
     {
+      config: { botScopes: ['channels:read'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'listServerChannels',
@@ -116,6 +119,7 @@ const serverRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/servers/:serverId/channels',
     {
+      config: { botScopes: ['channels:write'] },
       preHandler: app.authenticate,
       schema: {
         body: CreateChannelBodySchema,
@@ -145,6 +149,7 @@ const serverRoutes: FastifyPluginAsync = async (app) => {
   app.post<{ Body: CreateRoleBody; Params: { serverId: string } }>(
     '/servers/:serverId/roles',
     {
+      config: { botScopes: ['roles:write'] },
       preHandler: app.authenticate,
       schema: {
         body: CreateRoleBodySchema,

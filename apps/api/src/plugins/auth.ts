@@ -79,8 +79,14 @@ const authPlugin: FastifyPluginAsync = async (app) => {
     request.auth = await authService.authenticateRequest(request)
     if (request.auth.actorType === 'bot') {
       const requiredScopes = request.routeOptions.config.botScopes
+      if (requiredScopes === undefined) {
+        throw new ForbiddenError(
+          'This endpoint is not available to this bot token',
+        )
+      }
       if (
-        !requiredScopes?.some((scope) => request.auth.scopes?.includes(scope))
+        requiredScopes.length > 0 &&
+        !requiredScopes.some((scope) => request.auth.scopes?.includes(scope))
       ) {
         throw new ForbiddenError(
           'This endpoint is not available to this bot token',

@@ -3,7 +3,7 @@ import fp from 'fastify-plugin'
 import { Registry } from 'prom-client'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { httpPlugin } from '../dist/plugins/http.js'
+import { httpPlugin } from './plugins/http.js'
 
 type RedisCallback = (error: Error | null, result: [number, number]) => void
 

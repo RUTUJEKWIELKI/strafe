@@ -5,6 +5,10 @@ import {
   CreateBotBodySchema,
   ErrorResponseSchema,
   RevokeBotResponseSchema,
+
+  UpdateBotBodySchema,
+  BotApplicationSchema,
+  type UpdateBotBody,
   RotateBotTokenBodySchema,
   type CreateBotBody,
   type RotateBotTokenBody,
@@ -68,6 +72,37 @@ const botRoutes: FastifyPluginAsync = async (app) => {
     async (request) => ({
       bots: await app.botService.list(request.auth.userId),
     }),
+  )
+
+
+  app.get<{ Params: { botId: string } }>(
+    '/bots/public/:botId',
+    {
+      schema: {
+        operationId: 'getPublicBot',
+        params: BotParamsSchema,
+        response: { 200: BotApplicationSchema, 404: ErrorResponseSchema },
+        summary: 'Get details of a public bot before installation',
+        tags: ['bots'],
+      },
+    },
+    async (request) => app.botService.getPublic(request.params.botId)
+  )
+
+  app.patch<{ Body: UpdateBotBody; Params: { botId: string } }>(
+    '/bots/:botId',
+    {
+      preHandler: [app.authenticate, userOnly],
+      schema: {
+        body: UpdateBotBodySchema,
+        operationId: 'updateBotApplication',
+        params: BotParamsSchema,
+        response: { 200: BotApplicationSchema, 404: ErrorResponseSchema },
+        summary: 'Update bot application settings (e.g., name, public status)',
+        tags: ['bots'],
+      },
+    },
+    async (request) => app.botService.update(request.auth.userId, request.params.botId, request.body)
   )
 
   app.post<{ Body: RotateBotTokenBody; Params: { botId: string } }>(

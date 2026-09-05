@@ -142,6 +142,7 @@ const authRoutes: FastifyPluginAsync = async (app) => {
   app.get(
     '/users/@me',
     {
+      config: { botScopes: [] }, // No specific scope required to check own identity
       preHandler: app.authenticate,
       schema: {
         operationId: 'getCurrentUser',
