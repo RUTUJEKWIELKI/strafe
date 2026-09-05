@@ -9,6 +9,7 @@ const status = ref<'loading' | 'ready' | 'error'>('loading')
 const errorMessage = ref('')
 
 const configuration = {
+  agent: { disabled: true },
   customCss: `
     :root {
       --scalar-color-accent: #059669;
@@ -25,6 +26,7 @@ const configuration = {
   showSidebar: true,
   theme: 'default',
   url: documentUrl,
+  withDefaultFonts: false,
 }
 
 const ScalarApiReference = defineClientComponent(

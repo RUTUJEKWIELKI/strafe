@@ -15,6 +15,7 @@ import {
 import type { FastifyPluginAsync } from 'fastify'
 
 import { sessionMetadata } from '../lib/session-metadata.js'
+import { AppError } from '../lib/errors.js'
 
 const authRoutes: FastifyPluginAsync = async (app) => {
   app.post<{ Body: RegisterBody }>(
@@ -35,6 +36,36 @@ const authRoutes: FastifyPluginAsync = async (app) => {
       },
     },
     async (request, reply) => {
+      if (app.config.NODE_ENV === 'production') {
+        if (!request.body.captchaToken) {
+          throw new AppError({
+            code: 'CAPTCHA_REQUIRED',
+            message: 'Bot verification is required',
+            statusCode: 400,
+          })
+        }
+        const verifyRes = await fetch(
+          'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              secret: app.config.TURNSTILE_SECRET_KEY,
+              response: request.body.captchaToken,
+              remoteip: request.ip,
+            }),
+          },
+        )
+        const outcome = await verifyRes.json()
+        if (!outcome.success) {
+          throw new AppError({
+            code: 'CAPTCHA_FAILED',
+            message: 'Bot verification failed',
+            statusCode: 400,
+          })
+        }
+      }
+
       const result = await app.authService.register(
         request.body,
         sessionMetadata(request),
@@ -114,6 +145,7 @@ const authRoutes: FastifyPluginAsync = async (app) => {
   app.get(
     '/users/@me',
     {
+      config: { botScopes: [] }, // No specific scope required to check own identity
       preHandler: app.authenticate,
       schema: {
         operationId: 'getCurrentUser',

@@ -56,6 +56,7 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   app.patch<{ Body: UpdateServerBody; Params: { serverId: string } }>(
     '/servers/:serverId',
     {
+      config: { botScopes: ['servers:write'] },
       preHandler: app.authenticate,
       schema: {
         body: UpdateServerBodySchema,
@@ -86,7 +87,10 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/servers/:serverId/transfer-ownership',
     {
-      config: { rateLimit: { max: 5, timeWindow: '1 hour' } },
+      config: {
+        rateLimit: { max: 5, timeWindow: '1 hour' },
+        botScopes: ['servers:write'],
+      },
       preHandler: app.authenticate,
       schema: {
         body: TransferServerOwnershipBodySchema,
@@ -114,7 +118,10 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   app.delete<{ Params: { serverId: string } }>(
     '/servers/:serverId',
     {
-      config: { rateLimit: { max: 3, timeWindow: '1 hour' } },
+      config: {
+        rateLimit: { max: 3, timeWindow: '1 hour' },
+        botScopes: ['servers:write'],
+      },
       preHandler: app.authenticate,
       schema: {
         operationId: 'deleteServer',
@@ -136,6 +143,7 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   app.patch<{ Body: UpdateChannelBody; Params: { channelId: string } }>(
     '/channels/:channelId',
     {
+      config: { botScopes: ['channels:write'] },
       preHandler: app.authenticate,
       schema: {
         body: UpdateChannelBodySchema,
@@ -163,6 +171,7 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   app.delete<{ Params: { channelId: string } }>(
     '/channels/:channelId',
     {
+      config: { botScopes: ['channels:write'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'deleteChannel',
@@ -187,6 +196,7 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   app.put<{ Body: ReorderChannelsBody; Params: { serverId: string } }>(
     '/servers/:serverId/channels/order',
     {
+      config: { botScopes: ['channels:write'] },
       preHandler: app.authenticate,
       schema: {
         body: ReorderChannelsBodySchema,
@@ -214,6 +224,7 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { channelId: string } }>(
     '/channels/:channelId/permission-overwrites',
     {
+      config: { botScopes: ['roles:read'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'listChannelPermissionOverwrites',
@@ -241,6 +252,7 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/channels/:channelId/permission-overwrites/:subjectType/:subjectId',
     {
+      config: { botScopes: ['roles:write'] },
       preHandler: app.authenticate,
       schema: {
         body: UpsertChannelPermissionOverwriteBodySchema,
@@ -276,6 +288,7 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/channels/:channelId/permission-overwrites/:subjectType/:subjectId',
     {
+      config: { botScopes: ['roles:write'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'deleteChannelPermissionOverwrite',
@@ -297,6 +310,7 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { serverId: string } }>(
     '/servers/:serverId/roles',
     {
+      config: { botScopes: ['roles:read'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'listServerRoles',
@@ -320,6 +334,7 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/servers/:serverId/roles/:roleId',
     {
+      config: { botScopes: ['roles:write'] },
       preHandler: app.authenticate,
       schema: {
         body: UpdateRoleBodySchema,
@@ -348,6 +363,7 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   app.delete<{ Params: { roleId: string; serverId: string } }>(
     '/servers/:serverId/roles/:roleId',
     {
+      config: { botScopes: ['roles:write'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'deleteServerRole',
@@ -373,6 +389,7 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   app.put<{ Body: ReorderRolesBody; Params: { serverId: string } }>(
     '/servers/:serverId/roles/order',
     {
+      config: { botScopes: ['roles:write'] },
       preHandler: app.authenticate,
       schema: {
         body: ReorderRolesBodySchema,
@@ -398,6 +415,7 @@ const managementRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/servers/:serverId/audit-log',
     {
+      config: { botScopes: ['servers:read'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'listServerAuditLog',

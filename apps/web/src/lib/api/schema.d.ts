@@ -252,6 +252,94 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
+        /** Update current user profile */
+        patch: operations["updateUser"];
+        trace?: never;
+    };
+    "/api/bots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List bot applications owned by the current user */
+        get: operations["listBotApplications"];
+        put?: never;
+        /** Create a bot identity and its first scoped token */
+        post: operations["createBotApplication"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bots/public/{botId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get details of a public bot before installation */
+        get: operations["getPublicBot"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bots/{botId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update bot application settings (e.g., name, public status) */
+        patch: operations["updateBotApplication"];
+        trace?: never;
+    };
+    "/api/bots/{botId}/token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revoke previous credentials and issue a scoped bot token */
+        post: operations["rotateBotToken"];
+        /** Immediately revoke all active credentials for a bot */
+        delete: operations["revokeBotToken"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/servers/{serverId}/bots/{botId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Install an owned bot identity into an owned server */
+        post: operations["installBotApplication"];
+        delete?: never;
+        options?: never;
+        head?: never;
         patch?: never;
         trace?: never;
     };
@@ -449,6 +537,111 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/encryption/transparency/consistency": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getKeyTransparencyConsistencyProof"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/encryption/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["publishKeyBundle"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/encryption/users/{userId}/devices/{deviceId}/prekeys/consume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["consumePrekeyBundle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/encryption/devices/{deviceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    deviceId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        reason: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Default Response */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/encryption/sessions/rotate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["rotateEncryptionSessions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/files/uploads": {
         parameters: {
             query?: never;
@@ -596,6 +789,24 @@ export interface paths {
         /** Report whether dependencies are ready */
         get: operations["getReadiness"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/@me/key-backup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fetch the latest opaque encrypted key backup */
+        get: operations["getCurrentUserKeyBackup"];
+        /** Append an opaque encrypted key backup version */
+        put: operations["putCurrentUserKeyBackup"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1139,6 +1350,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/search/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Manually trigger a full reindex of search documents */
+        post: operations["syncSearchIndexes"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/servers": {
         parameters: {
             query?: never;
@@ -1220,6 +1448,109 @@ export interface paths {
         /** Join a server using an invite in one locked transaction */
         post: operations["joinServerInvite"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get public user profile */
+        get: operations["getUser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/@me/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get user settings */
+        get: operations["getUserSettings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update user settings */
+        patch: operations["updateUserSettings"];
+        trace?: never;
+    };
+    "/api/users/@me/devices/{deviceId}/push-subscription": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add a Web Push subscription for this device */
+        post: operations["addPushSubscription"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/@me/relationships": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a friend request */
+        post: operations["createRelationship"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/@me/relationships/{id}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Accept a friend request */
+        put: operations["acceptRelationship"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/@me/relationships/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete or decline a friend request */
+        delete: operations["deleteRelationship"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1736,6 +2067,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    captchaToken?: string;
                     displayName: string;
                     /** Format: email */
                     email: string;
@@ -2149,6 +2481,396 @@ export interface operations {
             };
             /** @description Default Response */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    updateUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    displayName?: string;
+                    bio?: string | null;
+                    pronouns?: string | null;
+                    avatarFileId?: string | null;
+                    bannerFileId?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    listBotApplications: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        bots: {
+                            /** Format: uuid */
+                            botUserId: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            description: string | null;
+                            /** Format: uuid */
+                            id: string;
+                            isPublic: boolean;
+                            name: string;
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    createBotApplication: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    description?: string;
+                    handle: string;
+                    name: string;
+                    scopes: ("messages:read" | "messages:write" | "servers:read" | "servers:write" | "members:read" | "members:write" | "channels:read" | "channels:write" | "roles:read" | "roles:write" | "users:read" | "users:write")[];
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        bot: {
+                            /** Format: uuid */
+                            botUserId: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            description: string | null;
+                            /** Format: uuid */
+                            id: string;
+                            isPublic: boolean;
+                            name: string;
+                        };
+                        /** @description Shown once. Store this credential securely. */
+                        token: string;
+                    };
+                };
+            };
+            /** @description Default Response */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getPublicBot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                botId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        botUserId: string;
+                        /** Format: date-time */
+                        createdAt: string;
+                        description: string | null;
+                        /** Format: uuid */
+                        id: string;
+                        isPublic: boolean;
+                        name: string;
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    updateBotApplication: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                botId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    description?: string | null;
+                    isPublic?: boolean;
+                    name?: string;
+                    avatarFileId?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** Format: uuid */
+                        botUserId: string;
+                        /** Format: date-time */
+                        createdAt: string;
+                        description: string | null;
+                        /** Format: uuid */
+                        id: string;
+                        isPublic: boolean;
+                        name: string;
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    rotateBotToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                botId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    scopes: ("messages:read" | "messages:write" | "servers:read" | "servers:write" | "members:read" | "members:write" | "channels:read" | "channels:write" | "roles:read" | "roles:write" | "users:read" | "users:write")[];
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        token: string;
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    revokeBotToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                botId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        revoked: boolean;
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    installBotApplication: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                botId: string;
+                serverId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        installed: boolean;
+                        /** Format: uuid */
+                        memberId: string;
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2693,6 +3415,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         archivedAt: string | null;
+                        flags: number;
                         /** Format: uuid */
                         id: string;
                         name: string;
@@ -2814,6 +3537,7 @@ export interface operations {
                     "application/json": {
                         channels: {
                             archivedAt: string | null;
+                            flags: number;
                             /** Format: uuid */
                             id: string;
                             name: string;
@@ -3538,6 +4262,7 @@ export interface operations {
                     "application/json": {
                         channels: {
                             archivedAt: string | null;
+                            flags: number;
                             /** Format: uuid */
                             id: string;
                             name: string;
@@ -3577,6 +4302,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         archivedAt: string | null;
+                        flags: number;
                         /** Format: uuid */
                         id: string;
                         name: string;
@@ -3648,6 +4374,241 @@ export interface operations {
             };
         };
     };
+    getKeyTransparencyConsistencyProof: {
+        parameters: {
+            query: {
+                fromSize: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        checkpoint: {
+                            /** Format: date-time */
+                            createdAt: string;
+                            rootHash: string;
+                            signature: string;
+                            size: number;
+                        };
+                        consistencyProof: string[];
+                        fromSize: number;
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    publishKeyBundle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    identityKey: string;
+                    oneTimePrekeys: {
+                        keyId: number;
+                        publicKey: string;
+                    }[];
+                    signedPrekey: {
+                        keyId: number;
+                        publicKey: string;
+                    } & {
+                        signature: string;
+                    };
+                    version: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        checkpoint: {
+                            /** Format: date-time */
+                            createdAt: string;
+                            rootHash: string;
+                            signature: string;
+                            size: number;
+                        };
+                        leafIndex: number;
+                    };
+                };
+            };
+            /** @description Default Response */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    consumePrekeyBundle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                deviceId: string;
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        bundle: {
+                            /** Format: uuid */
+                            deviceId: string;
+                            identityKey: string;
+                            oneTimePrekey: {
+                                keyId: number;
+                                publicKey: string;
+                            } | null;
+                            signedPrekey: {
+                                keyId: number;
+                                publicKey: string;
+                            } & {
+                                signature: string;
+                                version: number;
+                            };
+                            /** Format: uuid */
+                            userId: string;
+                            version: number;
+                        };
+                        checkpoint: {
+                            /** Format: date-time */
+                            createdAt: string;
+                            rootHash: string;
+                            signature: string;
+                            size: number;
+                        };
+                        inclusionProof: string[];
+                        leafIndex: number;
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    rotateEncryptionSessions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    conversationIds: string[];
+                    reason: "device_compromise" | "membership_changed";
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        rotated: number;
+                    };
+                };
+            };
+        };
+    };
     initiateFileUpload: {
         parameters: {
             query?: never;
@@ -3658,8 +4619,11 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    mimeType: string;
-                    originalName: string;
+                    chunkSizeBytes?: number;
+                    /** @enum {string} */
+                    encryptionMode?: "e2ee-v1";
+                    mimeType?: string;
+                    originalName?: string;
                     purpose: "attachment" | "avatar" | "banner" | "server_icon" | "emoji";
                     /** Format: uuid */
                     serverId?: string;
@@ -3840,6 +4804,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        encryptionMode: "none" | "e2ee-v1";
                         /** Format: date-time */
                         createdAt: string;
                         durationMs: number | null;
@@ -4074,6 +5039,137 @@ export interface operations {
                         status: "ok" | "degraded";
                         /** Format: date-time */
                         timestamp: string;
+                    };
+                };
+            };
+        };
+    };
+    getCurrentUserKeyBackup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        backup: {
+                            /** @enum {string} */
+                            aead: "aes-256-gcm";
+                            ciphertext: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: uuid */
+                            deviceId: string;
+                            identityKeyFingerprint: string;
+                            kdf: {
+                                /** @enum {string} */
+                                algorithm: "argon2id";
+                                iterations: number;
+                                memoryKiB: number;
+                                parallelism: number;
+                                salt: string;
+                            };
+                            nonce: string;
+                            previousDigest: string | null;
+                            version: number;
+                        } | null;
+                        latestVersion: number;
+                    };
+                };
+            };
+        };
+    };
+    putCurrentUserKeyBackup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    aead: "aes-256-gcm";
+                    ciphertext: string;
+                    /** Format: date-time */
+                    createdAt: string;
+                    /** Format: uuid */
+                    deviceId: string;
+                    identityKeyFingerprint: string;
+                    kdf: {
+                        /** @enum {string} */
+                        algorithm: "argon2id";
+                        iterations: number;
+                        memoryKiB: number;
+                        parallelism: number;
+                        salt: string;
+                    };
+                    nonce: string;
+                    previousDigest: string | null;
+                    version: number;
+                } & {
+                    expectedPreviousVersion: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        backup: {
+                            /** @enum {string} */
+                            aead: "aes-256-gcm";
+                            ciphertext: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: uuid */
+                            deviceId: string;
+                            identityKeyFingerprint: string;
+                            kdf: {
+                                /** @enum {string} */
+                                algorithm: "argon2id";
+                                iterations: number;
+                                memoryKiB: number;
+                                parallelism: number;
+                                salt: string;
+                            };
+                            nonce: string;
+                            previousDigest: string | null;
+                            version: number;
+                        } | null;
+                        latestVersion: number;
+                    };
+                };
+            };
+            /** @description Default Response */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
                     };
                 };
             };
@@ -4849,6 +5945,11 @@ export interface operations {
                 content: {
                     "application/json": {
                         messages: {
+                            attachmentEnvelopes: {
+                                envelope: string;
+                                /** Format: uuid */
+                                fileId: string;
+                            }[];
                             attachmentIds: string[];
                             author: {
                                 avatarUrl: string | null;
@@ -4863,7 +5964,18 @@ export interface operations {
                             authorId: string | null;
                             /** Format: uuid */
                             channelId: string;
-                            content: string;
+                            envelope: {
+                                authenticationTag: string;
+                                ciphertext: string;
+                                contentType: string;
+                                epoch: number;
+                                nonce: string;
+                                /** @enum {number} */
+                                protocolVersion: 1;
+                                /** Format: uuid */
+                                senderDeviceId: string;
+                            } | null;
+                            migrationState: "encrypted" | "legacy_unconvertible";
                             /** Format: date-time */
                             createdAt: string;
                             deletedAt: string | null;
@@ -4931,9 +6043,22 @@ export interface operations {
             content: {
                 "application/json": {
                     attachmentIds?: string[];
+                    attachmentEnvelopes?: {
+                        [key: string]: string;
+                    };
                     /** Format: uuid */
                     clientNonce: string;
-                    content: string;
+                    envelope: {
+                        authenticationTag: string;
+                        ciphertext: string;
+                        contentType: string;
+                        epoch: number;
+                        nonce: string;
+                        /** @enum {number} */
+                        protocolVersion: 1;
+                        /** Format: uuid */
+                        senderDeviceId: string;
+                    };
                     /** Format: uuid */
                     replyToMessageId?: string;
                 };
@@ -4947,6 +6072,11 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        attachmentEnvelopes: {
+                            envelope: string;
+                            /** Format: uuid */
+                            fileId: string;
+                        }[];
                         attachmentIds: string[];
                         author: {
                             avatarUrl: string | null;
@@ -4961,7 +6091,18 @@ export interface operations {
                         authorId: string | null;
                         /** Format: uuid */
                         channelId: string;
-                        content: string;
+                        envelope: {
+                            authenticationTag: string;
+                            ciphertext: string;
+                            contentType: string;
+                            epoch: number;
+                            nonce: string;
+                            /** @enum {number} */
+                            protocolVersion: 1;
+                            /** Format: uuid */
+                            senderDeviceId: string;
+                        } | null;
+                        migrationState: "encrypted" | "legacy_unconvertible";
                         /** Format: date-time */
                         createdAt: string;
                         deletedAt: string | null;
@@ -5088,7 +6229,17 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
-                    content: string;
+                    envelope: {
+                        authenticationTag: string;
+                        ciphertext: string;
+                        contentType: string;
+                        epoch: number;
+                        nonce: string;
+                        /** @enum {number} */
+                        protocolVersion: 1;
+                        /** Format: uuid */
+                        senderDeviceId: string;
+                    };
                 };
             };
         };
@@ -5100,6 +6251,11 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        attachmentEnvelopes: {
+                            envelope: string;
+                            /** Format: uuid */
+                            fileId: string;
+                        }[];
                         attachmentIds: string[];
                         author: {
                             avatarUrl: string | null;
@@ -5114,7 +6270,18 @@ export interface operations {
                         authorId: string | null;
                         /** Format: uuid */
                         channelId: string;
-                        content: string;
+                        envelope: {
+                            authenticationTag: string;
+                            ciphertext: string;
+                            contentType: string;
+                            epoch: number;
+                            nonce: string;
+                            /** @enum {number} */
+                            protocolVersion: 1;
+                            /** Format: uuid */
+                            senderDeviceId: string;
+                        } | null;
+                        migrationState: "encrypted" | "legacy_unconvertible";
                         /** Format: date-time */
                         createdAt: string;
                         deletedAt: string | null;
@@ -5449,6 +6616,36 @@ export interface operations {
                 "application/json": {
                     category: string;
                     description?: string;
+                    encryptedEvidence?: {
+                        context: {
+                            /** Format: uuid */
+                            authorId: string;
+                            /** Format: uuid */
+                            channelId: string;
+                            content: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: uuid */
+                            id: string;
+                        }[];
+                        cryptographicMaterial: {
+                            /** @enum {string} */
+                            algorithm: "Ed25519";
+                            authorPublicKey: string;
+                            signature: string;
+                        };
+                        message: {
+                            /** Format: uuid */
+                            authorId: string;
+                            /** Format: uuid */
+                            channelId: string;
+                            content: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: uuid */
+                            id: string;
+                        };
+                    };
                     /** Format: uuid */
                     serverId?: string;
                     /** Format: uuid */
@@ -5470,6 +6667,39 @@ export interface operations {
                         /** Format: date-time */
                         createdAt: string;
                         description: string | null;
+                        encryptedEvidence: {
+                            authorKeyFingerprint: string;
+                            context: {
+                                /** Format: uuid */
+                                authorId: string;
+                                /** Format: uuid */
+                                channelId: string;
+                                content: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: uuid */
+                                id: string;
+                            }[];
+                            cryptographicMaterial: {
+                                /** @enum {string} */
+                                algorithm: "Ed25519";
+                                authorPublicKey: string;
+                                signature: string;
+                            };
+                            message: {
+                                /** Format: uuid */
+                                authorId: string;
+                                /** Format: uuid */
+                                channelId: string;
+                                content: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: uuid */
+                                id: string;
+                            };
+                            /** @enum {string} */
+                            verification: "signature_valid";
+                        } | null;
                         /** Format: uuid */
                         id: string;
                         /** Format: uuid */
@@ -5534,6 +6764,39 @@ export interface operations {
                             /** Format: date-time */
                             createdAt: string;
                             description: string | null;
+                            encryptedEvidence: {
+                                authorKeyFingerprint: string;
+                                context: {
+                                    /** Format: uuid */
+                                    authorId: string;
+                                    /** Format: uuid */
+                                    channelId: string;
+                                    content: string;
+                                    /** Format: date-time */
+                                    createdAt: string;
+                                    /** Format: uuid */
+                                    id: string;
+                                }[];
+                                cryptographicMaterial: {
+                                    /** @enum {string} */
+                                    algorithm: "Ed25519";
+                                    authorPublicKey: string;
+                                    signature: string;
+                                };
+                                message: {
+                                    /** Format: uuid */
+                                    authorId: string;
+                                    /** Format: uuid */
+                                    channelId: string;
+                                    content: string;
+                                    /** Format: date-time */
+                                    createdAt: string;
+                                    /** Format: uuid */
+                                    id: string;
+                                };
+                                /** @enum {string} */
+                                verification: "signature_valid";
+                            } | null;
                             /** Format: uuid */
                             id: string;
                             /** Format: uuid */
@@ -5586,6 +6849,39 @@ export interface operations {
                         /** Format: date-time */
                         createdAt: string;
                         description: string | null;
+                        encryptedEvidence: {
+                            authorKeyFingerprint: string;
+                            context: {
+                                /** Format: uuid */
+                                authorId: string;
+                                /** Format: uuid */
+                                channelId: string;
+                                content: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: uuid */
+                                id: string;
+                            }[];
+                            cryptographicMaterial: {
+                                /** @enum {string} */
+                                algorithm: "Ed25519";
+                                authorPublicKey: string;
+                                signature: string;
+                            };
+                            message: {
+                                /** Format: uuid */
+                                authorId: string;
+                                /** Format: uuid */
+                                channelId: string;
+                                content: string;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: uuid */
+                                id: string;
+                            };
+                            /** @enum {string} */
+                            verification: "signature_valid";
+                        } | null;
                         /** Format: uuid */
                         id: string;
                         /** Format: uuid */
@@ -5943,6 +7239,7 @@ export interface operations {
                             enabled: boolean;
                             /** Format: uuid */
                             id: string;
+                            enforcementScope: "metadata" | "plaintext";
                             name: string;
                             /** Format: uuid */
                             serverId: string;
@@ -5994,6 +7291,7 @@ export interface operations {
                         enabled: boolean;
                         /** Format: uuid */
                         id: string;
+                        enforcementScope: "metadata" | "plaintext";
                         name: string;
                         /** Format: uuid */
                         serverId: string;
@@ -6073,6 +7371,7 @@ export interface operations {
                         enabled: boolean;
                         /** Format: uuid */
                         id: string;
+                        enforcementScope: "metadata" | "plaintext";
                         name: string;
                         /** Format: uuid */
                         serverId: string;
@@ -6448,6 +7747,24 @@ export interface operations {
             };
         };
     };
+    syncSearchIndexes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     createServer: {
         parameters: {
             query?: never;
@@ -6587,6 +7904,7 @@ export interface operations {
                     "application/json": {
                         channels: {
                             archivedAt: string | null;
+                            flags: number;
                             /** Format: uuid */
                             id: string;
                             name: string;
@@ -6614,6 +7932,7 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    encrypted?: boolean;
                     name: string;
                     /** Format: uuid */
                     parentId?: string;
@@ -6632,6 +7951,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         archivedAt: string | null;
+                        flags: number;
                         /** Format: uuid */
                         id: string;
                         name: string;
@@ -6835,6 +8155,232 @@ export interface operations {
                         };
                     };
                 };
+            };
+        };
+    };
+    getUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        avatarUrl: string | null;
+                        /** Format: date-time */
+                        createdAt: string;
+                        displayName: string;
+                        handle: string;
+                        /** Format: uuid */
+                        id: string;
+                        status: "active" | "disabled" | "pending_deletion";
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    getUserSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        allowDmsFrom: "everyone" | "friends" | "server_members" | "nobody";
+                        customStatus: string | null;
+                        customStatusExpiresAt: string | null;
+                        discoverability: "everyone" | "friends";
+                        locale: string;
+                        manualStatus: "online" | "idle" | "dnd" | "invisible";
+                        presenceVisibility: "everyone" | "friends" | "nobody";
+                        theme: "system" | "light" | "dark";
+                        timezone: string;
+                    };
+                };
+            };
+        };
+    };
+    updateUserSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    allowDmsFrom?: "everyone" | "friends" | "server_members" | "nobody";
+                    customStatus?: string | null;
+                    customStatusExpiresAt?: string | null;
+                    discoverability?: "everyone" | "friends";
+                    locale?: string;
+                    manualStatus?: "online" | "idle" | "dnd" | "invisible";
+                    presenceVisibility?: "everyone" | "friends" | "nobody";
+                    theme?: "system" | "light" | "dark";
+                    timezone?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    addPushSubscription: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                deviceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: uri */
+                    endpoint: string;
+                    keys: {
+                        [key: string]: string;
+                    };
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    createRelationship: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    targetId: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    acceptRelationship: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    deleteRelationship: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

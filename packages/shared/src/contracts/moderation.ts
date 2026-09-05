@@ -16,11 +16,42 @@ export const ReportStatusSchema = Type.Union([
   Type.Literal('dismissed'),
 ])
 
+export const ReportedMessageSchema = Type.Object({
+  authorId: IdSchema,
+  channelId: IdSchema,
+  content: Type.String({ maxLength: 16_000 }),
+  createdAt: DateTimeSchema,
+  id: IdSchema,
+})
+
+export const EncryptedReportEvidenceSchema = Type.Object(
+  {
+    context: Type.Array(ReportedMessageSchema, { maxItems: 20 }),
+    cryptographicMaterial: Type.Object({
+      algorithm: Type.Literal('Ed25519'),
+      authorPublicKey: Type.String({ maxLength: 1_024, minLength: 1 }),
+      signature: Type.String({ maxLength: 1_024, minLength: 1 }),
+    }),
+    message: ReportedMessageSchema,
+  },
+  { additionalProperties: false },
+)
+
+export const ReportEvidenceSchema = Type.Object({
+  authorKeyFingerprint: Type.String(),
+  context: Type.Array(ReportedMessageSchema),
+  cryptographicMaterial:
+    EncryptedReportEvidenceSchema.properties.cryptographicMaterial,
+  message: ReportedMessageSchema,
+  verification: Type.Literal('signature_valid'),
+})
+
 export const ReportSchema = Type.Object({
   assignedTo: Type.Union([IdSchema, Type.Null()]),
   category: Type.String(),
   createdAt: DateTimeSchema,
   description: Type.Union([Type.String(), Type.Null()]),
+  encryptedEvidence: Type.Union([ReportEvidenceSchema, Type.Null()]),
   id: IdSchema,
   reporterId: IdSchema,
   resolutionNote: Type.Union([Type.String(), Type.Null()]),
@@ -35,6 +66,7 @@ export const CreateReportBodySchema = Type.Object(
   {
     category: Type.String({ maxLength: 64, minLength: 1 }),
     description: Type.Optional(Type.String({ maxLength: 2_000 })),
+    encryptedEvidence: Type.Optional(EncryptedReportEvidenceSchema),
     serverId: Type.Optional(IdSchema),
     targetId: IdSchema,
     targetType: ReportTargetTypeSchema,
@@ -76,6 +108,10 @@ export const AutomodRuleSchema = Type.Object({
   createdAt: DateTimeSchema,
   enabled: Type.Boolean(),
   id: IdSchema,
+  enforcementScope: Type.Union([
+    Type.Literal('metadata'),
+    Type.Literal('plaintext'),
+  ]),
   name: Type.String(),
   serverId: IdSchema,
   triggerType: AutomodTriggerSchema,

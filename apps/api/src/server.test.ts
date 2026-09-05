@@ -67,7 +67,7 @@ describe('API server', () => {
     expect(
       specification.components?.securitySchemes?.StrafeToken,
     ).toMatchObject({
-      bearerFormat: 'JWT',
+      bearerFormat: 'JWT or Strafe bot token',
       scheme: 'bearer',
       type: 'http',
     })
@@ -77,6 +77,34 @@ describe('API server', () => {
     expect(
       specification.paths?.['/api/auth/login']?.post?.security,
     ).toBeUndefined()
+  })
+
+  it('accepts access tokens signed by the active JWT key', async () => {
+    const accessToken = server.jwt.sign(
+      { typ: 'access' },
+      {
+        expiresIn: 60,
+        key: server.jwtSigningKey.privateKey,
+        kid: server.jwtSigningKey.kid,
+      },
+    )
+
+    const response = await server.inject({
+      headers: { authorization: `Bearer ${accessToken}` },
+      method: 'GET',
+      url: '/api/users/@me',
+    })
+    expect(response.statusCode).toBe(401)
+    expect(response.json().error.message).toBe(
+      'Access token has an invalid payload',
+    )
+
+    await expect(
+      server.authService.verifyAccessToken(accessToken),
+    ).rejects.toMatchObject({
+      message: 'Access token has an invalid payload',
+      statusCode: 401,
+    })
   })
 
   it('publishes the complete community management API', () => {

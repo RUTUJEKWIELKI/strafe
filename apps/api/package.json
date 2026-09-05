@@ -7,6 +7,7 @@
     "build": "pnpm run shared:build && tsc -p tsconfig.json",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx scripts/seed.ts",
     "db:studio": "drizzle-kit studio",
     "dev": "pnpm run shared:build && tsx watch src/index.ts",
     "openapi:generate": "pnpm run shared:build && tsx scripts/generate-openapi.ts",

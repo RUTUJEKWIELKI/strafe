@@ -10,6 +10,7 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
+  boolean,
 } from 'drizzle-orm/pg-core'
 
 export const users = pgTable(
@@ -39,6 +40,55 @@ export const users = pgTable(
     uniqueIndex('users_active_handle_unique')
       .on(table.normalizedHandle)
       .where(sql`${table.deletedAt} is null`),
+  ],
+)
+
+export const botApplications = pgTable(
+  'bot_applications',
+  {
+    botUserId: uuid('bot_user_id')
+      .notNull()
+      .unique()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    description: text('description'),
+    id: uuid('id').primaryKey(),
+    isPublic: boolean('is_public').default(false).notNull(),
+    name: text('name').notNull(),
+    ownerId: uuid('owner_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index('bot_applications_owner_id_idx').on(table.ownerId)],
+)
+
+export const botTokens = pgTable(
+  'bot_tokens',
+  {
+    botId: uuid('bot_id')
+      .notNull()
+      .references(() => botApplications.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }),
+    id: uuid('id').primaryKey(),
+    lastUsedAt: timestamp('last_used_at', { withTimezone: true }),
+    name: text('name').notNull(),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+    scopes: text('scopes').array().notNull(),
+    tokenHash: text('token_hash').notNull(),
+  },
+  (table) => [
+    uniqueIndex('bot_tokens_token_hash_unique').on(table.tokenHash),
+    index('bot_tokens_active_bot_idx')
+      .on(table.botId, table.createdAt)
+      .where(sql`${table.revokedAt} is null`),
   ],
 )
 
@@ -146,6 +196,43 @@ export const userDevices = pgTable(
       .references(() => users.id, { onDelete: 'cascade' }),
   },
   (table) => [index('user_devices_user_id_idx').on(table.userId)],
+)
+
+export const encryptedKeyBackups = pgTable(
+  'encrypted_key_backups',
+  {
+    aead: text('aead').notNull(),
+    ciphertext: text('ciphertext').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
+    deviceId: uuid('device_id').notNull(),
+    identityKeyFingerprint: text('identity_key_fingerprint').notNull(),
+    kdf: jsonb('kdf')
+      .$type<{
+        algorithm: 'argon2id'
+        iterations: number
+        memoryKiB: number
+        parallelism: number
+        salt: string
+      }>()
+      .notNull(),
+    nonce: text('nonce').notNull(),
+    previousDigest: text('previous_digest'),
+    uploadedAt: timestamp('uploaded_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    version: integer('version').notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.version] }),
+    index('encrypted_key_backups_latest_idx').on(
+      table.userId,
+      table.version.desc(),
+    ),
+    check('encrypted_key_backups_version_check', sql`${table.version} > 0`),
+  ],
 )
 
 export const userSessions = pgTable(

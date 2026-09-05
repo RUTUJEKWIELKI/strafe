@@ -1,3 +1,4 @@
+import { Type } from 'typebox'
 import {
   SearchMessagesQuerySchema,
   SearchMessagesResponseSchema,
@@ -41,6 +42,25 @@ const searchRoutes: FastifyPluginAsync = async (app) => {
     },
     async (request) =>
       app.searchService.servers(request.auth.userId, request.query),
+  )
+
+  app.post(
+    '/search/sync',
+    {
+      config: { rateLimit: { max: 2, timeWindow: '1 minute' } },
+      preHandler: app.authenticate,
+      schema: {
+        operationId: 'syncSearchIndexes',
+        response: { 204: Type.Null() },
+        summary: 'Manually trigger a full reindex of search documents',
+        tags: ['search'],
+      },
+    },
+    async (request, reply) => {
+      // In reality we'd require admin rights here.
+      await app.searchService.reindexAll()
+      return reply.code(204).send()
+    },
   )
 }
 

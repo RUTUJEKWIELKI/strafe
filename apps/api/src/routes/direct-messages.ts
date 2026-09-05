@@ -11,6 +11,7 @@ const directMessageRoutes: FastifyPluginAsync = async (app) => {
   app.get(
     '/users/@me/dms',
     {
+      config: { botScopes: ['channels:read'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'listDirectMessages',
@@ -27,7 +28,10 @@ const directMessageRoutes: FastifyPluginAsync = async (app) => {
   app.post<{ Body: CreateDirectMessageBody }>(
     '/users/@me/dms',
     {
-      config: { rateLimit: { max: 20, timeWindow: '1 minute' } },
+      config: {
+        rateLimit: { max: 20, timeWindow: '1 minute' },
+        botScopes: ['messages:write'],
+      },
       preHandler: app.authenticate,
       schema: {
         body: CreateDirectMessageBodySchema,
@@ -49,6 +53,7 @@ const directMessageRoutes: FastifyPluginAsync = async (app) => {
           await app.directMessageService.create(
             request.auth.userId,
             request.body,
+            request.ip,
           ),
         ),
   )

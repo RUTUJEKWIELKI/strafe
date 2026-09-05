@@ -5,6 +5,7 @@ import { CurrentUserSchema } from './users.js'
 
 export const RegisterBodySchema = Type.Object(
   {
+    captchaToken: Type.Optional(Type.String()),
     displayName: Type.String({ maxLength: 64, minLength: 1 }),
     email: Type.String({ format: 'email', maxLength: 320 }),
     handle: Type.String({

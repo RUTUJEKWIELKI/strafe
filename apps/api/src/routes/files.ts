@@ -30,7 +30,10 @@ const fileRoutes: FastifyPluginAsync = async (app) => {
   app.post<{ Body: InitiateFileUploadBody }>(
     '/files/uploads',
     {
-      config: { rateLimit: { max: 30, timeWindow: '1 minute' } },
+      config: {
+        rateLimit: { max: 30, timeWindow: '1 minute' },
+        botScopes: ['messages:write'],
+      },
       preHandler: app.authenticate,
       schema: {
         body: InitiateFileUploadBodySchema,
@@ -58,7 +61,10 @@ const fileRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/files/uploads/:uploadId/parts',
     {
-      config: { rateLimit: { max: 120, timeWindow: '1 minute' } },
+      config: {
+        rateLimit: { max: 120, timeWindow: '1 minute' },
+        botScopes: ['messages:write'],
+      },
       preHandler: app.authenticate,
       schema: {
         body: PresignUploadPartBodySchema,
@@ -83,7 +89,10 @@ const fileRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/files/uploads/:uploadId/complete',
     {
-      config: { rateLimit: { max: 30, timeWindow: '1 minute' } },
+      config: {
+        rateLimit: { max: 30, timeWindow: '1 minute' },
+        botScopes: ['messages:write'],
+      },
       preHandler: app.authenticate,
       schema: {
         body: CompleteFileUploadBodySchema,
@@ -105,6 +114,7 @@ const fileRoutes: FastifyPluginAsync = async (app) => {
   app.delete<{ Params: { uploadId: string } }>(
     '/files/uploads/:uploadId',
     {
+      config: { botScopes: ['messages:write'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'abortFileUpload',
@@ -121,6 +131,7 @@ const fileRoutes: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { fileId: string } }>(
     '/files/:fileId',
     {
+      config: { botScopes: ['messages:read'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'getFile',
@@ -140,7 +151,10 @@ const fileRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/files/:fileId/download',
     {
-      config: { rateLimit: { max: 120, timeWindow: '1 minute' } },
+      config: {
+        rateLimit: { max: 120, timeWindow: '1 minute' },
+        botScopes: ['messages:read'],
+      },
       preHandler: app.authenticate,
       schema: {
         operationId: 'downloadFile',

@@ -1,26 +1,67 @@
 import jwt from '@fastify/jwt'
 import { hash, argon2id } from 'argon2'
-import type { FastifyPluginAsync } from 'fastify'
+import type { FastifyPluginAsync, FastifyRequest } from 'fastify'
 import fp from 'fastify-plugin'
-import { randomBytes } from 'node:crypto'
+import { generateKeyPairSync, randomBytes } from 'node:crypto'
 
 import { strafeTokenSecurityRequirement } from '../lib/strafe-token.js'
 import { AuthService } from '../modules/auth/auth.service.js'
+import { ForbiddenError } from '../lib/errors.js'
+import { loadJwtKeyset, type JwtKeyset } from '../lib/production-security.js'
+
+function ephemeralKeyset(): JwtKeyset {
+  const { privateKey, publicKey } = generateKeyPairSync('rsa', {
+    modulusLength: 2048,
+    privateKeyEncoding: { format: 'pem', type: 'pkcs8' },
+    publicKeyEncoding: { format: 'pem', type: 'spki' },
+  })
+  return {
+    activeKid: 'ephemeral-development',
+    keys: [{ kid: 'ephemeral-development', privateKey, publicKey }],
+  }
+}
 
 const authPlugin: FastifyPluginAsync = async (app) => {
-  if (app.config.NODE_ENV === 'production' && !app.config.AUTH_JWT_SECRET) {
-    throw new Error('AUTH_JWT_SECRET is required in production')
-  }
-
-  const secret =
-    app.config.AUTH_JWT_SECRET ?? randomBytes(48).toString('base64url')
-  if (!app.config.AUTH_JWT_SECRET) {
+  const keyset = app.config.AUTH_JWT_KEYSET_FILE
+    ? await loadJwtKeyset(app.config.AUTH_JWT_KEYSET_FILE)
+    : ephemeralKeyset()
+  if (!app.config.AUTH_JWT_KEYSET_FILE) {
     app.log.warn(
-      'AUTH_JWT_SECRET is not configured; access tokens reset on restart',
+      'JWT keyset is not configured; ephemeral development keys reset on restart',
     )
   }
+  const activeKey = keyset.keys.find((key) => key.kid === keyset.activeKid)!
+  const acceptedKeys = new Map(
+    keyset.keys
+      .filter((key) => !key.retireAt || new Date(key.retireAt) > new Date())
+      .map((key) => [key.kid, key.publicKey]),
+  )
 
-  await app.register(jwt, { secret })
+  await app.register(jwt, {
+    decode: { complete: true },
+    secret: async (
+      _request: FastifyRequest,
+      token: { header?: { kid?: string }; kid?: string },
+    ) => {
+      const header = token.header ?? token
+      const key =
+        typeof header.kid === 'string'
+          ? acceptedKeys.get(header.kid)
+          : undefined
+      if (!key)
+        throw new Error(
+          'JWT kid is unknown or outside its rotation grace period',
+        )
+      return key
+    },
+    sign: { algorithm: 'RS256' },
+    verify: { algorithms: ['RS256'] },
+  })
+  app.decorate('jwtSigningKey', {
+    kid: activeKey.kid,
+    privateKey: activeKey.privateKey!,
+  })
+  app.decorate('jwtVerificationKeys', acceptedKeys)
 
   const dummyPasswordHash = await hash(randomBytes(32), {
     hashLength: 32,
@@ -34,7 +75,24 @@ const authPlugin: FastifyPluginAsync = async (app) => {
   app.decorate('authService', authService)
   app.decorateRequest('auth')
   app.decorate('authenticate', async (request) => {
+    if (request.auth) return
     request.auth = await authService.authenticateRequest(request)
+    if (request.auth.actorType === 'bot') {
+      const requiredScopes = request.routeOptions.config.botScopes
+      if (requiredScopes === undefined) {
+        throw new ForbiddenError(
+          'This endpoint is not available to this bot token',
+        )
+      }
+      if (
+        requiredScopes.length > 0 &&
+        !requiredScopes.some((scope) => request.auth.scopes?.includes(scope))
+      ) {
+        throw new ForbiddenError(
+          'This endpoint is not available to this bot token',
+        )
+      }
+    }
   })
   app.addHook('onRoute', (routeOptions) => {
     const preHandlers = Array.isArray(routeOptions.preHandler)
@@ -51,6 +109,6 @@ const authPlugin: FastifyPluginAsync = async (app) => {
 }
 
 export default fp(authPlugin, {
-  dependencies: ['database'],
+  dependencies: ['bot-service', 'database'],
   name: 'auth',
 })
