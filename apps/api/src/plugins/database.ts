@@ -24,7 +24,7 @@ const databasePlugin: FastifyPluginAsync = async (app) => {
     connectionString: app.config.DATABASE_URL,
     max: app.config.DATABASE_POOL_MAX,
     ...(app.config.DATABASE_SSL === 'require'
-      ? { ssl: { rejectUnauthorized: false } }
+      ? { ssl: { rejectUnauthorized: true } }
       : {}),
   })
 

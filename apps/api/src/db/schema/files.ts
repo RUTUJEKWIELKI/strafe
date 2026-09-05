@@ -21,6 +21,8 @@ export const files = pgTable(
       .defaultNow()
       .notNull(),
     durationMs: integer('duration_ms'),
+    encryptionMode: text('encryption_mode').default('none').notNull(),
+    encryptionChunkSizeBytes: integer('encryption_chunk_size_bytes'),
     height: integer('height'),
     id: uuid('id').primaryKey(),
     mimeType: text('mime_type').notNull(),

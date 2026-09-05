@@ -35,6 +35,7 @@ import {
 function mapChannel(row: typeof channels.$inferSelect): Channel {
   return {
     archivedAt: row.archivedAt?.toISOString() ?? null,
+    flags: row.flags,
     id: row.id,
     name: row.name,
     parentId: row.parentId,

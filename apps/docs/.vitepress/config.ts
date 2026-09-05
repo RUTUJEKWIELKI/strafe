@@ -10,6 +10,14 @@ export default withMermaid(
     description: 'Architecture, API, and contributor documentation for Strafe.',
     head: [
       [
+        'meta',
+        {
+          'http-equiv': 'Content-Security-Policy',
+          content:
+            "default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; manifest-src 'self'",
+        },
+      ],
+      [
         'link',
         { href: `${base}favicon.svg`, rel: 'icon', type: 'image/svg+xml' },
       ],

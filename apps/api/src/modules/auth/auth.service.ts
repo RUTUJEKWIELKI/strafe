@@ -30,6 +30,9 @@ import {
 } from '../../lib/ids.js'
 
 export interface AuthContext {
+  actorType: 'bot' | 'user'
+  botId?: string
+  scopes?: string[]
   sessionId: string
   userId: string
 }
@@ -417,6 +420,20 @@ export class AuthService {
   }
 
   async authenticateRequest(request: FastifyRequest): Promise<AuthContext> {
+    const authorization = request.headers.authorization
+    const token = authorization?.startsWith('Bearer ')
+      ? authorization.slice('Bearer '.length)
+      : undefined
+    if (token?.startsWith('strafe_bot_')) {
+      const bot = await this.#app.botService.authenticate(token)
+      return {
+        actorType: 'bot',
+        botId: bot.botId,
+        scopes: bot.scopes,
+        sessionId: bot.tokenId,
+        userId: bot.userId,
+      }
+    }
     let payload: AccessTokenPayload
     try {
       payload = await request.jwtVerify<AccessTokenPayload>()
@@ -428,9 +445,30 @@ export class AuthService {
   }
 
   async verifyAccessToken(token: string): Promise<AuthContext> {
+    if (token.startsWith('strafe_bot_')) {
+      const bot = await this.#app.botService.authenticate(token)
+      if (!bot.scopes.includes('servers:read')) {
+        throw new UnauthorizedError(
+          'Bot token requires the servers:read scope for gateway access',
+        )
+      }
+      return {
+        actorType: 'bot',
+        botId: bot.botId,
+        scopes: bot.scopes,
+        sessionId: bot.tokenId,
+        userId: bot.userId,
+      }
+    }
     let payload: AccessTokenPayload
     try {
-      payload = this.#app.jwt.verify<AccessTokenPayload>(token)
+      const decoded = this.#app.jwt.decode(token, { complete: true }) as {
+        header?: { kid?: string }
+      } | null
+      const kid = decoded?.header?.kid
+      const key = kid ? this.#app.jwtVerificationKeys.get(kid) : undefined
+      if (!key) throw new Error('JWT signing key is not accepted')
+      payload = this.#app.jwt.verify<AccessTokenPayload>(token, { key })
     } catch {
       throw new UnauthorizedError('Access token is invalid or expired')
     }
@@ -485,7 +523,7 @@ export class AuthService {
       }
     }
 
-    return { sessionId: payload.sid, userId: payload.sub }
+    return { actorType: 'user', sessionId: payload.sid, userId: payload.sub }
   }
 
   async #getUser(userId: string): Promise<UserProjection | null> {
@@ -568,7 +606,11 @@ export class AuthService {
   #signAccessToken(userId: string, sessionId: string): string {
     return this.#app.jwt.sign(
       { sid: sessionId, sub: userId, typ: 'access' },
-      { expiresIn: this.#app.config.AUTH_ACCESS_TTL_SECONDS },
+      {
+        expiresIn: this.#app.config.AUTH_ACCESS_TTL_SECONDS,
+        key: this.#app.jwtSigningKey.privateKey,
+        kid: this.#app.jwtSigningKey.kid,
+      },
     )
   }
 

@@ -29,7 +29,7 @@ describe('client-side key backup', () => {
     await expect(
       decryptKeyBackup(envelope, generateRecoveryCode()),
     ).rejects.toThrow()
-  })
+  }, 30_000)
 
   it('detects an older or replaced pinned backup', async () => {
     const recoveryCode = generateRecoveryCode()

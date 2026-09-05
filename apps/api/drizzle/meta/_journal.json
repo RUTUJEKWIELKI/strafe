@@ -71,6 +71,41 @@
       "when": 1788340000000,
       "tag": "0009_encrypted_key_backups",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1788340000001,
+      "tag": "0009_bot_platform",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1788366530320,
+      "tag": "0010_e2ee_keys",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1788366335619,
+      "tag": "0011_encrypted_message_envelopes",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1788393600000,
+      "tag": "0012_e2ee_files",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1788367027633,
+      "tag": "0013_encrypted_report_evidence",
+      "breakpoints": true
     }
   ]
 }

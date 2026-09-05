@@ -42,6 +42,54 @@ export const users = pgTable(
   ],
 )
 
+export const botApplications = pgTable(
+  'bot_applications',
+  {
+    botUserId: uuid('bot_user_id')
+      .notNull()
+      .unique()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    description: text('description'),
+    id: uuid('id').primaryKey(),
+    name: text('name').notNull(),
+    ownerId: uuid('owner_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index('bot_applications_owner_id_idx').on(table.ownerId)],
+)
+
+export const botTokens = pgTable(
+  'bot_tokens',
+  {
+    botId: uuid('bot_id')
+      .notNull()
+      .references(() => botApplications.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }),
+    id: uuid('id').primaryKey(),
+    lastUsedAt: timestamp('last_used_at', { withTimezone: true }),
+    name: text('name').notNull(),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+    scopes: text('scopes').array().notNull(),
+    tokenHash: text('token_hash').notNull(),
+  },
+  (table) => [
+    uniqueIndex('bot_tokens_token_hash_unique').on(table.tokenHash),
+    index('bot_tokens_active_bot_idx')
+      .on(table.botId, table.createdAt)
+      .where(sql`${table.revokedAt} is null`),
+  ],
+)
+
 export const userProfiles = pgTable('user_profiles', {
   avatarFileId: uuid('avatar_file_id'),
   bannerFileId: uuid('banner_file_id'),

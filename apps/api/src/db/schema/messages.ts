@@ -27,13 +27,22 @@ export const messages = pgTable(
       .notNull()
       .references(() => channels.id, { onDelete: 'cascade' }),
     clientNonce: uuid('client_nonce'),
-    content: text('content').default('').notNull(),
+    authenticationTag: text('authentication_tag'),
+    ciphertext: text('ciphertext'),
+    contentType: text('content_type'),
     createdAt: timestamp('created_at', { withTimezone: true })
       .defaultNow()
       .notNull(),
     deletedAt: timestamp('deleted_at', { withTimezone: true }),
     editedAt: timestamp('edited_at', { withTimezone: true }),
     flags: integer('flags').default(0).notNull(),
+    messageEpoch: integer('message_epoch'),
+    migrationState: text('migration_state')
+      .default('legacy_unconvertible')
+      .notNull(),
+    nonce: text('nonce'),
+    protocolVersion: integer('protocol_version'),
+    senderDeviceId: uuid('sender_device_id'),
     id: uuid('id').primaryKey(),
     replyToMessageId: uuid('reply_to_message_id').references(
       (): AnyPgColumn => messages.id,
@@ -45,6 +54,10 @@ export const messages = pgTable(
     check(
       'messages_type_check',
       sql`${table.type} in ('default', 'system', 'reply', 'thread_starter')`,
+    ),
+    check(
+      'messages_envelope_state_check',
+      sql`(${table.migrationState} = 'legacy_unconvertible' and ${table.ciphertext} is null and ${table.protocolVersion} is null) or (${table.migrationState} = 'encrypted' and ${table.ciphertext} is not null and ${table.protocolVersion} is not null and ${table.authenticationTag} is not null and ${table.contentType} is not null and ${table.messageEpoch} is not null and ${table.nonce} is not null and ${table.senderDeviceId} is not null)`,
     ),
     index('messages_channel_history_idx').on(
       table.channelId,
@@ -67,7 +80,9 @@ export const messages = pgTable(
 export const messageEdits = pgTable(
   'message_edits',
   {
-    content: text('content').notNull(),
+    authenticationTag: text('authentication_tag'),
+    ciphertext: text('ciphertext'),
+    contentType: text('content_type'),
     editedAt: timestamp('edited_at', { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -75,6 +90,11 @@ export const messageEdits = pgTable(
       onDelete: 'set null',
     }),
     id: uuid('id').primaryKey(),
+    messageEpoch: integer('message_epoch'),
+    migrationState: text('migration_state').notNull(),
+    nonce: text('nonce'),
+    protocolVersion: integer('protocol_version'),
+    senderDeviceId: uuid('sender_device_id'),
     messageId: uuid('message_id')
       .notNull()
       .references(() => messages.id, { onDelete: 'cascade' }),
@@ -95,6 +115,7 @@ export const messageAttachments = pgTable(
     fileId: uuid('file_id')
       .notNull()
       .references(() => files.id, { onDelete: 'restrict' }),
+    encryptedEnvelope: text('encrypted_envelope'),
     messageId: uuid('message_id')
       .notNull()
       .references(() => messages.id, { onDelete: 'cascade' }),

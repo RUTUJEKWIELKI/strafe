@@ -49,6 +49,7 @@ const directMessageRoutes: FastifyPluginAsync = async (app) => {
           await app.directMessageService.create(
             request.auth.userId,
             request.body,
+            request.ip,
           ),
         ),
   )
