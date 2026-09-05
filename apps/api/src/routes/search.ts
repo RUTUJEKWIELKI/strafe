@@ -13,7 +13,10 @@ const searchRoutes: FastifyPluginAsync = async (app) => {
   app.get<{ Querystring: SearchMessagesQuery }>(
     '/search/messages',
     {
-      config: { rateLimit: { max: 60, timeWindow: '1 minute' } },
+      config: {
+        rateLimit: { max: 60, timeWindow: '1 minute' },
+        botScopes: ['messages:read'],
+      },
       preHandler: app.authenticate,
       schema: {
         operationId: 'searchMessages',
@@ -30,7 +33,10 @@ const searchRoutes: FastifyPluginAsync = async (app) => {
   app.get<{ Querystring: SearchServersQuery }>(
     '/search/servers',
     {
-      config: { rateLimit: { max: 60, timeWindow: '1 minute' } },
+      config: {
+        rateLimit: { max: 60, timeWindow: '1 minute' },
+        botScopes: ['servers:read'],
+      },
       preHandler: app.authenticate,
       schema: {
         operationId: 'searchServers',

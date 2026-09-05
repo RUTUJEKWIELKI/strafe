@@ -37,6 +37,7 @@ const memberRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/servers/:serverId/members',
     {
+      config: { botScopes: ['members:read'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'listServerMembers',
@@ -64,6 +65,7 @@ const memberRoutes: FastifyPluginAsync = async (app) => {
   app.delete<{ Params: { serverId: string } }>(
     '/servers/:serverId/members/@me',
     {
+      config: { botScopes: ['servers:read'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'leaveServer',
@@ -89,6 +91,7 @@ const memberRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/servers/:serverId/members/:userId/kick',
     {
+      config: { botScopes: ['members:write'] },
       preHandler: app.authenticate,
       schema: {
         body: KickMemberBodySchema,
@@ -117,6 +120,7 @@ const memberRoutes: FastifyPluginAsync = async (app) => {
   app.delete<{ Params: { serverId: string; userId: string } }>(
     '/servers/:serverId/members/:userId/timeout',
     {
+      config: { botScopes: ['members:write'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'clearMemberTimeout',
@@ -142,6 +146,7 @@ const memberRoutes: FastifyPluginAsync = async (app) => {
   app.delete<{ Params: { serverId: string; userId: string } }>(
     '/servers/:serverId/bans/:userId',
     {
+      config: { botScopes: ['members:write'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'unbanServerMember',
@@ -200,6 +205,7 @@ const memberRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/servers/:serverId/members/:userId/timeout',
     {
+      config: { botScopes: ['members:write'] },
       preHandler: app.authenticate,
       schema: {
         body: TimeoutMemberBodySchema,
@@ -230,6 +236,7 @@ const memberRoutes: FastifyPluginAsync = async (app) => {
   }>(
     '/servers/:serverId/members/:userId/ban',
     {
+      config: { botScopes: ['members:write'] },
       preHandler: app.authenticate,
       schema: {
         body: BanMemberBodySchema,

@@ -1,243 +1,4 @@
 export interface paths {
-  '/api/users/@me/sessions': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** List active account devices and sessions */
-    get: operations['listCurrentUserSessions']
-    put?: never
-    post?: never
-    /** Revoke all account sessions */
-    delete: operations['revokeAllCurrentUserSessions']
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/sessions/{sessionId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    /** Revoke one account session */
-    delete: operations['revokeCurrentUserSession']
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/password': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Change the local account password */
-    post: operations['changeCurrentUserPassword']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/auth/password/reset/request': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Request a one-time password reset link */
-    post: operations['requestPasswordReset']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/auth/password/reset/complete': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Consume a reset token and replace the password */
-    post: operations['completePasswordReset']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/email/verification': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Send an email verification link */
-    post: operations['requestEmailVerification']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/auth/email/verify': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Consume an email verification token */
-    post: operations['verifyEmail']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/email/change': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Send a confirmation link to a new email address */
-    post: operations['requestCurrentUserEmailChange']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/auth/email/change/confirm': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Consume a token and safely replace the account email */
-    post: operations['confirmEmailChange']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/security-events': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** List the account security audit trail */
-    get: operations['listCurrentUserSecurityEvents']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/auth/register': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Create a user account and session */
-    post: operations['register']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/auth/login': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Create a session using local credentials */
-    post: operations['login']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/auth/refresh': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Rotate a refresh token and issue a new access token */
-    post: operations['refreshSession']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/auth/logout': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Revoke the current session */
-    post: operations['logout']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/api/users/@me': {
     parameters: {
       query?: never
@@ -245,102 +6,21 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Return the authenticated user */
+    /**
+     * Return the authenticated user
+     * @description **Required Scopes:** None (accessible to any valid bot token)
+     */
     get: operations['getCurrentUser']
     put?: never
     post?: never
     delete?: never
     options?: never
     head?: never
-    /** Update current user profile */
+    /**
+     * Update current user profile
+     * @description **Required Scopes:** `users:write`
+     */
     patch: operations['updateUser']
-    trace?: never
-  }
-  '/api/bots': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** List bot applications owned by the current user */
-    get: operations['listBotApplications']
-    put?: never
-    /** Create a bot identity and its first scoped token */
-    post: operations['createBotApplication']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/bots/public/{botId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get details of a public bot before installation */
-    get: operations['getPublicBot']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/bots/{botId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    /** Update bot application settings (e.g., name, public status) */
-    patch: operations['updateBotApplication']
-    trace?: never
-  }
-  '/api/bots/{botId}/token': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Revoke previous credentials and issue a scoped bot token */
-    post: operations['rotateBotToken']
-    /** Immediately revoke all active credentials for a bot */
-    delete: operations['revokeBotToken']
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/servers/{serverId}/bots/{botId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Install an owned bot identity into an owned server */
-    post: operations['installBotApplication']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
     trace?: never
   }
   '/api/servers/{serverId}': {
@@ -350,15 +30,24 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get a server visible to the current member */
+    /**
+     * Get a server visible to the current member
+     * @description **Required Scopes:** `servers:read`
+     */
     get: operations['getServer']
     put?: never
     post?: never
-    /** Soft-delete a server and deactivate its memberships */
+    /**
+     * Soft-delete a server and deactivate its memberships
+     * @description **Required Scopes:** `servers:write`
+     */
     delete: operations['deleteServer']
     options?: never
     head?: never
-    /** Update server settings using ManageServer permission */
+    /**
+     * Update server settings using ManageServer permission
+     * @description **Required Scopes:** `servers:write`
+     */
     patch: operations['updateServer']
     trace?: never
   }
@@ -371,7 +60,10 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Transfer ownership to another active member */
+    /**
+     * Transfer ownership to another active member
+     * @description **Required Scopes:** `servers:write`
+     */
     post: operations['transferServerOwnership']
     delete?: never
     options?: never
@@ -389,11 +81,17 @@ export interface paths {
     get?: never
     put?: never
     post?: never
-    /** Soft-delete a channel and detach its children */
+    /**
+     * Soft-delete a channel and detach its children
+     * @description **Required Scopes:** `channels:write`
+     */
     delete: operations['deleteChannel']
     options?: never
     head?: never
-    /** Update a server channel without changing its type */
+    /**
+     * Update a server channel without changing its type
+     * @description **Required Scopes:** `channels:write`
+     */
     patch: operations['updateChannel']
     trace?: never
   }
@@ -405,7 +103,10 @@ export interface paths {
       cookie?: never
     }
     get?: never
-    /** Replace the complete channel and category order */
+    /**
+     * Replace the complete channel and category order
+     * @description **Required Scopes:** `channels:write`
+     */
     put: operations['reorderServerChannels']
     post?: never
     delete?: never
@@ -421,7 +122,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** List channel role and member permission overwrites */
+    /**
+     * List channel role and member permission overwrites
+     * @description **Required Scopes:** `roles:read`
+     */
     get: operations['listChannelPermissionOverwrites']
     put?: never
     post?: never
@@ -439,10 +143,16 @@ export interface paths {
       cookie?: never
     }
     get?: never
-    /** Create or replace a channel permission overwrite */
+    /**
+     * Create or replace a channel permission overwrite
+     * @description **Required Scopes:** `roles:write`
+     */
     put: operations['upsertChannelPermissionOverwrite']
     post?: never
-    /** Delete a channel permission overwrite */
+    /**
+     * Delete a channel permission overwrite
+     * @description **Required Scopes:** `roles:write`
+     */
     delete: operations['deleteChannelPermissionOverwrite']
     options?: never
     head?: never
@@ -456,10 +166,16 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** List roles from highest to lowest */
+    /**
+     * List roles from highest to lowest
+     * @description **Required Scopes:** `roles:read`
+     */
     get: operations['listServerRoles']
     put?: never
-    /** Create a role without privilege escalation */
+    /**
+     * Create a role without privilege escalation
+     * @description **Required Scopes:** `roles:write`
+     */
     post: operations['createRole']
     delete?: never
     options?: never
@@ -477,11 +193,17 @@ export interface paths {
     get?: never
     put?: never
     post?: never
-    /** Delete an unmanaged non-default role */
+    /**
+     * Delete an unmanaged non-default role
+     * @description **Required Scopes:** `roles:write`
+     */
     delete: operations['deleteServerRole']
     options?: never
     head?: never
-    /** Update a role without permission escalation */
+    /**
+     * Update a role without permission escalation
+     * @description **Required Scopes:** `roles:write`
+     */
     patch: operations['updateServerRole']
     trace?: never
   }
@@ -493,7 +215,10 @@ export interface paths {
       cookie?: never
     }
     get?: never
-    /** Replace the complete role hierarchy as server owner */
+    /**
+     * Replace the complete role hierarchy as server owner
+     * @description **Required Scopes:** `roles:write`
+     */
     put: operations['reorderServerRoles']
     post?: never
     delete?: never
@@ -509,7 +234,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** List the permission-protected server audit trail */
+    /**
+     * List the permission-protected server audit trail
+     * @description **Required Scopes:** `servers:read`
+     */
     get: operations['listServerAuditLog']
     put?: never
     post?: never
@@ -526,116 +254,17 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** List private conversations for the current user */
+    /**
+     * List private conversations for the current user
+     * @description **Required Scopes:** `channels:read`
+     */
     get: operations['listDirectMessages']
     put?: never
-    /** Create or return a canonical two-user conversation */
+    /**
+     * Create or return a canonical two-user conversation
+     * @description **Required Scopes:** `messages:write`
+     */
     post: operations['createDirectMessage']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/encryption/transparency/consistency': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get: operations['getKeyTransparencyConsistencyProof']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/encryption/keys': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put: operations['publishKeyBundle']
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/encryption/users/{userId}/devices/{deviceId}/prekeys/consume': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post: operations['consumePrekeyBundle']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/encryption/devices/{deviceId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    delete: {
-      parameters: {
-        query?: never
-        header?: never
-        path: {
-          deviceId: string
-        }
-        cookie?: never
-      }
-      requestBody: {
-        content: {
-          'application/json': {
-            reason: string
-          }
-        }
-      }
-      responses: {
-        /** @description Default Response */
-        200: {
-          headers: {
-            [name: string]: unknown
-          }
-          content?: never
-        }
-      }
-    }
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/encryption/sessions/rotate': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post: operations['rotateEncryptionSessions']
     delete?: never
     options?: never
     head?: never
@@ -651,7 +280,10 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Create a quarantined S3 multipart upload */
+    /**
+     * Create a quarantined S3 multipart upload
+     * @description **Required Scopes:** `messages:write`
+     */
     post: operations['initiateFileUpload']
     delete?: never
     options?: never
@@ -668,7 +300,10 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Sign one multipart upload part */
+    /**
+     * Sign one multipart upload part
+     * @description **Required Scopes:** `messages:write`
+     */
     post: operations['presignFileUploadPart']
     delete?: never
     options?: never
@@ -685,7 +320,10 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Complete upload and move the file into quarantine */
+    /**
+     * Complete upload and move the file into quarantine
+     * @description **Required Scopes:** `messages:write`
+     */
     post: operations['completeFileUpload']
     delete?: never
     options?: never
@@ -703,7 +341,10 @@ export interface paths {
     get?: never
     put?: never
     post?: never
-    /** Abort and remove a pending multipart upload */
+    /**
+     * Abort and remove a pending multipart upload
+     * @description **Required Scopes:** `messages:write`
+     */
     delete: operations['abortFileUpload']
     options?: never
     head?: never
@@ -717,12 +358,14 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Return authorized file metadata and processing state */
+    /**
+     * Return authorized file metadata and processing state
+     * @description **Required Scopes:** `messages:read`
+     */
     get: operations['getFile']
     put?: never
     post?: never
-    /** Delete an unused owned file */
-    delete: operations['deleteFile']
+    delete?: never
     options?: never
     head?: never
     patch?: never
@@ -735,78 +378,12 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Create a short authorized download URL */
+    /**
+     * Create a short authorized download URL
+     * @description **Required Scopes:** `messages:read`
+     */
     get: operations['downloadFile']
     put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/files/{fileId}/reprocess': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Retry scanning and processing an owned quarantined file */
-    post: operations['reprocessFile']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/health': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Report service health */
-    get: operations['getHealth']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/health/ready': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Report whether dependencies are ready */
-    get: operations['getReadiness']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/key-backup': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Fetch the latest opaque encrypted key backup */
-    get: operations['getCurrentUserKeyBackup']
-    /** Append an opaque encrypted key backup version */
-    put: operations['putCurrentUserKeyBackup']
     post?: never
     delete?: never
     options?: never
@@ -821,7 +398,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** List active server members using cursor pagination */
+    /**
+     * List active server members using cursor pagination
+     * @description **Required Scopes:** `members:read`
+     */
     get: operations['listServerMembers']
     put?: never
     post?: never
@@ -841,7 +421,10 @@ export interface paths {
     get?: never
     put?: never
     post?: never
-    /** Leave a server after transferring ownership if necessary */
+    /**
+     * Leave a server after transferring ownership if necessary
+     * @description **Required Scopes:** `servers:read`
+     */
     delete: operations['leaveServer']
     options?: never
     head?: never
@@ -857,7 +440,10 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Kick a lower-permission member and record the action */
+    /**
+     * Kick a lower-permission member and record the action
+     * @description **Required Scopes:** `members:write`
+     */
     post: operations['kickServerMember']
     delete?: never
     options?: never
@@ -874,9 +460,15 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Apply a server timeout with a moderation case */
+    /**
+     * Apply a server timeout with a moderation case
+     * @description **Required Scopes:** `members:write`
+     */
     post: operations['timeoutMember']
-    /** Clear an active or stale server timeout */
+    /**
+     * Clear an active or stale server timeout
+     * @description **Required Scopes:** `members:write`
+     */
     delete: operations['clearMemberTimeout']
     options?: never
     head?: never
@@ -893,7 +485,10 @@ export interface paths {
     get?: never
     put?: never
     post?: never
-    /** Remove a server ban and record the action */
+    /**
+     * Remove a server ban and record the action
+     * @description **Required Scopes:** `members:write`
+     */
     delete: operations['unbanServerMember']
     options?: never
     head?: never
@@ -908,7 +503,10 @@ export interface paths {
       cookie?: never
     }
     get?: never
-    /** Replace member roles without permission escalation */
+    /**
+     * Replace member roles without permission escalation
+     * @description **Required Scopes:** `roles:write`
+     */
     put: operations['replaceMemberRoles']
     post?: never
     delete?: never
@@ -926,7 +524,10 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Ban a member atomically and write the audit trail */
+    /**
+     * Ban a member atomically and write the audit trail
+     * @description **Required Scopes:** `members:write`
+     */
     post: operations['banMember']
     delete?: never
     options?: never
@@ -941,10 +542,16 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Read channel history using keyset pagination */
+    /**
+     * Read channel history using keyset pagination
+     * @description **Required Scopes:** `messages:read`
+     */
     get: operations['listMessages']
     put?: never
-    /** Send an idempotent message */
+    /**
+     * Send an idempotent message
+     * @description **Required Scopes:** `messages:write`
+     */
     post: operations['createMessage']
     delete?: never
     options?: never
@@ -962,11 +569,17 @@ export interface paths {
     get?: never
     put?: never
     post?: never
-    /** Replace a message with a stable tombstone */
+    /**
+     * Replace a message with a stable tombstone
+     * @description **Required Scopes:** `messages:write`
+     */
     delete: operations['deleteMessage']
     options?: never
     head?: never
-    /** Edit a message and retain its moderation history */
+    /**
+     * Edit a message and retain its moderation history
+     * @description **Required Scopes:** `messages:write`
+     */
     patch: operations['updateMessage']
     trace?: never
   }
@@ -978,339 +591,17 @@ export interface paths {
       cookie?: never
     }
     get?: never
-    /** Add an idempotent reaction to a message */
+    /**
+     * Add an idempotent reaction to a message
+     * @description **Required Scopes:** `messages:write`
+     */
     put: operations['addMessageReaction']
     post?: never
-    /** Remove the current user reaction */
+    /**
+     * Remove the current user reaction
+     * @description **Required Scopes:** `messages:write`
+     */
     delete: operations['removeMessageReaction']
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/channels/{channelId}/read-state': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    /** Move the current user read cursor atomically */
-    put: operations['markChannelRead']
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/reports': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Report visible content, a user or a community */
-    post: operations['createReport']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/servers/{serverId}/reports': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** List the server moderation report queue */
-    get: operations['listServerReports']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/servers/{serverId}/reports/{reportId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    /** Assign, review or resolve a report */
-    patch: operations['updateServerReport']
-    trace?: never
-  }
-  '/api/servers/{serverId}/moderation/cases': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** List complete server moderation history */
-    get: operations['listModerationCases']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/servers/{serverId}/moderation/cases/{caseId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get a moderation case with actions and appeals */
-    get: operations['getModerationCase']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/moderation/appeals': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** List the current user moderation appeal history */
-    get: operations['listCurrentUserModerationAppeals']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/moderation/cases/{caseId}/appeals': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Appeal a moderation case concerning the current user */
-    post: operations['createModerationAppeal']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/servers/{serverId}/moderation/appeals/{appealId}/decision': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Accept or reject a moderation appeal */
-    post: operations['decideModerationAppeal']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/blocks': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** List blocked users */
-    get: operations['listCurrentUserBlocks']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/blocks/{userId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    /** Block a user and prevent direct interaction */
-    put: operations['blockUser']
-    post?: never
-    /** Remove a user block */
-    delete: operations['unblockUser']
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/servers/{serverId}/automod/rules': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** List server automod rules */
-    get: operations['listAutomodRules']
-    put?: never
-    /** Create a validated server automod rule */
-    post: operations['createAutomodRule']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/servers/{serverId}/automod/rules/{ruleId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    /** Delete a server automod rule */
-    delete: operations['deleteAutomodRule']
-    options?: never
-    head?: never
-    /** Update a server automod rule */
-    patch: operations['updateAutomodRule']
-    trace?: never
-  }
-  '/api/users/@me/notifications': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** List the current user notification inbox */
-    get: operations['listNotifications']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/notifications/{notificationId}/read': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Mark one notification as read */
-    post: operations['markNotificationRead']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/notifications/read-all': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Mark every current user notification as read */
-    post: operations['markAllNotificationsRead']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/notification-preferences': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** List notification delivery and mute preferences */
-    get: operations['listNotificationPreferences']
-    /** Create or replace a scoped notification preference */
-    put: operations['upsertNotificationPreference']
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/push-subscriptions': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** List current user web push subscriptions */
-    get: operations['listPushSubscriptions']
-    put?: never
-    /** Register or rotate a web push subscription */
-    post: operations['createPushSubscription']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/push-subscriptions/{subscriptionId}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    /** Revoke a web push subscription */
-    delete: operations['deletePushSubscription']
     options?: never
     head?: never
     patch?: never
@@ -1323,7 +614,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Search only messages visible to the current user */
+    /**
+     * Search only messages visible to the current user
+     * @description **Required Scopes:** `messages:read`
+     */
     get: operations['searchMessages']
     put?: never
     post?: never
@@ -1340,44 +634,13 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Search public and joined communities */
+    /**
+     * Search public and joined communities
+     * @description **Required Scopes:** `servers:read`
+     */
     get: operations['searchServers']
     put?: never
     post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/search/sync': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Manually trigger a full reindex of search documents */
-    post: operations['syncSearchIndexes']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/servers': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Create a server with default text and voice channels */
-    post: operations['createServer']
     delete?: never
     options?: never
     head?: never
@@ -1391,7 +654,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** List servers joined by the authenticated user */
+    /**
+     * List servers joined by the authenticated user
+     * @description **Required Scopes:** `servers:read`
+     */
     get: operations['listCurrentUserServers']
     put?: never
     post?: never
@@ -1408,45 +674,17 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** List channels visible to the current member */
+    /**
+     * List channels visible to the current member
+     * @description **Required Scopes:** `channels:read`
+     */
     get: operations['listServerChannels']
     put?: never
-    /** Create a channel using server role permissions */
+    /**
+     * Create a channel using server role permissions
+     * @description **Required Scopes:** `channels:write`
+     */
     post: operations['createChannel']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/servers/{serverId}/invites': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Create a hashed, optionally expiring server invite */
-    post: operations['createInvite']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/invites/{code}/join': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Join a server using an invite in one locked transaction */
-    post: operations['joinServerInvite']
     delete?: never
     options?: never
     head?: never
@@ -1460,97 +698,14 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Get public user profile */
+    /**
+     * Get public user profile
+     * @description **Required Scopes:** `users:read`
+     */
     get: operations['getUser']
     put?: never
     post?: never
     delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/settings': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get user settings */
-    get: operations['getUserSettings']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    /** Update user settings */
-    patch: operations['updateUserSettings']
-    trace?: never
-  }
-  '/api/users/@me/devices/{deviceId}/push-subscription': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Add a Web Push subscription for this device */
-    post: operations['addPushSubscription']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/relationships': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** Send a friend request */
-    post: operations['createRelationship']
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/relationships/{id}/accept': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    /** Accept a friend request */
-    put: operations['acceptRelationship']
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  '/api/users/@me/relationships/{id}': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post?: never
-    /** Delete or decline a friend request */
-    delete: operations['deleteRelationship']
     options?: never
     head?: never
     patch?: never
@@ -1565,7 +720,10 @@ export interface paths {
     }
     get?: never
     put?: never
-    /** Issue a short-lived LiveKit token after permission checks */
+    /**
+     * Issue a short-lived LiveKit token after permission checks
+     * @description **Required Scopes:** `channels:read`
+     */
     post: operations['createVoiceToken']
     delete?: never
     options?: never
@@ -1585,869 +743,6 @@ export interface components {
 }
 export type $defs = Record<string, never>
 export interface operations {
-  listCurrentUserSessions: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            sessions: {
-              city: string | null
-              countryCode: string | null
-              /** Format: date-time */
-              createdAt: string
-              current: boolean
-              device: {
-                /** Format: uuid */
-                id: string
-                name: string
-                platform: string
-                trustedAt: string | null
-              }
-              /** Format: date-time */
-              expiresAt: string
-              /** Format: uuid */
-              id: string
-              ipAddress: string | null
-              /** Format: date-time */
-              lastSeenAt: string
-              userAgent: string | null
-            }[]
-          }
-        }
-      }
-    }
-  }
-  revokeAllCurrentUserSessions: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          keepCurrent?: boolean
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            revoked: number
-          }
-        }
-      }
-    }
-  }
-  revokeCurrentUserSession: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        sessionId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            revoked: number
-          }
-        }
-      }
-      /** @description Default Response */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  changeCurrentUserPassword: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          currentPassword: string
-          newPassword: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            revokedSessions: number
-            /** @enum {boolean} */
-            updated: true
-          }
-        }
-      }
-      /** @description Default Response */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  requestPasswordReset: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          /** Format: email */
-          email: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      202: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** @enum {boolean} */
-            accepted: true
-            testToken?: string
-          }
-        }
-      }
-    }
-  }
-  completePasswordReset: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          newPassword: string
-          token: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** @enum {boolean} */
-            accepted: true
-            testToken?: string
-          }
-        }
-      }
-      /** @description Default Response */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  requestEmailVerification: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      202: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** @enum {boolean} */
-            accepted: true
-            testToken?: string
-          }
-        }
-      }
-      /** @description Default Response */
-      503: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  verifyEmail: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          token: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** @enum {boolean} */
-            accepted: true
-            testToken?: string
-          }
-        }
-      }
-    }
-  }
-  requestCurrentUserEmailChange: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          /** Format: email */
-          newEmail: string
-          password: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      202: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** @enum {boolean} */
-            accepted: true
-            testToken?: string
-          }
-        }
-      }
-      /** @description Default Response */
-      409: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      503: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  confirmEmailChange: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          token: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** @enum {boolean} */
-            accepted: true
-            testToken?: string
-          }
-        }
-      }
-      /** @description Default Response */
-      409: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  listCurrentUserSecurityEvents: {
-    parameters: {
-      query?: {
-        before?: string
-        limit?: number
-      }
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            events: {
-              action: string
-              /** Format: date-time */
-              createdAt: string
-              /** Format: uuid */
-              id: string
-              metadata: {
-                [key: string]: unknown
-              }
-            }[]
-            nextCursor: string | null
-          }
-        }
-      }
-    }
-  }
-  register: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          captchaToken?: string
-          displayName: string
-          /** Format: email */
-          email: string
-          handle: string
-          password: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            tokens: {
-              accessToken: string
-              /** Format: date-time */
-              accessTokenExpiresAt: string
-              refreshToken: string
-              /** Format: date-time */
-              refreshTokenExpiresAt: string
-              /** Format: uuid */
-              deviceId: string
-              /** Format: uuid */
-              sessionId: string
-              /** @enum {string} */
-              tokenType: 'Bearer'
-            }
-            /** CurrentUser */
-            user: {
-              avatarUrl: string | null
-              /** Format: date-time */
-              createdAt: string
-              displayName: string
-              handle: string
-              /** Format: uuid */
-              id: string
-              status: 'active' | 'disabled' | 'pending_deletion'
-            } & {
-              /** Format: email */
-              email: string
-              emailVerified: boolean
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      409: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      503: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  login: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          /** Format: email */
-          email: string
-          password: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            tokens: {
-              accessToken: string
-              /** Format: date-time */
-              accessTokenExpiresAt: string
-              refreshToken: string
-              /** Format: date-time */
-              refreshTokenExpiresAt: string
-              /** Format: uuid */
-              deviceId: string
-              /** Format: uuid */
-              sessionId: string
-              /** @enum {string} */
-              tokenType: 'Bearer'
-            }
-            user: {
-              avatarUrl: string | null
-              /** Format: date-time */
-              createdAt: string
-              displayName: string
-              handle: string
-              /** Format: uuid */
-              id: string
-              status: 'active' | 'disabled' | 'pending_deletion'
-            } & {
-              /** Format: email */
-              email: string
-              emailVerified: boolean
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      503: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  refreshSession: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          refreshToken: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            tokens: {
-              accessToken: string
-              /** Format: date-time */
-              accessTokenExpiresAt: string
-              refreshToken: string
-              /** Format: date-time */
-              refreshTokenExpiresAt: string
-              /** Format: uuid */
-              deviceId: string
-              /** Format: uuid */
-              sessionId: string
-              /** @enum {string} */
-              tokenType: 'Bearer'
-            }
-            user: {
-              avatarUrl: string | null
-              /** Format: date-time */
-              createdAt: string
-              displayName: string
-              handle: string
-              /** Format: uuid */
-              id: string
-              status: 'active' | 'disabled' | 'pending_deletion'
-            } & {
-              /** Format: email */
-              email: string
-              emailVerified: boolean
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      503: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  logout: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          refreshToken?: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            revoked: boolean
-          }
-        }
-      }
-      /** @description Default Response */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
   getCurrentUser: {
     parameters: {
       query?: never
@@ -2525,394 +820,6 @@ export interface operations {
           [name: string]: unknown
         }
         content?: never
-      }
-    }
-  }
-  listBotApplications: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            bots: {
-              /** Format: uuid */
-              botUserId: string
-              /** Format: date-time */
-              createdAt: string
-              description: string | null
-              /** Format: uuid */
-              id: string
-              isPublic: boolean
-              name: string
-            }[]
-          }
-        }
-      }
-    }
-  }
-  createBotApplication: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          description?: string
-          handle: string
-          name: string
-          scopes: (
-            | 'messages:read'
-            | 'messages:write'
-            | 'servers:read'
-            | 'servers:write'
-            | 'members:read'
-            | 'members:write'
-            | 'channels:read'
-            | 'channels:write'
-            | 'roles:read'
-            | 'roles:write'
-            | 'users:read'
-            | 'users:write'
-          )[]
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            bot: {
-              /** Format: uuid */
-              botUserId: string
-              /** Format: date-time */
-              createdAt: string
-              description: string | null
-              /** Format: uuid */
-              id: string
-              isPublic: boolean
-              name: string
-            }
-            /** @description Shown once. Store this credential securely. */
-            token: string
-          }
-        }
-      }
-      /** @description Default Response */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      409: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  getPublicBot: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        botId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** Format: uuid */
-            botUserId: string
-            /** Format: date-time */
-            createdAt: string
-            description: string | null
-            /** Format: uuid */
-            id: string
-            isPublic: boolean
-            name: string
-          }
-        }
-      }
-      /** @description Default Response */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  updateBotApplication: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        botId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          description?: string | null
-          isPublic?: boolean
-          name?: string
-          avatarFileId?: string | null
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** Format: uuid */
-            botUserId: string
-            /** Format: date-time */
-            createdAt: string
-            description: string | null
-            /** Format: uuid */
-            id: string
-            isPublic: boolean
-            name: string
-          }
-        }
-      }
-      /** @description Default Response */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  rotateBotToken: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        botId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          scopes: (
-            | 'messages:read'
-            | 'messages:write'
-            | 'servers:read'
-            | 'servers:write'
-            | 'members:read'
-            | 'members:write'
-            | 'channels:read'
-            | 'channels:write'
-            | 'roles:read'
-            | 'roles:write'
-            | 'users:read'
-            | 'users:write'
-          )[]
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            token: string
-          }
-        }
-      }
-      /** @description Default Response */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  revokeBotToken: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        botId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            revoked: boolean
-          }
-        }
-      }
-      /** @description Default Response */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  installBotApplication: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        botId: string
-        serverId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            installed: boolean
-            /** Format: uuid */
-            memberId: string
-          }
-        }
-      }
-      /** @description Default Response */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
       }
     }
   }
@@ -4440,241 +2347,6 @@ export interface operations {
       }
     }
   }
-  getKeyTransparencyConsistencyProof: {
-    parameters: {
-      query: {
-        fromSize: number
-      }
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            checkpoint: {
-              /** Format: date-time */
-              createdAt: string
-              rootHash: string
-              signature: string
-              size: number
-            }
-            consistencyProof: string[]
-            fromSize: number
-          }
-        }
-      }
-      /** @description Default Response */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  publishKeyBundle: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          identityKey: string
-          oneTimePrekeys: {
-            keyId: number
-            publicKey: string
-          }[]
-          signedPrekey: {
-            keyId: number
-            publicKey: string
-          } & {
-            signature: string
-          }
-          version: number
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            checkpoint: {
-              /** Format: date-time */
-              createdAt: string
-              rootHash: string
-              signature: string
-              size: number
-            }
-            leafIndex: number
-          }
-        }
-      }
-      /** @description Default Response */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      409: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  consumePrekeyBundle: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        deviceId: string
-        userId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            bundle: {
-              /** Format: uuid */
-              deviceId: string
-              identityKey: string
-              oneTimePrekey: {
-                keyId: number
-                publicKey: string
-              } | null
-              signedPrekey: {
-                keyId: number
-                publicKey: string
-              } & {
-                signature: string
-                version: number
-              }
-              /** Format: uuid */
-              userId: string
-              version: number
-            }
-            checkpoint: {
-              /** Format: date-time */
-              createdAt: string
-              rootHash: string
-              signature: string
-              size: number
-            }
-            inclusionProof: string[]
-            leafIndex: number
-          }
-        }
-      }
-      /** @description Default Response */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  rotateEncryptionSessions: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          conversationIds: string[]
-          reason: 'device_compromise' | 'membership_changed'
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            rotated: number
-          }
-        }
-      }
-    }
-  }
   initiateFileUpload: {
     parameters: {
       query?: never
@@ -4938,38 +2610,6 @@ export interface operations {
       }
     }
   }
-  deleteFile: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        fileId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** Format: uuid */
-            fileId: string
-            status:
-              | 'pending'
-              | 'quarantined'
-              | 'processing'
-              | 'ready'
-              | 'rejected'
-              | 'deleted'
-          }
-        }
-      }
-    }
-  }
   downloadFile: {
     parameters: {
       query?: {
@@ -4998,261 +2638,6 @@ export interface operations {
       }
       /** @description Default Response */
       404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  reprocessFile: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        fileId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** Format: uuid */
-            fileId: string
-            status:
-              | 'pending'
-              | 'quarantined'
-              | 'processing'
-              | 'ready'
-              | 'rejected'
-              | 'deleted'
-          }
-        }
-      }
-      /** @description Default Response */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  getHealth: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            services: {
-              database: 'available' | 'disabled' | 'unavailable'
-              redis: 'available' | 'disabled' | 'unavailable'
-            }
-            status: 'ok' | 'degraded'
-            /** Format: date-time */
-            timestamp: string
-          }
-        }
-      }
-    }
-  }
-  getReadiness: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            services: {
-              database: 'available' | 'disabled' | 'unavailable'
-              redis: 'available' | 'disabled' | 'unavailable'
-            }
-            status: 'ok' | 'degraded'
-            /** Format: date-time */
-            timestamp: string
-          }
-        }
-      }
-      /** @description Default Response */
-      503: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            services: {
-              database: 'available' | 'disabled' | 'unavailable'
-              redis: 'available' | 'disabled' | 'unavailable'
-            }
-            status: 'ok' | 'degraded'
-            /** Format: date-time */
-            timestamp: string
-          }
-        }
-      }
-    }
-  }
-  getCurrentUserKeyBackup: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            backup: {
-              /** @enum {string} */
-              aead: 'aes-256-gcm'
-              ciphertext: string
-              /** Format: date-time */
-              createdAt: string
-              /** Format: uuid */
-              deviceId: string
-              identityKeyFingerprint: string
-              kdf: {
-                /** @enum {string} */
-                algorithm: 'argon2id'
-                iterations: number
-                memoryKiB: number
-                parallelism: number
-                salt: string
-              }
-              nonce: string
-              previousDigest: string | null
-              version: number
-            } | null
-            latestVersion: number
-          }
-        }
-      }
-    }
-  }
-  putCurrentUserKeyBackup: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          /** @enum {string} */
-          aead: 'aes-256-gcm'
-          ciphertext: string
-          /** Format: date-time */
-          createdAt: string
-          /** Format: uuid */
-          deviceId: string
-          identityKeyFingerprint: string
-          kdf: {
-            /** @enum {string} */
-            algorithm: 'argon2id'
-            iterations: number
-            memoryKiB: number
-            parallelism: number
-            salt: string
-          }
-          nonce: string
-          previousDigest: string | null
-          version: number
-        } & {
-          expectedPreviousVersion: number
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            backup: {
-              /** @enum {string} */
-              aead: 'aes-256-gcm'
-              ciphertext: string
-              /** Format: date-time */
-              createdAt: string
-              /** Format: uuid */
-              deviceId: string
-              identityKeyFingerprint: string
-              kdf: {
-                /** @enum {string} */
-                algorithm: 'argon2id'
-                iterations: number
-                memoryKiB: number
-                parallelism: number
-                salt: string
-              }
-              nonce: string
-              previousDigest: string | null
-              version: number
-            } | null
-            latestVersion: number
-          }
-        }
-      }
-      /** @description Default Response */
-      409: {
         headers: {
           [name: string]: unknown
         }
@@ -6624,1149 +4009,6 @@ export interface operations {
       }
     }
   }
-  markChannelRead: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        channelId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          /** Format: uuid */
-          lastReadMessageId: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** Format: uuid */
-            channelId: string
-            /** Format: date-time */
-            lastReadAt: string
-            /** Format: uuid */
-            lastReadMessageId: string
-            mentionCount: number
-            /** Format: uuid */
-            userId: string
-          }
-        }
-      }
-      /** @description Default Response */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  createReport: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          category: string
-          description?: string
-          encryptedEvidence?: {
-            context: {
-              /** Format: uuid */
-              authorId: string
-              /** Format: uuid */
-              channelId: string
-              content: string
-              /** Format: date-time */
-              createdAt: string
-              /** Format: uuid */
-              id: string
-            }[]
-            cryptographicMaterial: {
-              /** @enum {string} */
-              algorithm: 'Ed25519'
-              authorPublicKey: string
-              signature: string
-            }
-            message: {
-              /** Format: uuid */
-              authorId: string
-              /** Format: uuid */
-              channelId: string
-              content: string
-              /** Format: date-time */
-              createdAt: string
-              /** Format: uuid */
-              id: string
-            }
-          }
-          /** Format: uuid */
-          serverId?: string
-          /** Format: uuid */
-          targetId: string
-          targetType: 'user' | 'message' | 'server' | 'channel'
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            assignedTo: string | null
-            category: string
-            /** Format: date-time */
-            createdAt: string
-            description: string | null
-            encryptedEvidence: {
-              authorKeyFingerprint: string
-              context: {
-                /** Format: uuid */
-                authorId: string
-                /** Format: uuid */
-                channelId: string
-                content: string
-                /** Format: date-time */
-                createdAt: string
-                /** Format: uuid */
-                id: string
-              }[]
-              cryptographicMaterial: {
-                /** @enum {string} */
-                algorithm: 'Ed25519'
-                authorPublicKey: string
-                signature: string
-              }
-              message: {
-                /** Format: uuid */
-                authorId: string
-                /** Format: uuid */
-                channelId: string
-                content: string
-                /** Format: date-time */
-                createdAt: string
-                /** Format: uuid */
-                id: string
-              }
-              /** @enum {string} */
-              verification: 'signature_valid'
-            } | null
-            /** Format: uuid */
-            id: string
-            /** Format: uuid */
-            reporterId: string
-            resolutionNote: string | null
-            serverId: string | null
-            status: 'open' | 'reviewing' | 'resolved' | 'dismissed'
-            /** Format: uuid */
-            targetId: string
-            targetType: 'user' | 'message' | 'server' | 'channel'
-            /** Format: date-time */
-            updatedAt: string
-          }
-        }
-      }
-      /** @description Default Response */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  listServerReports: {
-    parameters: {
-      query?: {
-        before?: string
-        limit?: number
-        status?: 'open' | 'reviewing' | 'resolved' | 'dismissed'
-      }
-      header?: never
-      path: {
-        serverId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            reports: {
-              assignedTo: string | null
-              category: string
-              /** Format: date-time */
-              createdAt: string
-              description: string | null
-              encryptedEvidence: {
-                authorKeyFingerprint: string
-                context: {
-                  /** Format: uuid */
-                  authorId: string
-                  /** Format: uuid */
-                  channelId: string
-                  content: string
-                  /** Format: date-time */
-                  createdAt: string
-                  /** Format: uuid */
-                  id: string
-                }[]
-                cryptographicMaterial: {
-                  /** @enum {string} */
-                  algorithm: 'Ed25519'
-                  authorPublicKey: string
-                  signature: string
-                }
-                message: {
-                  /** Format: uuid */
-                  authorId: string
-                  /** Format: uuid */
-                  channelId: string
-                  content: string
-                  /** Format: date-time */
-                  createdAt: string
-                  /** Format: uuid */
-                  id: string
-                }
-                /** @enum {string} */
-                verification: 'signature_valid'
-              } | null
-              /** Format: uuid */
-              id: string
-              /** Format: uuid */
-              reporterId: string
-              resolutionNote: string | null
-              serverId: string | null
-              status: 'open' | 'reviewing' | 'resolved' | 'dismissed'
-              /** Format: uuid */
-              targetId: string
-              targetType: 'user' | 'message' | 'server' | 'channel'
-              /** Format: date-time */
-              updatedAt: string
-            }[]
-          } & {
-            nextCursor: string | null
-          }
-        }
-      }
-    }
-  }
-  updateServerReport: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        reportId: string
-        serverId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          assignedTo?: string | null
-          resolutionNote?: string
-          status?: 'open' | 'reviewing' | 'resolved' | 'dismissed'
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            assignedTo: string | null
-            category: string
-            /** Format: date-time */
-            createdAt: string
-            description: string | null
-            encryptedEvidence: {
-              authorKeyFingerprint: string
-              context: {
-                /** Format: uuid */
-                authorId: string
-                /** Format: uuid */
-                channelId: string
-                content: string
-                /** Format: date-time */
-                createdAt: string
-                /** Format: uuid */
-                id: string
-              }[]
-              cryptographicMaterial: {
-                /** @enum {string} */
-                algorithm: 'Ed25519'
-                authorPublicKey: string
-                signature: string
-              }
-              message: {
-                /** Format: uuid */
-                authorId: string
-                /** Format: uuid */
-                channelId: string
-                content: string
-                /** Format: date-time */
-                createdAt: string
-                /** Format: uuid */
-                id: string
-              }
-              /** @enum {string} */
-              verification: 'signature_valid'
-            } | null
-            /** Format: uuid */
-            id: string
-            /** Format: uuid */
-            reporterId: string
-            resolutionNote: string | null
-            serverId: string | null
-            status: 'open' | 'reviewing' | 'resolved' | 'dismissed'
-            /** Format: uuid */
-            targetId: string
-            targetType: 'user' | 'message' | 'server' | 'channel'
-            /** Format: date-time */
-            updatedAt: string
-          }
-        }
-      }
-    }
-  }
-  listModerationCases: {
-    parameters: {
-      query?: {
-        before?: string
-        limit?: number
-      }
-      header?: never
-      path: {
-        serverId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            cases: {
-              assignedTo: string | null
-              closedAt: string | null
-              /** Format: date-time */
-              createdAt: string
-              /** Format: uuid */
-              id: string
-              openedBy: string | null
-              reason: string | null
-              /** Format: uuid */
-              serverId: string
-              status: string
-              /** Format: uuid */
-              subjectId: string
-              subjectType: 'user' | 'message' | 'server' | 'channel'
-              /** Format: date-time */
-              updatedAt: string
-            }[]
-          } & {
-            nextCursor: string | null
-          }
-        }
-      }
-    }
-  }
-  getModerationCase: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseId: string
-        serverId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            actions: {
-              action: string
-              actorId: string | null
-              /** Format: date-time */
-              createdAt: string
-              expiresAt: string | null
-              /** Format: uuid */
-              id: string
-              metadata: {
-                [key: string]: unknown
-              }
-              reason: string | null
-            }[]
-            appeals: {
-              /** Format: uuid */
-              caseId: string
-              /** Format: date-time */
-              createdAt: string
-              decidedAt: string | null
-              decidedBy: string | null
-              decisionNote: string | null
-              /** Format: uuid */
-              id: string
-              reason: string
-              /** Format: uuid */
-              serverId: string
-              status: 'pending' | 'accepted' | 'rejected'
-              /** Format: uuid */
-              userId: string
-            }[]
-            case: {
-              assignedTo: string | null
-              closedAt: string | null
-              /** Format: date-time */
-              createdAt: string
-              /** Format: uuid */
-              id: string
-              openedBy: string | null
-              reason: string | null
-              /** Format: uuid */
-              serverId: string
-              status: string
-              /** Format: uuid */
-              subjectId: string
-              subjectType: 'user' | 'message' | 'server' | 'channel'
-              /** Format: date-time */
-              updatedAt: string
-            }
-          }
-        }
-      }
-    }
-  }
-  listCurrentUserModerationAppeals: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            appeals: {
-              /** Format: uuid */
-              caseId: string
-              /** Format: date-time */
-              createdAt: string
-              decidedAt: string | null
-              decidedBy: string | null
-              decisionNote: string | null
-              /** Format: uuid */
-              id: string
-              reason: string
-              /** Format: uuid */
-              serverId: string
-              status: 'pending' | 'accepted' | 'rejected'
-              /** Format: uuid */
-              userId: string
-            }[]
-          }
-        }
-      }
-    }
-  }
-  createModerationAppeal: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        caseId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          reason: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** Format: uuid */
-            appealId: string
-            /** Format: uuid */
-            caseId: string
-            status: string
-          }
-        }
-      }
-    }
-  }
-  decideModerationAppeal: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        appealId: string
-        serverId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          decision: 'accepted' | 'rejected'
-          note?: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** Format: uuid */
-            appealId: string
-            /** Format: uuid */
-            caseId: string
-            status: string
-          }
-        }
-      }
-    }
-  }
-  listCurrentUserBlocks: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            blocks: {
-              /** Format: uuid */
-              blockedId: string
-              /** Format: date-time */
-              createdAt: string
-              reason: string | null
-            }[]
-          }
-        }
-      }
-    }
-  }
-  blockUser: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        userId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          reason?: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** Format: uuid */
-            blockedId: string
-            /** Format: date-time */
-            createdAt: string
-            reason: string | null
-          }
-        }
-      }
-    }
-  }
-  unblockUser: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        userId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            removed: boolean
-          }
-        }
-      }
-    }
-  }
-  listAutomodRules: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        serverId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            rules: {
-              action: 'block' | 'flag' | 'timeout'
-              config: {
-                [key: string]: unknown
-              }
-              /** Format: date-time */
-              createdAt: string
-              enabled: boolean
-              /** Format: uuid */
-              id: string
-              enforcementScope: 'metadata' | 'plaintext'
-              name: string
-              /** Format: uuid */
-              serverId: string
-              triggerType: 'keyword' | 'spam' | 'link' | 'flood' | 'raid'
-              /** Format: date-time */
-              updatedAt: string
-            }[]
-          }
-        }
-      }
-    }
-  }
-  createAutomodRule: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        serverId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          action: 'block' | 'flag' | 'timeout'
-          config: {
-            [key: string]: unknown
-          }
-          enabled?: boolean
-          name: string
-          triggerType: 'keyword' | 'spam' | 'link' | 'flood' | 'raid'
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            action: 'block' | 'flag' | 'timeout'
-            config: {
-              [key: string]: unknown
-            }
-            /** Format: date-time */
-            createdAt: string
-            enabled: boolean
-            /** Format: uuid */
-            id: string
-            enforcementScope: 'metadata' | 'plaintext'
-            name: string
-            /** Format: uuid */
-            serverId: string
-            triggerType: 'keyword' | 'spam' | 'link' | 'flood' | 'raid'
-            /** Format: date-time */
-            updatedAt: string
-          }
-        }
-      }
-    }
-  }
-  deleteAutomodRule: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        ruleId: string
-        serverId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** @enum {boolean} */
-            deleted: true
-            /** Format: uuid */
-            ruleId: string
-          }
-        }
-      }
-    }
-  }
-  updateAutomodRule: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        ruleId: string
-        serverId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          action?: 'block' | 'flag' | 'timeout'
-          config?: {
-            [key: string]: unknown
-          }
-          enabled?: boolean
-          name?: string
-          triggerType?: 'keyword' | 'spam' | 'link' | 'flood' | 'raid'
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            action: 'block' | 'flag' | 'timeout'
-            config: {
-              [key: string]: unknown
-            }
-            /** Format: date-time */
-            createdAt: string
-            enabled: boolean
-            /** Format: uuid */
-            id: string
-            enforcementScope: 'metadata' | 'plaintext'
-            name: string
-            /** Format: uuid */
-            serverId: string
-            triggerType: 'keyword' | 'spam' | 'link' | 'flood' | 'raid'
-            /** Format: date-time */
-            updatedAt: string
-          }
-        }
-      }
-    }
-  }
-  listNotifications: {
-    parameters: {
-      query?: {
-        before?: string
-        limit?: number
-        unreadOnly?: boolean
-      }
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            nextCursor: string | null
-            notifications: {
-              /** Format: date-time */
-              createdAt: string
-              data: {
-                [key: string]: unknown
-              }
-              groupCount: number
-              groupKey: string | null
-              /** Format: uuid */
-              id: string
-              readAt: string | null
-              seenAt: string | null
-              type: string
-              /** Format: uuid */
-              userId: string
-            }[]
-          }
-        }
-      }
-    }
-  }
-  markNotificationRead: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        notificationId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            updated: number
-          }
-        }
-      }
-      /** @description Default Response */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  markAllNotificationsRead: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            updated: number
-          }
-        }
-      }
-    }
-  }
-  listNotificationPreferences: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            preferences: {
-              channelId: string | null
-              config: {
-                digest: 'off' | 'hourly' | 'daily'
-                email: boolean
-                muted: boolean
-                push: boolean
-              }
-              /** Format: uuid */
-              id: string
-              serverId: string | null
-              type: string
-              /** Format: date-time */
-              updatedAt: string
-              /** Format: uuid */
-              userId: string
-            }[]
-          }
-        }
-      }
-    }
-  }
-  upsertNotificationPreference: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          channelId?: string | null
-          config: {
-            digest?: 'off' | 'hourly' | 'daily'
-            email?: boolean
-            muted?: boolean
-            push?: boolean
-          }
-          serverId?: string | null
-          type: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            channelId: string | null
-            config: {
-              digest: 'off' | 'hourly' | 'daily'
-              email: boolean
-              muted: boolean
-              push: boolean
-            }
-            /** Format: uuid */
-            id: string
-            serverId: string | null
-            type: string
-            /** Format: date-time */
-            updatedAt: string
-            /** Format: uuid */
-            userId: string
-          }
-        }
-      }
-    }
-  }
-  listPushSubscriptions: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            subscriptions: {
-              /** Format: date-time */
-              createdAt: string
-              endpoint: string
-              /** Format: uuid */
-              id: string
-              lastError: string | null
-              lastUsedAt: string | null
-            }[]
-          }
-        }
-      }
-    }
-  }
-  createPushSubscription: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          endpoint: string
-          keys: {
-            auth: string
-            p256dh: string
-          }
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** Format: date-time */
-            createdAt: string
-            endpoint: string
-            /** Format: uuid */
-            id: string
-            lastError: string | null
-            lastUsedAt: string | null
-          }
-        }
-      }
-    }
-  }
-  deletePushSubscription: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        subscriptionId: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            removed: boolean
-          }
-        }
-      }
-    }
-  }
   searchMessages: {
     parameters: {
       query: {
@@ -7839,108 +4081,6 @@ export interface operations {
             }[]
             limit: number
             offset: number
-          }
-        }
-      }
-    }
-  }
-  syncSearchIndexes: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      204: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
-      }
-    }
-  }
-  createServer: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          description?: string
-          name: string
-          visibility?: 'private' | 'unlisted' | 'public'
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            /** Format: uuid */
-            defaultChannelId: string
-            /** Server */
-            server: {
-              /** Format: date-time */
-              createdAt: string
-              description: string | null
-              /** Format: uuid */
-              id: string
-              memberCount: number
-              name: string
-              /** Format: uuid */
-              ownerId: string
-              slug: string
-              version: number
-              visibility: 'private' | 'unlisted' | 'public'
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
           }
         }
       }
@@ -8131,160 +4271,6 @@ export interface operations {
       }
     }
   }
-  createInvite: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        serverId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          /** Format: uuid */
-          channelId?: string
-          expiresInSeconds?: number
-          maxUses?: number
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            code: string
-            expiresAt: string | null
-            /** Format: uuid */
-            id: string
-            maxUses: number | null
-            /** Format: uuid */
-            serverId: string
-            uses: number
-          }
-        }
-      }
-      /** @description Default Response */
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  joinServerInvite: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        code: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            joined: boolean
-            server: {
-              /** Format: date-time */
-              createdAt: string
-              description: string | null
-              /** Format: uuid */
-              id: string
-              memberCount: number
-              name: string
-              /** Format: uuid */
-              ownerId: string
-              slug: string
-              version: number
-              visibility: 'private' | 'unlisted' | 'public'
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-      /** @description Default Response */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
   getUser: {
     parameters: {
       query?: never
@@ -8332,182 +4318,6 @@ export interface operations {
             }
           }
         }
-      }
-    }
-  }
-  getUserSettings: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            allowDmsFrom: 'everyone' | 'friends' | 'server_members' | 'nobody'
-            customStatus: string | null
-            customStatusExpiresAt: string | null
-            discoverability: 'everyone' | 'friends'
-            locale: string
-            manualStatus: 'online' | 'idle' | 'dnd' | 'invisible'
-            presenceVisibility: 'everyone' | 'friends' | 'nobody'
-            theme: 'system' | 'light' | 'dark'
-            timezone: string
-          }
-        }
-      }
-    }
-  }
-  updateUserSettings: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          allowDmsFrom?: 'everyone' | 'friends' | 'server_members' | 'nobody'
-          customStatus?: string | null
-          customStatusExpiresAt?: string | null
-          discoverability?: 'everyone' | 'friends'
-          locale?: string
-          manualStatus?: 'online' | 'idle' | 'dnd' | 'invisible'
-          presenceVisibility?: 'everyone' | 'friends' | 'nobody'
-          theme?: 'system' | 'light' | 'dark'
-          timezone?: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      204: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
-      }
-    }
-  }
-  addPushSubscription: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        deviceId: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          /** Format: uri */
-          endpoint: string
-          keys: {
-            [key: string]: string
-          }
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      204: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
-      }
-    }
-  }
-  createRelationship: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': {
-          /** Format: uuid */
-          targetId: string
-        }
-      }
-    }
-    responses: {
-      /** @description Default Response */
-      204: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
-      }
-    }
-  }
-  acceptRelationship: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        id: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      204: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
-      }
-      /** @description Default Response */
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': {
-            error: {
-              code: string
-              details?: {
-                field?: string
-                message: string
-              }[]
-              message: string
-              requestId: string
-            }
-          }
-        }
-      }
-    }
-  }
-  deleteRelationship: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        id: string
-      }
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Default Response */
-      204: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
       }
     }
   }
