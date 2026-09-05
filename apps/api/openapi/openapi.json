@@ -8286,6 +8286,468 @@
         }
       }
     },
+    "/api/users/@me/key-backup": {
+      "get": {
+        "operationId": "getCurrentUserKeyBackup",
+        "summary": "Fetch the latest opaque encrypted key backup",
+        "tags": [
+          "key backup"
+        ],
+        "security": [
+          {
+            "StrafeToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "backup",
+                    "latestVersion"
+                  ],
+                  "properties": {
+                    "backup": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "required": [
+                            "aead",
+                            "ciphertext",
+                            "createdAt",
+                            "deviceId",
+                            "identityKeyFingerprint",
+                            "kdf",
+                            "nonce",
+                            "previousDigest",
+                            "version"
+                          ],
+                          "properties": {
+                            "aead": {
+                              "type": "string",
+                              "enum": [
+                                "aes-256-gcm"
+                              ]
+                            },
+                            "ciphertext": {
+                              "type": "string",
+                              "maxLength": 4000000,
+                              "minLength": 1
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "deviceId": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "identityKeyFingerprint": {
+                              "type": "string",
+                              "maxLength": 128,
+                              "minLength": 16
+                            },
+                            "kdf": {
+                              "type": "object",
+                              "required": [
+                                "algorithm",
+                                "iterations",
+                                "memoryKiB",
+                                "parallelism",
+                                "salt"
+                              ],
+                              "properties": {
+                                "algorithm": {
+                                  "type": "string",
+                                  "enum": [
+                                    "argon2id"
+                                  ]
+                                },
+                                "iterations": {
+                                  "type": "integer",
+                                  "maximum": 10,
+                                  "minimum": 1
+                                },
+                                "memoryKiB": {
+                                  "type": "integer",
+                                  "maximum": 1048576,
+                                  "minimum": 65536
+                                },
+                                "parallelism": {
+                                  "type": "integer",
+                                  "maximum": 8,
+                                  "minimum": 1
+                                },
+                                "salt": {
+                                  "type": "string",
+                                  "maxLength": 128,
+                                  "minLength": 22
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            "nonce": {
+                              "type": "string",
+                              "maxLength": 64,
+                              "minLength": 16
+                            },
+                            "previousDigest": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "maxLength": 128,
+                                  "minLength": 32
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": 1
+                            }
+                          },
+                          "additionalProperties": false,
+                          "title": "KeyBackupEnvelope"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "latestVersion": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "putCurrentUserKeyBackup",
+        "summary": "Append an opaque encrypted key backup version",
+        "tags": [
+          "key backup"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "aead",
+                      "ciphertext",
+                      "createdAt",
+                      "deviceId",
+                      "identityKeyFingerprint",
+                      "kdf",
+                      "nonce",
+                      "previousDigest",
+                      "version"
+                    ],
+                    "properties": {
+                      "aead": {
+                        "type": "string",
+                        "enum": [
+                          "aes-256-gcm"
+                        ]
+                      },
+                      "ciphertext": {
+                        "type": "string",
+                        "maxLength": 4000000,
+                        "minLength": 1
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "deviceId": {
+                        "type": "string",
+                        "format": "uuid"
+                      },
+                      "identityKeyFingerprint": {
+                        "type": "string",
+                        "maxLength": 128,
+                        "minLength": 16
+                      },
+                      "kdf": {
+                        "type": "object",
+                        "required": [
+                          "algorithm",
+                          "iterations",
+                          "memoryKiB",
+                          "parallelism",
+                          "salt"
+                        ],
+                        "properties": {
+                          "algorithm": {
+                            "type": "string",
+                            "enum": [
+                              "argon2id"
+                            ]
+                          },
+                          "iterations": {
+                            "type": "integer",
+                            "maximum": 10,
+                            "minimum": 1
+                          },
+                          "memoryKiB": {
+                            "type": "integer",
+                            "maximum": 1048576,
+                            "minimum": 65536
+                          },
+                          "parallelism": {
+                            "type": "integer",
+                            "maximum": 8,
+                            "minimum": 1
+                          },
+                          "salt": {
+                            "type": "string",
+                            "maxLength": 128,
+                            "minLength": 22
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "nonce": {
+                        "type": "string",
+                        "maxLength": 64,
+                        "minLength": 16
+                      },
+                      "previousDigest": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 128,
+                            "minLength": 32
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "version": {
+                        "type": "integer",
+                        "minimum": 1
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "expectedPreviousVersion"
+                    ],
+                    "properties": {
+                      "expectedPreviousVersion": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "StrafeToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "backup",
+                    "latestVersion"
+                  ],
+                  "properties": {
+                    "backup": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "required": [
+                            "aead",
+                            "ciphertext",
+                            "createdAt",
+                            "deviceId",
+                            "identityKeyFingerprint",
+                            "kdf",
+                            "nonce",
+                            "previousDigest",
+                            "version"
+                          ],
+                          "properties": {
+                            "aead": {
+                              "type": "string",
+                              "enum": [
+                                "aes-256-gcm"
+                              ]
+                            },
+                            "ciphertext": {
+                              "type": "string",
+                              "maxLength": 4000000,
+                              "minLength": 1
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "deviceId": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "identityKeyFingerprint": {
+                              "type": "string",
+                              "maxLength": 128,
+                              "minLength": 16
+                            },
+                            "kdf": {
+                              "type": "object",
+                              "required": [
+                                "algorithm",
+                                "iterations",
+                                "memoryKiB",
+                                "parallelism",
+                                "salt"
+                              ],
+                              "properties": {
+                                "algorithm": {
+                                  "type": "string",
+                                  "enum": [
+                                    "argon2id"
+                                  ]
+                                },
+                                "iterations": {
+                                  "type": "integer",
+                                  "maximum": 10,
+                                  "minimum": 1
+                                },
+                                "memoryKiB": {
+                                  "type": "integer",
+                                  "maximum": 1048576,
+                                  "minimum": 65536
+                                },
+                                "parallelism": {
+                                  "type": "integer",
+                                  "maximum": 8,
+                                  "minimum": 1
+                                },
+                                "salt": {
+                                  "type": "string",
+                                  "maxLength": 128,
+                                  "minLength": 22
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            "nonce": {
+                              "type": "string",
+                              "maxLength": 64,
+                              "minLength": 16
+                            },
+                            "previousDigest": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "maxLength": 128,
+                                  "minLength": 32
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "version": {
+                              "type": "integer",
+                              "minimum": 1
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "latestVersion": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "message"
+                            ],
+                            "properties": {
+                              "field": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/servers/{serverId}/members": {
       "get": {
         "operationId": "listServerMembers",

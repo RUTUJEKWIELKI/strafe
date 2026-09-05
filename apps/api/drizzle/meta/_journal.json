@@ -64,6 +64,13 @@
       "when": 1788111294810,
       "tag": "0008_file_scan_status",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1788340000000,
+      "tag": "0009_encrypted_key_backups",
+      "breakpoints": true
     }
   ]
 }
