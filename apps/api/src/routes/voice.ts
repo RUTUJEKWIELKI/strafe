@@ -10,6 +10,7 @@ const voiceRoutes: FastifyPluginAsync = async (app) => {
   app.post<{ Params: { channelId: string } }>(
     '/channels/:channelId/voice/token',
     {
+      config: { botScopes: ['channels:read'] },
       preHandler: app.authenticate,
       schema: {
         operationId: 'createVoiceToken',

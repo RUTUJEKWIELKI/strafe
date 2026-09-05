@@ -99,11 +99,24 @@ const authPlugin: FastifyPluginAsync = async (app) => {
       ? routeOptions.preHandler
       : [routeOptions.preHandler]
 
-    if (!preHandlers.includes(app.authenticate)) return
+    const options = routeOptions as unknown as {
+      config?: { botScopes?: string[] }
+      schema?: Record<string, unknown>
+    }
 
-    routeOptions.schema = {
-      ...routeOptions.schema,
-      security: strafeTokenSecurityRequirement(),
+    if (preHandlers.includes(app.authenticate)) {
+      options.schema = {
+        ...options.schema,
+        security: strafeTokenSecurityRequirement(),
+      }
+    }
+
+    if (options.config?.botScopes !== undefined) {
+      options.schema = {
+        ...options.schema,
+        'x-bot-scopes': options.config.botScopes,
+        'x-bot-enabled': true,
+      }
     }
   })
 }

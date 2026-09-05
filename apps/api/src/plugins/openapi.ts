@@ -3,6 +3,7 @@ import swaggerUi from '@fastify/swagger-ui'
 import type { FastifyPluginAsync } from 'fastify'
 import fp from 'fastify-plugin'
 
+import { filterBotOpenApi, type OpenApiDocument } from '../lib/bot-openapi.js'
 import { STRAFE_TOKEN_SECURITY_SCHEME } from '../lib/strafe-token.js'
 
 const openApiPlugin: FastifyPluginAsync = async (app) => {
@@ -31,6 +32,28 @@ const openApiPlugin: FastifyPluginAsync = async (app) => {
   await app.register(swaggerUi, {
     routePrefix: '/docs',
   })
+
+  app.get(
+    '/docs/bot/json',
+    { schema: { hide: true } },
+    async (_request, reply) => {
+      const botSpec = filterBotOpenApi(
+        app.swagger() as unknown as OpenApiDocument,
+      )
+      return reply.send(botSpec)
+    },
+  )
+
+  app.get(
+    '/docs/bot.json',
+    { schema: { hide: true } },
+    async (_request, reply) => {
+      const botSpec = filterBotOpenApi(
+        app.swagger() as unknown as OpenApiDocument,
+      )
+      return reply.send(botSpec)
+    },
+  )
 }
 
 export default fp(openApiPlugin, { name: 'openapi' })
