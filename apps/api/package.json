@@ -51,7 +51,7 @@
     "@opentelemetry/exporter-trace-otlp-http": "^0.221.0",
     "@opentelemetry/sdk-node": "^0.221.0",
     "@sentry/node": "^10.72.0",
-    "@simplewebauthn/server": "^13.3.3",
+    "@simplewebauthn/server": "^14.0.0",
     "ajv-formats": "^3.0.1",
     "argon2": "^0.45.1",
     "blurhash": "^2.0.5",
