@@ -19,7 +19,7 @@
     "@kobalte/core": "^0.13.13",
     "@livekit/krisp-noise-filter": "^0.4.4",
     "@sentry/solid": "^10.72.0",
-    "@simplewebauthn/browser": "^13.3.0",
+    "@simplewebauthn/browser": "^14.0.0",
     "@solid-primitives/audio": "^1.4.5",
     "@solid-primitives/broadcast-channel": "^0.1.1",
     "@solid-primitives/clipboard": "^1.6.6",
