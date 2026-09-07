@@ -10764,6 +10764,71 @@
         }
       }
     },
+    "/api/locale": {
+      "get": {
+        "operationId": "getLandingLocale",
+        "summary": "Resolve the initial landing page locale",
+        "tags": [
+          "system"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "locale",
+                    "source"
+                  ],
+                  "properties": {
+                    "locale": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "en"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "pl"
+                          ]
+                        }
+                      ]
+                    },
+                    "source": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "default"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "header"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "ip"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/servers/{serverId}/members": {
       "get": {
         "operationId": "listServerMembers",
