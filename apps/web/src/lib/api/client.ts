@@ -28,3 +28,17 @@ export async function getHealth() {
 
   return data
 }
+
+export async function getLandingLocale(options?: {
+  signal?: AbortSignal
+}): Promise<'en' | 'pl'> {
+  const { data } = await api.GET('/api/locale', {
+    ...(options?.signal ? { signal: options.signal } : {}),
+  })
+
+  if (!data) {
+    throw new Error('The API did not return a landing locale')
+  }
+
+  return data.locale
+}

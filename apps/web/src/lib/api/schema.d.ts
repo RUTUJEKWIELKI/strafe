@@ -814,6 +814,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/locale": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Resolve the initial landing page locale */
+        get: operations["getLandingLocale"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/servers/{serverId}/members": {
         parameters: {
             query?: never;
@@ -5170,6 +5187,29 @@ export interface operations {
                             message: string;
                             requestId: string;
                         };
+                    };
+                };
+            };
+        };
+    };
+    getLandingLocale: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        locale: "en" | "pl";
+                        source: "default" | "header" | "ip";
                     };
                 };
             };
