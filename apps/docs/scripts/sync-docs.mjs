@@ -22,6 +22,11 @@ const copies = [
   ['docs/guides/realtime.md', 'guide/guides/realtime.md'],
   ['docs/guides/files.md', 'guide/guides/files.md'],
   ['docs/guides/voice.md', 'guide/guides/voice.md'],
+  [
+    'docs/guides/bots-and-applications.md',
+    'guide/guides/bots-and-applications.md',
+  ],
+  ['docs/guides/bot-sdk.md', 'guide/guides/bot-sdk.md'],
   ['AGENTS.md', 'guide/contributing.md'],
   ['SECURITY.md', 'guide/security.md'],
 ]
@@ -48,6 +53,11 @@ await writeFile(resolve(docsRoot, 'guide/repository.md'), repositoryGuide)
 
 const openapiSource = resolve(repositoryRoot, 'apps/api/openapi/openapi.json')
 const openapiTarget = resolve(docsRoot, 'public/openapi.json')
+const botOpenapiSource = resolve(
+  repositoryRoot,
+  'apps/api/openapi/bot-openapi.json',
+)
+const botOpenapiTarget = resolve(docsRoot, 'public/bot-openapi.json')
 
 let openapiText
 try {
@@ -72,6 +82,7 @@ try {
 
 await mkdir(dirname(openapiTarget), { recursive: true })
 await writeFile(openapiTarget, openapiText)
+await copyFile(botOpenapiSource, botOpenapiTarget)
 
 const generatedRoot = resolve(docsRoot, 'api/generated')
 await rm(generatedRoot, { force: true, recursive: true })

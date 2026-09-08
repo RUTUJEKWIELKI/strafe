@@ -63,7 +63,7 @@ export const UserSettingsSchema = Type.Object(
       Type.Literal('everyone'),
       Type.Literal('friends'),
     ]),
-    locale: Type.String(),
+    locale: Type.Union([Type.Literal('en'), Type.Literal('pl')]),
     manualStatus: Type.Union([
       Type.Literal('online'),
       Type.Literal('idle'),

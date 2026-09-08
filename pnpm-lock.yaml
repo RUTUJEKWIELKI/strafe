@@ -560,6 +560,9 @@ importers:
       hls.js:
         specifier: ^1.7.1
         version: 1.7.1
+      i18next:
+        specifier: ^26.4.2
+        version: 26.4.2(typescript@5.9.3)
       linkify-it:
         specifier: ^6.1.0
         version: 6.1.0
@@ -581,6 +584,9 @@ importers:
       shiki:
         specifier: ^4.4.3
         version: 4.4.3
+      solid-i18next:
+        specifier: ^0.0.5
+        version: 0.0.5(i18next@26.4.2(typescript@5.9.3))(solid-js@1.9.15)
       solid-js:
         specifier: ^1.9.15
         version: 1.9.15
@@ -634,6 +640,9 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      vitest:
+        specifier: ^4.1.11
+        version: 4.1.11(@opentelemetry/api@1.9.1)(@types/node@26.4.0)(@vitest/coverage-v8@4.1.11)(jsdom@30.0.1(@noble/hashes@2.3.0))(msw@2.15.0(@types/node@26.4.0)(typescript@5.9.3))(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
 
   packages/shared:
     dependencies:
@@ -7350,6 +7359,14 @@ packages:
     resolution: {integrity: sha512-eKCa6bwnJhvxj14kZk5NCPc6Hb6BdsU9DZcOnmQKSnO1VKrfV0zCvtttPZUsBvjmNDn8rpcJfpwSYnHBjc95MQ==}
     engines: {node: '>=18.18.0'}
 
+  i18next@26.4.2:
+    resolution: {integrity: sha512-RX+R0VLg13IbvRuJSxnqykUFS9vQZTl8wYpWPCIUDWVrSGjsQywB5Y+pjzrkboxGAuYfJZVH1InFTdgBdxq6ug==}
+    peerDependencies:
+      typescript: ^5 || ^6 || ^7
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   iconv-lite@0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
@@ -9587,6 +9604,12 @@ packages:
   smol-toml@1.8.0:
     resolution: {integrity: sha512-kCZr2V3ch9i00x8zXRhjUNVcjG9ijES5dDudkXvUVCT5QlJNQWElSJdZqyPemffHoLNUYwOcou0Fy+ojN0uHSQ==}
     engines: {node: '>= 18'}
+
+  solid-i18next@0.0.5:
+    resolution: {integrity: sha512-bVt3pG0UGm7/HulBtnj3vEcxCcmGbFHw9pRRwzxvlJIoEVt8wtIVyjhPps+6uJbh7oiaZoNLWYVzO0Slu6xaBA==}
+    peerDependencies:
+      i18next: ^25.8.13 || ^26.0.0
+      solid-js: ^1.9.11
 
   solid-js@1.9.15:
     resolution: {integrity: sha512-EeiY2xfpZJqPLjXspVEKjAII4yv8NyG//NxZ3IpOFHdUNnnTyL0uJOeS9LWGvA7cFCz5y94cjFwYlmw5Luncsg==}
@@ -18242,6 +18265,10 @@ snapshots:
 
   human-signals@8.0.1: {}
 
+  i18next@26.4.2(typescript@5.9.3):
+    optionalDependencies:
+      typescript: 5.9.3
+
   iconv-lite@0.6.3:
     dependencies:
       safer-buffer: 2.1.2
@@ -21139,6 +21166,11 @@ snapshots:
   smol-toml@1.7.0: {}
 
   smol-toml@1.8.0: {}
+
+  solid-i18next@0.0.5(i18next@26.4.2(typescript@5.9.3))(solid-js@1.9.15):
+    dependencies:
+      i18next: 26.4.2(typescript@5.9.3)
+      solid-js: 1.9.15
 
   solid-js@1.9.15:
     dependencies:

@@ -45,7 +45,11 @@ const botRoutes: FastifyPluginAsync = async (app) => {
         response: {
           201: BotCredentialSchema,
           400: ErrorResponseSchema,
+          401: ErrorResponseSchema,
+          403: ErrorResponseSchema,
           409: ErrorResponseSchema,
+          429: ErrorResponseSchema,
+          503: ErrorResponseSchema,
         },
         summary: 'Create a bot identity and its first scoped token',
         tags: ['bots'],
@@ -63,7 +67,12 @@ const botRoutes: FastifyPluginAsync = async (app) => {
       preHandler: [app.authenticate, userOnly],
       schema: {
         operationId: 'listBotApplications',
-        response: { 200: BotListResponseSchema },
+        response: {
+          200: BotListResponseSchema,
+          401: ErrorResponseSchema,
+          403: ErrorResponseSchema,
+          503: ErrorResponseSchema,
+        },
         summary: 'List bot applications owned by the current user',
         tags: ['bots'],
       },
@@ -79,7 +88,11 @@ const botRoutes: FastifyPluginAsync = async (app) => {
       schema: {
         operationId: 'getPublicBot',
         params: BotParamsSchema,
-        response: { 200: BotApplicationSchema, 404: ErrorResponseSchema },
+        response: {
+          200: BotApplicationSchema,
+          404: ErrorResponseSchema,
+          503: ErrorResponseSchema,
+        },
         summary: 'Get details of a public bot before installation',
         tags: ['bots'],
       },
@@ -95,7 +108,14 @@ const botRoutes: FastifyPluginAsync = async (app) => {
         body: UpdateBotBodySchema,
         operationId: 'updateBotApplication',
         params: BotParamsSchema,
-        response: { 200: BotApplicationSchema, 404: ErrorResponseSchema },
+        response: {
+          200: BotApplicationSchema,
+          400: ErrorResponseSchema,
+          401: ErrorResponseSchema,
+          403: ErrorResponseSchema,
+          404: ErrorResponseSchema,
+          503: ErrorResponseSchema,
+        },
         summary: 'Update bot application settings (e.g., name, public status)',
         tags: ['bots'],
       },
@@ -116,18 +136,24 @@ const botRoutes: FastifyPluginAsync = async (app) => {
         body: RotateBotTokenBodySchema,
         operationId: 'rotateBotToken',
         params: BotParamsSchema,
-        response: { 200: BotTokenResponseSchema, 404: ErrorResponseSchema },
+        response: {
+          200: BotTokenResponseSchema,
+          400: ErrorResponseSchema,
+          401: ErrorResponseSchema,
+          403: ErrorResponseSchema,
+          404: ErrorResponseSchema,
+          503: ErrorResponseSchema,
+        },
         summary: 'Revoke previous credentials and issue a scoped bot token',
         tags: ['bots'],
       },
     },
-    async (request) => ({
-      token: await app.botService.rotate(
+    async (request) =>
+      app.botService.rotate(
         request.auth.userId,
         request.params.botId,
         request.body.scopes,
       ),
-    }),
   )
 
   app.delete<{ Params: { botId: string } }>(
@@ -137,7 +163,13 @@ const botRoutes: FastifyPluginAsync = async (app) => {
       schema: {
         operationId: 'revokeBotToken',
         params: BotParamsSchema,
-        response: { 200: RevokeBotResponseSchema, 404: ErrorResponseSchema },
+        response: {
+          200: RevokeBotResponseSchema,
+          401: ErrorResponseSchema,
+          403: ErrorResponseSchema,
+          404: ErrorResponseSchema,
+          503: ErrorResponseSchema,
+        },
         summary: 'Immediately revoke all active credentials for a bot',
         tags: ['bots'],
       },
@@ -157,7 +189,13 @@ const botRoutes: FastifyPluginAsync = async (app) => {
       schema: {
         operationId: 'installBotApplication',
         params: BotInstallParamsSchema,
-        response: { 200: BotInstallResponseSchema, 404: ErrorResponseSchema },
+        response: {
+          200: BotInstallResponseSchema,
+          401: ErrorResponseSchema,
+          403: ErrorResponseSchema,
+          404: ErrorResponseSchema,
+          503: ErrorResponseSchema,
+        },
         summary: 'Install an owned bot identity into an owned server',
         tags: ['bots'],
       },

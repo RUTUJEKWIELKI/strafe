@@ -1,131 +1,104 @@
-# Tworzenie Botów i Aplikacji w Strafe
+# Boty i aplikacje
 
-Strafe oferuje potężne API i oficjalne wsparcie dla botów, umożliwiając deweloperom automatyzację, budowę integracji i rozszerzanie funkcjonalności kanałów. Ponieważ architektura Strafe opiera się na szyfrowaniu End-to-End (E2EE), boty w naszym systemie są traktowane jako pełnoprawni obywatele (first-class citizens) z własnymi kluczami tożsamości.
+Bot w Strafe ma własną tożsamość użytkownika, członkostwa na serwerach i jawnie ograniczony token. Token bota nie jest tokenem właściciela i nie może korzystać z endpointów, które nie zostały oznaczone jako dostępne dla botów.
 
-## Wstęp i Architektura
+> [!IMPORTANT]
+> Token `strafe_bot_…` jest wyświetlany tylko podczas utworzenia lub rotacji. API przechowuje wyłącznie jego skrót. Traktuj token jak hasło i nigdy nie umieszczaj go w kodzie, logach ani obrazie kontenera.
 
-W przeciwieństwie do tradycyjnych komunikatorów, bot w Strafe to nie tylko "skrypt uderzający po API".
-Boty posiadają własne ID użytkownika (`botUserId`) oraz korzystają z tych samych węzłów Realtime Gateway. Kiedy dodajesz bota do serwera, inni członkowie wymieniają z nim klucze kryptograficzne, aby bot mógł odszyfrować wiadomości.
+## Model bezpieczeństwa
 
-### Główne różnice między botem a zwykłym użytkownikiem:
+Dostęp bota jest przecięciem trzech niezależnych warstw:
 
-1. **Brak logowania hasłem:** Boty nie posiadają loginu i hasła. Uwierzytelniają się wyłącznie przez kryptograficznie bezpieczne tokeny dostępowe (np. `strafe_bot_XYZ...`).
-2. **Uprawnienia i Scopes:** Każdy token bota posiada zdefiniowane `scopes` (zakresy dostępu, np. `messages:read`, `messages:write`). Bot nie przeczyta wiadomości, jeśli właściciel nie nadał mu na to odpowiedniego uprawnienia przy generowaniu tokenu.
-3. **Limitowanie ruchu (Rate Limiting):** API Strafe posiada dedykowane koszyki limitów zapobiegania nadużyciom (Abuse Prevention) skonfigurowane specjalnie pod boty, aby umożliwić im płynną, automatyczną pracę (np. szybkie wysyłanie kilkudziesięciu powiadomień).
+1. **Scope tokenu** określa klasę operacji, np. `messages:read`.
+2. **Członkostwo bota** określa serwery i kanały widoczne dla tożsamości.
+3. **Role i nadpisania kanału** obowiązują bota tak samo jak pozostałych członków.
 
----
+Posiadanie scope `messages:write` nie daje automatycznie prawa wysyłania do każdego kanału. Endpoint musi również obsługiwać boty, a rola bota musi zawierać odpowiednie uprawnienie.
 
-## Zarządzanie aplikacjami (Bot Management API)
+### Dostępne scopes
 
-Aby stworzyć bota, musisz zarejestrować aplikację. Twój zwykły użytkownik będzie jej właścicielem (`ownerId`).
+| Scope                              | Zastosowanie                                    |
+| ---------------------------------- | ----------------------------------------------- |
+| `servers:read` / `servers:write`   | Odczyt serwerów i zarządzanie ich ustawieniami  |
+| `channels:read` / `channels:write` | Odczyt i zarządzanie kanałami                   |
+| `messages:read` / `messages:write` | Historia, wysyłanie, edycja, usuwanie i reakcje |
+| `members:read` / `members:write`   | Członkowie i działania moderacyjne              |
+| `roles:read` / `roles:write`       | Role oraz przypisania                           |
+| `users:read` / `users:write`       | Profile widoczne dla bota                       |
 
-### Tworzenie nowej aplikacji Bota
+Wybieraj najmniejszy możliwy zestaw. Utworzenie i rotacja tokenu akceptują od 1 do 10 unikalnych scopes.
 
-```http
-POST /api/bots
-Authorization: Bearer <twój_token_użytkownika>
-Content-Type: application/json
+## Utworzenie aplikacji
 
+Endpointy zarządzania aplikacjami wymagają zwykłego tokenu użytkownika. Bot nie może tworzyć ani rotować własnych credentials.
+
+```bash
+curl --fail-with-body \
+  --request POST \
+  --url "$STRAFE_API_URL/api/bots" \
+  --header "Authorization: Bearer $STRAFE_USER_TOKEN" \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "name": "Release Assistant",
+    "handle": "release_assistant",
+    "description": "Publikuje informacje o wdrożeniach.",
+    "scopes": ["servers:read", "channels:read", "messages:write"]
+  }'
+```
+
+Odpowiedź `201` zawiera obiekt `bot` i jednorazowy `token`. Nickname jest normalizowany bez rozróżniania wielkości liter, a jego unikalność wymusza baza danych.
+
+```json
 {
-  "name": "Mój Pierwszy Bot",
-  "handle": "my_first_bot",
-  "description": "Ten bot wita nowych użytkowników.",
-  "scopes": ["messages:read", "messages:write"]
+  "bot": {
+    "botUserId": "019…",
+    "createdAt": "2026-09-08T07:00:00.000Z",
+    "description": "Publikuje informacje o wdrożeniach.",
+    "id": "019…",
+    "isPublic": false,
+    "name": "Release Assistant"
+  },
+  "token": "strafe_bot_…",
+  "tokenExpiresAt": "2026-10-08T07:00:00.000Z"
 }
 ```
 
-Odpowiedź zawiera identyfikator bota oraz jego początkowy token (np. `strafe_bot_...`), który należy skopiować, gdyż jest ukazywany **tylko raz**.
-
-### Zarządzanie (Z poziomu właściciela)
-
-Możesz listować wszystkie swoje boty wywołując `GET /api/bots`, obracać tokenem (generować nowy, niszcząc stary) przy pomocy `POST /api/bots/:botId/token`, lub całkowicie zawiesić boty i cofnąć im uprawnienia przez `DELETE /api/bots/:botId/token`.
-
-Dzięki tej architekturze, jeśli token bota wycieknie (np. wrzucisz go przez pomyłkę do publicznego repozytorium), możesz natychmiast go unieważnić w API.
-
----
+Zapisz identyfikator aplikacji oddzielnie od sekretu. Lista `GET /api/bots` celowo nie zwraca tokenów.
 
 ## Instalacja na serwerze
 
-Aby bot mógł cokolwiek zrobić na serwerze, musisz go zainstalować (właściciel bota i właściciel serwera muszą mieć odpowiednie prawa).
+Instalujący musi mieć `ManageServer`. Prywatną aplikację może zainstalować tylko jej właściciel; publiczną aplikację może zainstalować uprawniony administrator innego serwera.
 
-```http
-POST /api/servers/:serverId/bots/:botId
-Authorization: Bearer <twój_token_użytkownika>
+```bash
+curl --fail-with-body \
+  --request POST \
+  --url "$STRAFE_API_URL/api/servers/$SERVER_ID/bots/$BOT_ID" \
+  --header "Authorization: Bearer $STRAFE_USER_TOKEN"
 ```
 
-Po tej operacji, serwer wymusi proces E2EE Key Exchange na podłączonych użytkownikach – zaczną oni automatycznie szyfrować nowe wiadomości również dla kluczy publicznych Twojego bota.
+Operacja jest idempotentna. `installed: false` oznacza, że aktywne członkostwo już istniało. Po instalacji przypisz botowi rolę odpowiednią do jego zadania.
 
----
+## Rotacja i unieważnienie
 
-## Oficjalne SDK dla TypeScript: `@strafe/bot-sdk`
+Rotacja atomowo unieważnia wszystkie aktywne tokeny aplikacji i wydaje nowy wraz z polem `expiresAt`. Tokeny są obecnie ważne przez 30 dni:
 
-Dla twórców aplikacji, przygotowaliśmy wbudowany pakiet `@strafe/bot-sdk`. Jest to lekki i silnie typowany klient komunikujący się z API, zapewniający autouzupełnianie w oparciu o naszą specyfikację OpenAPI.
-
-### Instalacja i szybki start
-
-Pakiet ten można zainstalować bezpośrednio z pnpm. Skonstruowanie klienta ogranicza się do przekazania mu wygenerowanego tokenu bota:
-
-```typescript
-import { StrafeBot } from '@strafe/bot-sdk'
-
-// Inicjalizacja SDK
-const bot = new StrafeBot({
-  token: process.env.STRAFE_BOT_TOKEN!, // np. strafe_bot_8a2f...
-  baseUrl: 'https://api.strafe.app',
-})
-
-// Przykładowe wywołanie - sprawdzenie tożsamości bota
-async function start() {
-  const me = await bot.getMe()
-  console.log(`Zalogowano jako bot: ${me.displayName} (${me.handle})`)
-}
-
-start()
+```bash
+curl --fail-with-body \
+  --request POST \
+  --url "$STRAFE_API_URL/api/bots/$BOT_ID/token" \
+  --header "Authorization: Bearer $STRAFE_USER_TOKEN" \
+  --header 'Content-Type: application/json' \
+  --data '{"scopes":["servers:read","channels:read","messages:write"]}'
 ```
 
-### Wysyłanie i Odczytywanie Wiadomości (E2EE)
+Po rotacji stare procesy zaczną otrzymywać `401`. Wdróż nowy sekret, zrestartuj instancje, a dopiero później usuń poprzednią wersję sekretu z menedżera secrets. Awaryjne `DELETE /api/bots/:botId/token` natychmiast unieważnia wszystkie aktywne credentials.
 
-Ze względu na to, że Strafe jest aplikacją End-to-End Encrypted, bot przed wysłaniem wiadomości na kanał musi utworzyć cyfrową "kopertę" (Envelope) zaszyfrowaną wynegocjowanym z uczestnikami kluczem sesyjnym.
+## Limity i błędy
 
-Dlatego w SDK nie wysyłamy płaskiego tekstu. Deweloper budujący bota musi najpierw przetworzyć wiadomość algorytmem AES-256-GCM. SDK akceptuje przygotowaną, bezpieczną kopertę:
+API zwraca ujednoliconą strukturę błędu z `code`, bezpiecznym `message` i `requestId`. Odpowiedź `429` zawiera `Retry-After`; klient powinien odczekać wskazaną liczbę sekund i zastosować jitter. Nie ponawiaj automatycznie `400`, `401` ani `403`.
 
-```typescript
-// Uwaga: Zakładamy, że bot przechowuje swoje klucze tożsamości oraz klucze grupowe z serwera.
+Wysyłanie wiadomości jest ograniczone do 30 żądań na 10 sekund. Używaj unikalnego `clientNonce`, dzięki czemu bezpieczne ponowienie żądania nie utworzy duplikatu.
 
-import { createCipheriv, randomBytes } from 'node:crypto'
-import { randomUUID } from 'node:crypto'
+## Następny krok
 
-async function sendEncrypted(
-  channelId: string,
-  plainText: string,
-  groupKey: Buffer,
-) {
-  // 1. Wygenerowanie wektora inicjującego (IV) i przygotowanie wiadomości
-  const nonce = randomBytes(12)
-  const cipher = createCipheriv('aes-256-gcm', groupKey, nonce)
-
-  // 2. Szyfrowanie
-  let ciphertext = cipher.update(plainText, 'utf8', 'base64')
-  ciphertext += cipher.final('base64')
-  const authTag = cipher.getAuthTag()
-
-  // 3. Wysłanie zaszyfrowanej koperty przez Bot SDK
-  await bot.sendRawMessage(channelId, {
-    clientNonce: randomUUID(),
-    envelope: {
-      protocolVersion: 1,
-      contentType: 'text/plain',
-      nonce: nonce.toString('base64'),
-      ciphertext: ciphertext,
-      authenticationTag: authTag.toString('base64'),
-      senderDeviceId: 'bot-device-id',
-      epoch: 0,
-    },
-  })
-}
-```
-
-### Dokumentacja API i Scalar
-
-Wszystkie dostępne metody, struktury danych REST i parametry uwierzytelniania dla botów znajdują się na naszej oficjalnej zakładce **[Interactive API Reference](/api/reference)**.
-Korzystamy z silnika **Scalar**, aby umożliwić deweloperom swobodne, wbudowane zapytania HTTP bezpośrednio z przeglądarki. Wystarczy podać `Bearer strafe_bot_XYZ` w prawym górnym rogu podstrony dokumentacji API!
+Przejdź do przewodnika [Klient TypeScript dla botów](./bot-sdk), aby skonfigurować REST, Gateway, obsługę błędów i bezpieczne zamykanie procesu. Operacje dostępne dla botów można też sprawdzić w [interaktywnym API](/api/reference) oraz w dedykowanej specyfikacji `apps/api/openapi/bot-openapi.json`.

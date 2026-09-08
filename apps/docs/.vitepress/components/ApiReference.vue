@@ -4,7 +4,10 @@ import '@scalar/api-reference/style.css'
 import { onMounted, ref } from 'vue'
 import { defineClientComponent, withBase } from 'vitepress'
 
-const documentUrl = withBase('/openapi.json')
+const props = withDefaults(defineProps<{ documentPath?: string }>(), {
+  documentPath: '/openapi.json',
+})
+const documentUrl = withBase(props.documentPath)
 const status = ref<'loading' | 'ready' | 'error'>('loading')
 const errorMessage = ref('')
 

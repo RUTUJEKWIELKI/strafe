@@ -68,13 +68,18 @@ export class UserService {
 
   async updateSettings(userId: string, data: UpdateUserSettingsBody) {
     const { db } = requireDatabase(this.#app)
+    const { customStatusExpiresAt, ...settings } = data
     await db
       .update(userSettings)
       .set({
-        ...data,
-        customStatusExpiresAt: data.customStatusExpiresAt
-          ? new Date(data.customStatusExpiresAt)
-          : null,
+        ...settings,
+        ...(customStatusExpiresAt !== undefined
+          ? {
+              customStatusExpiresAt: customStatusExpiresAt
+                ? new Date(customStatusExpiresAt)
+                : null,
+            }
+          : {}),
         updatedAt: new Date(),
       })
       .where(eq(userSettings.userId, userId))

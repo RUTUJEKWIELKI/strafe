@@ -48,6 +48,7 @@ export class BotService {
     const botId = createId()
     const botUserId = createId()
     const rawToken = `${TOKEN_PREFIX}${createOpaqueToken()}`
+    const tokenExpiresAt = new Date(Date.now() + DEFAULT_TOKEN_TTL_MS)
     try {
       const bot = await db.transaction(async (tx) => {
         await tx.insert(users).values({
@@ -72,7 +73,7 @@ export class BotService {
           .returning()
         await tx.insert(botTokens).values({
           botId,
-          expiresAt: new Date(Date.now() + DEFAULT_TOKEN_TTL_MS),
+          expiresAt: tokenExpiresAt,
           id: createId(),
           name: 'default',
           scopes: input.scopes,
@@ -88,7 +89,11 @@ export class BotService {
         })
         return created!
       })
-      return { bot: this.present(bot), token: rawToken }
+      return {
+        bot: this.present(bot),
+        token: rawToken,
+        tokenExpiresAt: tokenExpiresAt.toISOString(),
+      }
     } catch (error) {
       if (isPostgresError(error) && error.code === '23505') {
         throw new ConflictError(
@@ -189,6 +194,7 @@ export class BotService {
   async rotate(ownerId: string, botId: string, scopes: BotScope[]) {
     const { db } = requireDatabase(this.app)
     const rawToken = `${TOKEN_PREFIX}${createOpaqueToken()}`
+    const expiresAt = new Date(Date.now() + DEFAULT_TOKEN_TTL_MS)
     await db.transaction(async (tx) => {
       const [bot] = await tx
         .select({ id: botApplications.id })
@@ -207,14 +213,14 @@ export class BotService {
         .where(and(eq(botTokens.botId, botId), isNull(botTokens.revokedAt)))
       await tx.insert(botTokens).values({
         botId,
-        expiresAt: new Date(Date.now() + DEFAULT_TOKEN_TTL_MS),
+        expiresAt,
         id: createId(),
         name: 'default',
         scopes,
         tokenHash: hashSecret(rawToken),
       })
     })
-    return rawToken
+    return { expiresAt: expiresAt.toISOString(), token: rawToken }
   }
 
   async install(installerId: string, botId: string, serverId: string) {
@@ -372,6 +378,7 @@ export class BotService {
       createdAt: bot.createdAt.toISOString(),
       description: bot.description,
       id: bot.id,
+      isPublic: bot.isPublic,
       name: bot.name,
     }
   }

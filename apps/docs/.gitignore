@@ -1,6 +1,7 @@
 # Generated from the repository's canonical Markdown and OpenAPI files.
 guide/
 public/openapi.json
+public/bot-openapi.json
 api/generated/*
 !api/generated/.gitignore
 !api/generated/index.md
