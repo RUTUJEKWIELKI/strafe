@@ -20,7 +20,7 @@ export function LoginPage() {
   const [submitting, setSubmitting] = createSignal(false)
 
   onMount(() => {
-    if (currentUser()) navigate('/app', { replace: true })
+    if (currentUser()) navigate('/@me', { replace: true })
   })
 
   const submit = async (event: SubmitEvent) => {
@@ -37,7 +37,7 @@ export function LoginPage() {
     setSubmitting(true)
     try {
       await login(email().trim(), password())
-      navigate('/app', { replace: true })
+      navigate('/@me', { replace: true })
     } catch (error) {
       const key = authErrorKey(error)
       setFormError(

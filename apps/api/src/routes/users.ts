@@ -5,6 +5,7 @@ import {
   UserSettingsSchema,
   UpdateUserSettingsBodySchema,
   CreateRelationshipBodySchema,
+  RelationshipListResponseSchema,
   WebPushSubscriptionBodySchema,
   type UpdateUserBody,
   type UpdateUserSettingsBody,
@@ -15,6 +16,23 @@ import type { FastifyPluginAsync } from 'fastify'
 import { Type } from 'typebox'
 
 const usersRoutes: FastifyPluginAsync = async (app) => {
+  app.get(
+    '/users/@me/relationships',
+    {
+      preHandler: app.authenticate,
+      schema: {
+        operationId: 'listRelationships',
+        response: { 200: RelationshipListResponseSchema },
+        tags: ['relationships'],
+      },
+    },
+    async (request) => ({
+      relationships: await app.userService.listRelationships(
+        request.auth.userId,
+      ),
+    }),
+  )
+
   app.get<{ Params: { userId: string } }>(
     '/users/:userId',
     {

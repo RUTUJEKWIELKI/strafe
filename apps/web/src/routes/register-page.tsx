@@ -46,7 +46,7 @@ export function RegisterPage() {
   const [captchaToken, setCaptchaToken] = createSignal('')
 
   onMount(() => {
-    if (currentUser()) navigate('/app', { replace: true })
+    if (currentUser()) navigate('/@me', { replace: true })
   })
 
   createEffect(() => {
@@ -117,7 +117,7 @@ export function RegisterPage() {
         locale: i18n().resolvedLanguage === 'pl' ? 'pl' : 'en',
         password: password(),
       })
-      navigate('/app', { replace: true })
+      navigate('/@me', { replace: true })
     } catch (error) {
       const key = authErrorKey(error)
       if (key === 'handleTaken') {

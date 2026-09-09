@@ -24,6 +24,7 @@ import {
   outboxEvents,
   serverMembers,
   userBlocks,
+  userRelationships,
   userReports,
   users,
 } from '../../db/schema.js'
@@ -719,18 +720,35 @@ export class ModerationService {
       .where(and(eq(users.id, blockedId), isNull(users.deletedAt)))
       .limit(1)
     if (!target) throw new NotFoundError('User not found')
-    const [block] = await db
-      .insert(userBlocks)
-      .values({
-        blockedId,
-        blockerId: userId,
-        reason: input.reason?.trim() || null,
-      })
-      .onConflictDoUpdate({
-        set: { reason: input.reason?.trim() || null },
-        target: [userBlocks.blockerId, userBlocks.blockedId],
-      })
-      .returning()
+    const block = await db.transaction(async (tx) => {
+      await tx
+        .delete(userRelationships)
+        .where(
+          or(
+            and(
+              eq(userRelationships.requesterId, userId),
+              eq(userRelationships.addresseeId, blockedId),
+            ),
+            and(
+              eq(userRelationships.requesterId, blockedId),
+              eq(userRelationships.addresseeId, userId),
+            ),
+          ),
+        )
+      const [created] = await tx
+        .insert(userBlocks)
+        .values({
+          blockedId,
+          blockerId: userId,
+          reason: input.reason?.trim() || null,
+        })
+        .onConflictDoUpdate({
+          set: { reason: input.reason?.trim() || null },
+          target: [userBlocks.blockerId, userBlocks.blockedId],
+        })
+        .returning()
+      return created
+    })
     if (!block) throw new Error('Block upsert returned no row')
     return {
       blockedId,

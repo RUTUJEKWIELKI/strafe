@@ -536,6 +536,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/users/@me/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List private DM and group conversations */
+        get: operations["listConversations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/@me/groups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a private group conversation */
+        post: operations["createGroupDirectMessage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/users/@me/dms": {
         parameters: {
             query?: never;
@@ -1487,6 +1521,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/users/@me/relationships": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listRelationships"];
+        put?: never;
+        /** Send a friend request */
+        post: operations["createRelationship"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/users/{userId}": {
         parameters: {
             query?: never;
@@ -1533,23 +1584,6 @@ export interface paths {
         put?: never;
         /** Add a Web Push subscription for this device */
         post: operations["addPushSubscription"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/users/@me/relationships": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Send a friend request */
-        post: operations["createRelationship"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4709,6 +4743,162 @@ export interface operations {
             };
             /** @description Default Response */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    listConversations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        conversations: ({
+                            archivedAt: string | null;
+                            flags: number;
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            parentId: string | null;
+                            positionKey: string;
+                            serverId: string | null;
+                            slowmodeSeconds: number;
+                            topic: string | null;
+                            type: "category" | "text" | "announcement" | "forum" | "voice" | "stage" | "thread_public" | "thread_private" | "dm" | "group_dm";
+                        } & {
+                            members: {
+                                /** Format: date-time */
+                                joinedAt: string;
+                                role: "owner" | "member";
+                                user: {
+                                    avatarUrl: string | null;
+                                    displayName: string;
+                                    handle: string;
+                                    /** Format: uuid */
+                                    id: string;
+                                };
+                            }[];
+                        })[];
+                    };
+                };
+            };
+        };
+    };
+    createGroupDirectMessage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    memberIds: string[];
+                    name: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        archivedAt: string | null;
+                        flags: number;
+                        /** Format: uuid */
+                        id: string;
+                        name: string;
+                        parentId: string | null;
+                        positionKey: string;
+                        serverId: string | null;
+                        slowmodeSeconds: number;
+                        topic: string | null;
+                        type: "category" | "text" | "announcement" | "forum" | "voice" | "stage" | "thread_public" | "thread_private" | "dm" | "group_dm";
+                    } & {
+                        members: {
+                            /** Format: date-time */
+                            joinedAt: string;
+                            role: "owner" | "member";
+                            user: {
+                                avatarUrl: string | null;
+                                displayName: string;
+                                handle: string;
+                                /** Format: uuid */
+                                id: string;
+                            };
+                        }[];
+                    };
+                };
+            };
+            /** @description Default Response */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8741,6 +8931,71 @@ export interface operations {
             };
         };
     };
+    listRelationships: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        relationships: {
+                            /** Format: uuid */
+                            addresseeId: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: uuid */
+                            requesterId: string;
+                            user: {
+                                avatarUrl: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                                displayName: string;
+                                handle: string;
+                                /** Format: uuid */
+                                id: string;
+                                status: "active" | "disabled" | "pending_deletion";
+                            };
+                            status: "pending" | "accepted" | "declined";
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    createRelationship: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    targetId: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getUser: {
         parameters: {
             query?: never;
@@ -8870,31 +9125,6 @@ export interface operations {
                     keys: {
                         [key: string]: string;
                     };
-                };
-            };
-        };
-        responses: {
-            /** @description Default Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    createRelationship: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** Format: uuid */
-                    targetId: string;
                 };
             };
         };

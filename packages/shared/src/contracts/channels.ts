@@ -140,6 +140,41 @@ export const CreateDirectMessageBodySchema = Type.Object(
   { $id: 'CreateDirectMessageBody' },
 )
 
+export const CreateGroupDirectMessageBodySchema = Type.Object(
+  {
+    memberIds: Type.Array(IdSchema, {
+      maxItems: 9,
+      minItems: 1,
+      uniqueItems: true,
+    }),
+    name: Type.String({ maxLength: 100, minLength: 1 }),
+  },
+  { $id: 'CreateGroupDirectMessageBody', additionalProperties: false },
+)
+
+export const ConversationMemberSchema = Type.Object({
+  joinedAt: DateTimeSchema,
+  role: Type.Union([Type.Literal('owner'), Type.Literal('member')]),
+  user: Type.Object({
+    avatarUrl: Type.Union([Type.String(), Type.Null()]),
+    displayName: Type.String(),
+    handle: Type.String(),
+    id: IdSchema,
+  }),
+})
+
+export const ConversationSchema = Type.Intersect(
+  [
+    ChannelSchema,
+    Type.Object({ members: Type.Array(ConversationMemberSchema) }),
+  ],
+  { $id: 'Conversation' },
+)
+
+export const ConversationListResponseSchema = Type.Object({
+  conversations: Type.Array(ConversationSchema),
+})
+
 export type Channel = Static<typeof ChannelSchema>
 export type ChannelPermissionOverwrite = Static<
   typeof ChannelPermissionOverwriteSchema
@@ -148,6 +183,10 @@ export type CreateChannelBody = Static<typeof CreateChannelBodySchema>
 export type CreateDirectMessageBody = Static<
   typeof CreateDirectMessageBodySchema
 >
+export type CreateGroupDirectMessageBody = Static<
+  typeof CreateGroupDirectMessageBodySchema
+>
+export type Conversation = Static<typeof ConversationSchema>
 export type PermissionOverwriteSubjectType = Static<
   typeof PermissionOverwriteSubjectTypeSchema
 >
