@@ -23,6 +23,12 @@ function base64url(value: ArrayBuffer) {
     .replace(/=+$/, '')
 }
 
+function requireKeyPair(key: CryptoKey | CryptoKeyPair): CryptoKeyPair {
+  if (!('publicKey' in key) || !('privateKey' in key))
+    throw new Error('KEY_PAIR_GENERATION_FAILED')
+  return key
+}
+
 export class IndexedDbConversationKeyStore implements SecureConversationKeyStore {
   private id(conversationId: string, epoch: number) {
     const deviceId = currentDeviceId()
@@ -57,13 +63,12 @@ export const conversationKeyStore = new IndexedDbConversationKeyStore()
 export async function ensureDeviceKeyBundle(deviceId: string) {
   const existing = await database.keys.get(`identity:${deviceId}`)
   if (existing) return
-  const identity = await crypto.subtle.generateKey('Ed25519', false, [
-    'sign',
-    'verify',
-  ])
-  const signedPrekey = await crypto.subtle.generateKey('X25519', false, [
-    'deriveBits',
-  ])
+  const identity = requireKeyPair(
+    await crypto.subtle.generateKey('Ed25519', false, ['sign', 'verify']),
+  )
+  const signedPrekey = requireKeyPair(
+    await crypto.subtle.generateKey('X25519', false, ['deriveBits']),
+  )
   const publicKey = base64url(
     await crypto.subtle.exportKey('raw', signedPrekey.publicKey),
   )
@@ -75,8 +80,10 @@ export async function ensureDeviceKeyBundle(deviceId: string) {
     ),
   )
   const oneTimePairs = await Promise.all(
-    Array.from({ length: 20 }, () =>
-      crypto.subtle.generateKey('X25519', false, ['deriveBits']),
+    Array.from({ length: 20 }, async () =>
+      requireKeyPair(
+        await crypto.subtle.generateKey('X25519', false, ['deriveBits']),
+      ),
     ),
   )
   await api.PUT('/api/encryption/keys', {

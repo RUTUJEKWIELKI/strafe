@@ -34,7 +34,7 @@ async function loadMessages(channelId: string) {
 
 export function ChatPage() {
   const [t] = useTranslation()
-  const params = useParams()
+  const params = useParams<{ conversationId: string }>()
   const conversations = useConversations()
   const realtimeState = useRealtime()
   const conversation = () =>
@@ -69,8 +69,9 @@ export function ChatPage() {
   })
   createEffect(() => {
     const event = realtimeState.lastEvent()
+    if (!event) return
     if (
-      event?.aggregateId === params.conversationId &&
+      event.aggregateId === params.conversationId &&
       /^(message\.|channel\.)/.test(event.type)
     )
       void refetch()

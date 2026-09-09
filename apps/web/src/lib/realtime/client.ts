@@ -13,7 +13,7 @@ export class RealtimeClient {
   #reconnect?: number
   #attempt = 0
   #closed = true
-  #lastStreamId?: string
+  #lastStreamId: string | undefined
   #removeTokenListener?: () => void
 
   start() {
