@@ -20,14 +20,19 @@ function MessageContent(props: {
     (envelope) =>
       decryptMessage(envelope, props.message.channelId, props.keyStore),
   )
-  if (props.message.deletedAt)
-    return <p class="deleted">{t('workspace.chat.deleted')}</p>
   return (
     <Show
-      when={!plaintext.loading}
-      fallback={<p>{t('workspace.chat.decrypting')}</p>}
+      when={!props.message.deletedAt}
+      fallback={<p class="deleted">{t('workspace.chat.deleted')}</p>}
     >
-      <p>{plaintext.error ? t('workspace.chat.decryptFailed') : plaintext()}</p>
+      <Show
+        when={!plaintext.loading}
+        fallback={<p>{t('workspace.chat.decrypting')}</p>}
+      >
+        <p>
+          {plaintext.error ? t('workspace.chat.decryptFailed') : plaintext()}
+        </p>
+      </Show>
     </Show>
   )
 }

@@ -50,7 +50,7 @@ describe('private chat controls', () => {
       <I18nextProvider i18n={i18n}>
         <MessageComposer
           encryptionReady={false}
-          onSend={async () => {}}
+          onSend={() => Promise.resolve()}
           onTyping={() => {}}
         />
       </I18nextProvider>
