@@ -1,6 +1,8 @@
 packages:
   - apps/*
   - packages/*
+overrides:
+  'js-yaml@>=4.0.0 <4.3.2': ^4.3.2
 allowBuilds:
   argon2: true
   cpu-features: true

@@ -20,6 +20,7 @@ import type { FastifyInstance } from 'fastify'
 import {
   channels,
   channelReadStates,
+  encryptionSessionEpochs,
   files,
   messageAttachments,
   messageEdits,
@@ -285,6 +286,20 @@ export class MessageService {
     }
 
     validateEnvelope(input.envelope)
+    if (authorization.channel.type === 'group_dm') {
+      const { db } = requireDatabase(this.#app)
+      const [state] = await db
+        .select({ epoch: encryptionSessionEpochs.epoch })
+        .from(encryptionSessionEpochs)
+        .where(eq(encryptionSessionEpochs.conversationId, channelId))
+        .limit(1)
+      if (!state || input.envelope.epoch !== state.epoch) {
+        throw new BadRequestError(
+          'Message encryption epoch is stale',
+          'STALE_ENCRYPTION_EPOCH',
+        )
+      }
+    }
     const attachmentIds = input.attachmentIds ?? []
     if (!input.envelope.ciphertext && attachmentIds.length === 0) {
       throw new BadRequestError(

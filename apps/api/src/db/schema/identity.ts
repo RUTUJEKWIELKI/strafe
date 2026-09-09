@@ -115,7 +115,7 @@ export const userSettings = pgTable(
       withTimezone: true,
     }),
     discoverability: text('discoverability').default('everyone').notNull(),
-    locale: text('locale').default('pl-PL').notNull(),
+    locale: text('locale').default('pl').notNull(),
     manualStatus: text('manual_status').default('online').notNull(),
     presenceVisibility: text('presence_visibility')
       .default('everyone')
@@ -142,6 +142,7 @@ export const userSettings = pgTable(
       'user_settings_allow_dms_check',
       sql`${table.allowDmsFrom} in ('everyone', 'friends', 'server_members', 'nobody')`,
     ),
+    check('user_settings_locale_check', sql`${table.locale} in ('en', 'pl')`),
   ],
 )
 

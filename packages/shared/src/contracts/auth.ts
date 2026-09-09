@@ -5,6 +5,7 @@ import { CurrentUserSchema } from './users.js'
 
 export const RegisterBodySchema = Type.Object(
   {
+    birthDate: Type.String({ format: 'date' }),
     captchaToken: Type.Optional(Type.String()),
     displayName: Type.String({ maxLength: 64, minLength: 1 }),
     email: Type.String({ format: 'email', maxLength: 320 }),
@@ -13,9 +14,29 @@ export const RegisterBodySchema = Type.Object(
       minLength: 3,
       pattern: '^[A-Za-z0-9_.]+$',
     }),
+    locale: Type.Union([Type.Literal('en'), Type.Literal('pl')]),
     password: Type.String({ maxLength: 128, minLength: 12 }),
   },
   { $id: 'RegisterBody' },
+)
+
+export const HandleAvailabilityParamsSchema = Type.Object(
+  {
+    handle: Type.String({
+      maxLength: 32,
+      minLength: 3,
+      pattern: '^[A-Za-z0-9_.]+$',
+    }),
+  },
+  { additionalProperties: false, $id: 'HandleAvailabilityParams' },
+)
+
+export const HandleAvailabilityResponseSchema = Type.Object(
+  {
+    available: Type.Boolean(),
+    normalizedHandle: Type.String(),
+  },
+  { $id: 'HandleAvailabilityResponse' },
 )
 
 export const LoginBodySchema = Type.Object(
@@ -164,6 +185,9 @@ export type ConsumeAuthChallengeBody = Static<
   typeof ConsumeAuthChallengeBodySchema
 >
 export type LoginBody = Static<typeof LoginBodySchema>
+export type HandleAvailabilityParams = Static<
+  typeof HandleAvailabilityParamsSchema
+>
 export type LogoutBody = Static<typeof LogoutBodySchema>
 export type RefreshBody = Static<typeof RefreshBodySchema>
 export type RegisterBody = Static<typeof RegisterBodySchema>

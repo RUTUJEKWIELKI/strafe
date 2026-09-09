@@ -36,7 +36,7 @@ export const CreateBotBodySchema = Type.Object(
     }),
     name: Type.String({ maxLength: 64, minLength: 1 }),
     scopes: Type.Array(BotScopeSchema, {
-      maxItems: 4,
+      maxItems: 10,
       minItems: 1,
       uniqueItems: true,
     }),
@@ -49,6 +49,7 @@ export const BotCredentialSchema = Type.Object({
   token: Type.String({
     description: 'Shown once. Store this credential securely.',
   }),
+  tokenExpiresAt: DateTimeSchema,
 })
 
 export const BotListResponseSchema = Type.Object({
@@ -74,7 +75,10 @@ export const UpdateBotBodySchema = Type.Object(
   { additionalProperties: false },
 )
 
-export const BotTokenResponseSchema = Type.Object({ token: Type.String() })
+export const BotTokenResponseSchema = Type.Object({
+  expiresAt: DateTimeSchema,
+  token: Type.String(),
+})
 export const RevokeBotResponseSchema = Type.Object({ revoked: Type.Boolean() })
 
 export type BotScope = Static<typeof BotScopeSchema>

@@ -34,9 +34,11 @@ describe.skipIf(!databaseUrl)('account security integration', () => {
         headers: deviceHeaders('Laptop'),
         method: 'POST',
         payload: {
+          birthDate: '1990-01-01',
           displayName: 'Security Test',
           email,
           handle: `security_${suffix}`,
+          locale: 'en',
           password: firstPassword,
         },
         url: '/api/auth/register',

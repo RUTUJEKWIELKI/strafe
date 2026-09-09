@@ -4060,6 +4060,25 @@ export interface operations {
                     };
                 };
             };
+            /** @description Default Response */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
         };
     };
     listServerChannels: {
@@ -4093,6 +4112,63 @@ export interface operations {
                             topic: string | null;
                             type: "category" | "text" | "announcement" | "forum" | "voice" | "stage" | "thread_public" | "thread_private" | "dm" | "group_dm";
                         }[];
+                    };
+                };
+            };
+            /** @description Default Response */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
                     };
                 };
             };

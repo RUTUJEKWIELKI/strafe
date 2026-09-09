@@ -20,7 +20,11 @@ import {
   users,
 } from '../../db/schema.js'
 import { requireDatabase, isPostgresError } from '../../lib/database.js'
-import { ConflictError, UnauthorizedError } from '../../lib/errors.js'
+import {
+  BadRequestError,
+  ConflictError,
+  UnauthorizedError,
+} from '../../lib/errors.js'
 import {
   createId,
   createOpaqueToken,
@@ -86,6 +90,25 @@ function toCurrentUser(user: UserProjection): CurrentUser {
   }
 }
 
+export function isAtLeastThirteen(
+  birthDate: string,
+  now = new Date(),
+): boolean {
+  const [year, month, day] = birthDate.split('-').map(Number)
+  if (!year || !month || !day) return false
+  const date = new Date(Date.UTC(year, month - 1, day))
+  if (
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day ||
+    date > now
+  ) {
+    return false
+  }
+  const thirteenthBirthday = new Date(Date.UTC(year + 13, month - 1, day))
+  return thirteenthBirthday <= now
+}
+
 export class AuthService {
   readonly #app: FastifyInstance
   readonly #dummyPasswordHash: string
@@ -99,9 +122,21 @@ export class AuthService {
     input: RegisterBody,
     metadata: SessionMetadata,
   ): Promise<AuthResponse> {
-    const { db } = requireDatabase(this.#app)
     const email = normalizeEmail(input.email)
     const normalizedHandle = normalizeHandle(input.handle)
+    if (!input.displayName.trim()) {
+      throw new BadRequestError(
+        'Display name cannot be blank',
+        'DISPLAY_NAME_INVALID',
+      )
+    }
+    if (!isAtLeastThirteen(input.birthDate)) {
+      throw new BadRequestError(
+        'You must be at least 13 years old to create an account',
+        'MINIMUM_AGE_REQUIRED',
+      )
+    }
+    const { db } = requireDatabase(this.#app)
     const passwordHash = await hash(input.password, {
       hashLength: 32,
       memoryCost: 65_536,
@@ -142,7 +177,7 @@ export class AuthService {
           throw new Error('User profile insert returned no row')
         }
 
-        await tx.insert(userSettings).values({ userId })
+        await tx.insert(userSettings).values({ locale: input.locale, userId })
         await tx.insert(authIdentities).values({
           id: identityId,
           passwordHash,
@@ -217,6 +252,21 @@ export class AuthService {
       }
       throw error
     }
+  }
+
+  async isHandleAvailable(handle: string): Promise<boolean> {
+    const { db } = requireDatabase(this.#app)
+    const [existing] = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(
+        and(
+          eq(users.normalizedHandle, normalizeHandle(handle)),
+          isNull(users.deletedAt),
+        ),
+      )
+      .limit(1)
+    return !existing
   }
 
   async login(

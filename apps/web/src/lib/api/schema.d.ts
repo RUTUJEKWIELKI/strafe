@@ -170,6 +170,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/handle-availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Check whether a normalized account handle is available */
+        get: operations["getHandleAvailability"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/register": {
         parameters: {
             query?: never;
@@ -519,6 +536,120 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/users/@me/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List private DM and group conversations */
+        get: operations["listConversations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/users/@me/groups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a private group conversation */
+        post: operations["createGroupDirectMessage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/conversations/{conversationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["updateGroupConversation"];
+        trace?: never;
+    };
+    "/api/conversations/{conversationId}/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["addGroupConversationMember"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/conversations/{conversationId}/members/{userId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["removeGroupConversationMember"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/conversations/{conversationId}/leave": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["leaveGroupConversation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/conversations/{conversationId}/ownership": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["transferGroupConversationOwnership"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/users/@me/dms": {
         parameters: {
             query?: never;
@@ -807,6 +938,23 @@ export interface paths {
         get: operations["getCurrentUserKeyBackup"];
         /** Append an opaque encrypted key backup version */
         put: operations["putCurrentUserKeyBackup"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/locale": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Resolve the initial landing page locale */
+        get: operations["getLandingLocale"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -1453,6 +1601,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/users/@me/relationships": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listRelationships"];
+        put?: never;
+        /** Send a friend request */
+        post: operations["createRelationship"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/users/{userId}": {
         parameters: {
             query?: never;
@@ -1499,23 +1664,6 @@ export interface paths {
         put?: never;
         /** Add a Web Push subscription for this device */
         post: operations["addPushSubscription"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/users/@me/relationships": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Send a friend request */
-        post: operations["createRelationship"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2057,6 +2205,31 @@ export interface operations {
             };
         };
     };
+    getHandleAvailability: {
+        parameters: {
+            query: {
+                handle: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        available: boolean;
+                        normalizedHandle: string;
+                    };
+                };
+            };
+        };
+    };
     register: {
         parameters: {
             query?: never;
@@ -2067,11 +2240,14 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** Format: date */
+                    birthDate: string;
                     captchaToken?: string;
                     displayName: string;
                     /** Format: email */
                     email: string;
                     handle: string;
+                    locale: "en" | "pl";
                     password: string;
                 };
             };
@@ -2558,6 +2734,63 @@ export interface operations {
                     };
                 };
             };
+            /** @description Default Response */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
         };
     };
     createBotApplication: {
@@ -2598,6 +2831,8 @@ export interface operations {
                         };
                         /** @description Shown once. Store this credential securely. */
                         token: string;
+                        /** Format: date-time */
+                        tokenExpiresAt: string;
                     };
                 };
             };
@@ -2621,7 +2856,83 @@ export interface operations {
                 };
             };
             /** @description Default Response */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2690,6 +3001,25 @@ export interface operations {
                     };
                 };
             };
+            /** @description Default Response */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
         };
     };
     updateBotApplication: {
@@ -2732,7 +3062,83 @@ export interface operations {
                 };
             };
             /** @description Default Response */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2776,12 +3182,90 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        /** Format: date-time */
+                        expiresAt: string;
                         token: string;
                     };
                 };
             };
             /** @description Default Response */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2824,7 +3308,64 @@ export interface operations {
                 };
             };
             /** @description Default Response */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2870,7 +3411,64 @@ export interface operations {
                 };
             };
             /** @description Default Response */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4244,6 +4842,699 @@ export interface operations {
             };
         };
     };
+    listConversations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        conversations: ({
+                            archivedAt: string | null;
+                            flags: number;
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            parentId: string | null;
+                            positionKey: string;
+                            serverId: string | null;
+                            slowmodeSeconds: number;
+                            topic: string | null;
+                            type: "category" | "text" | "announcement" | "forum" | "voice" | "stage" | "thread_public" | "thread_private" | "dm" | "group_dm";
+                        } & {
+                            members: {
+                                /** Format: date-time */
+                                joinedAt: string;
+                                role: "owner" | "member";
+                                user: {
+                                    avatarUrl: string | null;
+                                    displayName: string;
+                                    handle: string;
+                                    /** Format: uuid */
+                                    id: string;
+                                };
+                            }[];
+                        })[];
+                    };
+                };
+            };
+        };
+    };
+    createGroupDirectMessage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    memberIds: string[];
+                    name: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        archivedAt: string | null;
+                        flags: number;
+                        /** Format: uuid */
+                        id: string;
+                        name: string;
+                        parentId: string | null;
+                        positionKey: string;
+                        serverId: string | null;
+                        slowmodeSeconds: number;
+                        topic: string | null;
+                        type: "category" | "text" | "announcement" | "forum" | "voice" | "stage" | "thread_public" | "thread_private" | "dm" | "group_dm";
+                    } & {
+                        members: {
+                            /** Format: date-time */
+                            joinedAt: string;
+                            role: "owner" | "member";
+                            user: {
+                                avatarUrl: string | null;
+                                displayName: string;
+                                handle: string;
+                                /** Format: uuid */
+                                id: string;
+                            };
+                        }[];
+                    };
+                };
+            };
+            /** @description Default Response */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    updateGroupConversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        conversation: ({
+                            archivedAt: string | null;
+                            flags: number;
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            parentId: string | null;
+                            positionKey: string;
+                            serverId: string | null;
+                            slowmodeSeconds: number;
+                            topic: string | null;
+                            type: "category" | "text" | "announcement" | "forum" | "voice" | "stage" | "thread_public" | "thread_private" | "dm" | "group_dm";
+                        } & {
+                            members: {
+                                /** Format: date-time */
+                                joinedAt: string;
+                                role: "owner" | "member";
+                                user: {
+                                    avatarUrl: string | null;
+                                    displayName: string;
+                                    handle: string;
+                                    /** Format: uuid */
+                                    id: string;
+                                };
+                            }[];
+                        }) | null;
+                        encryptionEpoch: number;
+                    };
+                };
+            };
+            /** @description Default Response */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    addGroupConversationMember: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    userId: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        conversation: ({
+                            archivedAt: string | null;
+                            flags: number;
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            parentId: string | null;
+                            positionKey: string;
+                            serverId: string | null;
+                            slowmodeSeconds: number;
+                            topic: string | null;
+                            type: "category" | "text" | "announcement" | "forum" | "voice" | "stage" | "thread_public" | "thread_private" | "dm" | "group_dm";
+                        } & {
+                            members: {
+                                /** Format: date-time */
+                                joinedAt: string;
+                                role: "owner" | "member";
+                                user: {
+                                    avatarUrl: string | null;
+                                    displayName: string;
+                                    handle: string;
+                                    /** Format: uuid */
+                                    id: string;
+                                };
+                            }[];
+                        }) | null;
+                        encryptionEpoch: number;
+                    };
+                };
+            };
+            /** @description Default Response */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    removeGroupConversationMember: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+                userId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        conversation: ({
+                            archivedAt: string | null;
+                            flags: number;
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            parentId: string | null;
+                            positionKey: string;
+                            serverId: string | null;
+                            slowmodeSeconds: number;
+                            topic: string | null;
+                            type: "category" | "text" | "announcement" | "forum" | "voice" | "stage" | "thread_public" | "thread_private" | "dm" | "group_dm";
+                        } & {
+                            members: {
+                                /** Format: date-time */
+                                joinedAt: string;
+                                role: "owner" | "member";
+                                user: {
+                                    avatarUrl: string | null;
+                                    displayName: string;
+                                    handle: string;
+                                    /** Format: uuid */
+                                    id: string;
+                                };
+                            }[];
+                        }) | null;
+                        encryptionEpoch: number;
+                    };
+                };
+            };
+            /** @description Default Response */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    leaveGroupConversation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        conversation: ({
+                            archivedAt: string | null;
+                            flags: number;
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            parentId: string | null;
+                            positionKey: string;
+                            serverId: string | null;
+                            slowmodeSeconds: number;
+                            topic: string | null;
+                            type: "category" | "text" | "announcement" | "forum" | "voice" | "stage" | "thread_public" | "thread_private" | "dm" | "group_dm";
+                        } & {
+                            members: {
+                                /** Format: date-time */
+                                joinedAt: string;
+                                role: "owner" | "member";
+                                user: {
+                                    avatarUrl: string | null;
+                                    displayName: string;
+                                    handle: string;
+                                    /** Format: uuid */
+                                    id: string;
+                                };
+                            }[];
+                        }) | null;
+                        encryptionEpoch: number;
+                    };
+                };
+            };
+            /** @description Default Response */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
+    transferGroupConversationOwnership: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    userId: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        conversation: ({
+                            archivedAt: string | null;
+                            flags: number;
+                            /** Format: uuid */
+                            id: string;
+                            name: string;
+                            parentId: string | null;
+                            positionKey: string;
+                            serverId: string | null;
+                            slowmodeSeconds: number;
+                            topic: string | null;
+                            type: "category" | "text" | "announcement" | "forum" | "voice" | "stage" | "thread_public" | "thread_private" | "dm" | "group_dm";
+                        } & {
+                            members: {
+                                /** Format: date-time */
+                                joinedAt: string;
+                                role: "owner" | "member";
+                                user: {
+                                    avatarUrl: string | null;
+                                    displayName: string;
+                                    handle: string;
+                                    /** Format: uuid */
+                                    id: string;
+                                };
+                            }[];
+                        }) | null;
+                        encryptionEpoch: number;
+                    };
+                };
+            };
+            /** @description Default Response */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+        };
+    };
     listDirectMessages: {
         parameters: {
             query?: never;
@@ -5170,6 +6461,29 @@ export interface operations {
                             message: string;
                             requestId: string;
                         };
+                    };
+                };
+            };
+        };
+    };
+    getLandingLocale: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        locale: "en" | "pl";
+                        source: "default" | "header" | "ip";
                     };
                 };
             };
@@ -7882,6 +9196,25 @@ export interface operations {
                     };
                 };
             };
+            /** @description Default Response */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
         };
     };
     listServerChannels: {
@@ -7915,6 +9248,63 @@ export interface operations {
                             topic: string | null;
                             type: "category" | "text" | "announcement" | "forum" | "voice" | "stage" | "thread_public" | "thread_private" | "dm" | "group_dm";
                         }[];
+                    };
+                };
+            };
+            /** @description Default Response */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
+                    };
+                };
+            };
+            /** @description Default Response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            code: string;
+                            details?: {
+                                field?: string;
+                                message: string;
+                            }[];
+                            message: string;
+                            requestId: string;
+                        };
                     };
                 };
             };
@@ -8158,6 +9548,71 @@ export interface operations {
             };
         };
     };
+    listRelationships: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Default Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        relationships: {
+                            /** Format: uuid */
+                            addresseeId: string;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: uuid */
+                            requesterId: string;
+                            user: {
+                                avatarUrl: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                                displayName: string;
+                                handle: string;
+                                /** Format: uuid */
+                                id: string;
+                                status: "active" | "disabled" | "pending_deletion";
+                            };
+                            status: "pending" | "accepted" | "declined";
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    createRelationship: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    targetId: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Default Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getUser: {
         parameters: {
             query?: never;
@@ -8228,7 +9683,7 @@ export interface operations {
                         customStatus: string | null;
                         customStatusExpiresAt: string | null;
                         discoverability: "everyone" | "friends";
-                        locale: string;
+                        locale: "en" | "pl";
                         manualStatus: "online" | "idle" | "dnd" | "invisible";
                         presenceVisibility: "everyone" | "friends" | "nobody";
                         theme: "system" | "light" | "dark";
@@ -8252,7 +9707,7 @@ export interface operations {
                     customStatus?: string | null;
                     customStatusExpiresAt?: string | null;
                     discoverability?: "everyone" | "friends";
-                    locale?: string;
+                    locale?: "en" | "pl";
                     manualStatus?: "online" | "idle" | "dnd" | "invisible";
                     presenceVisibility?: "everyone" | "friends" | "nobody";
                     theme?: "system" | "light" | "dark";
@@ -8287,31 +9742,6 @@ export interface operations {
                     keys: {
                         [key: string]: string;
                     };
-                };
-            };
-        };
-        responses: {
-            /** @description Default Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    createRelationship: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** Format: uuid */
-                    targetId: string;
                 };
             };
         };
