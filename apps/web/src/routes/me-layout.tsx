@@ -14,17 +14,21 @@ async function loadConversations(): Promise<Conversation[]> {
 
 export function MeLayout(props: { children?: JSX.Element }) {
   const [conversations] = createResource(loadConversations)
-  return <Show when={currentUser()} fallback={<Navigate href="/login" />}>
-    <div class="private-app">
-      <AppSidebar conversations={conversations() ?? []} />
-      <main class="private-main">
-        <Show
-          when={!conversations.loading}
-          fallback={<div class="app-loading">Loading your conversations…</div>}
-        >
-          {props.children}
-        </Show>
-      </main>
-    </div>
-  </Show>
+  return (
+    <Show when={currentUser()} fallback={<Navigate href="/login" />}>
+      <div class="private-app">
+        <AppSidebar conversations={conversations() ?? []} />
+        <main class="private-main">
+          <Show
+            when={!conversations.loading}
+            fallback={
+              <div class="app-loading">Loading your conversations…</div>
+            }
+          >
+            {props.children}
+          </Show>
+        </main>
+      </div>
+    </Show>
+  )
 }

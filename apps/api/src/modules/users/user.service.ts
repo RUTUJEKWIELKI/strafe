@@ -164,14 +164,12 @@ export class UserService {
         await tx
           .insert(userRelationships)
           .values({ addresseeId, requesterId, status: 'pending' })
-        await tx
-          .insert(notifications)
-          .values({
-            id: createId(),
-            userId: addresseeId,
-            type: 'friend_request',
-            data: { actorId: requesterId },
-          })
+        await tx.insert(notifications).values({
+          id: createId(),
+          userId: addresseeId,
+          type: 'friend_request',
+          data: { actorId: requesterId },
+        })
       }
     })
   }

@@ -329,48 +329,40 @@ export class DirectMessageService {
       throw new ForbiddenError('A blocked user cannot be added to the group')
     const channelId = createId()
     await db.transaction(async (tx) => {
-      await tx
-        .insert(channels)
-        .values({
-          id: channelId,
-          name: input.name.trim(),
-          ownerId: userId,
-          positionKey: '000000',
-          type: 'group_dm',
-        })
-      await tx
-        .insert(channelMembers)
-        .values([
-          { channelId, userId, role: 'owner' },
-          ...memberIds.map((memberId) => ({
-            channelId,
-            userId: memberId,
-            role: 'member' as const,
-          })),
-        ])
-      await tx
-        .insert(conversationEvents)
-        .values(
-          memberIds.map((targetId) => ({
-            actorId: userId,
-            channelId,
-            id: createId(),
-            targetId,
-            type: 'member_added',
-          })),
-        )
-      await tx
-        .insert(outboxEvents)
-        .values({
-          aggregateId: channelId,
-          aggregateType: 'channel',
+      await tx.insert(channels).values({
+        id: channelId,
+        name: input.name.trim(),
+        ownerId: userId,
+        positionKey: '000000',
+        type: 'group_dm',
+      })
+      await tx.insert(channelMembers).values([
+        { channelId, userId, role: 'owner' },
+        ...memberIds.map((memberId) => ({
+          channelId,
+          userId: memberId,
+          role: 'member' as const,
+        })),
+      ])
+      await tx.insert(conversationEvents).values(
+        memberIds.map((targetId) => ({
+          actorId: userId,
+          channelId,
           id: createId(),
-          payload: {
-            audience: { userIds: [userId, ...memberIds] },
-            data: { channelId },
-          },
-          topic: 'channel.group_created',
-        })
+          targetId,
+          type: 'member_added',
+        })),
+      )
+      await tx.insert(outboxEvents).values({
+        aggregateId: channelId,
+        aggregateType: 'channel',
+        id: createId(),
+        payload: {
+          audience: { userIds: [userId, ...memberIds] },
+          data: { channelId },
+        },
+        topic: 'channel.group_created',
+      })
     })
     return (await this.listConversations(userId)).find(
       (conversation) => conversation.id === channelId,
