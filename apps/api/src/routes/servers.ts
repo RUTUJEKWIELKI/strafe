@@ -60,7 +60,10 @@ const serverRoutes: FastifyPluginAsync = async (app) => {
       preHandler: app.authenticate,
       schema: {
         operationId: 'listCurrentUserServers',
-        response: { 200: ServerListResponseSchema },
+        response: {
+          200: ServerListResponseSchema,
+          401: ErrorResponseSchema,
+        },
         summary: 'List servers joined by the authenticated user',
         tags: ['servers'],
       },
@@ -100,7 +103,12 @@ const serverRoutes: FastifyPluginAsync = async (app) => {
       schema: {
         operationId: 'listServerChannels',
         params: ServerParamsSchema,
-        response: { 200: ChannelListResponseSchema },
+        response: {
+          200: ChannelListResponseSchema,
+          401: ErrorResponseSchema,
+          403: ErrorResponseSchema,
+          404: ErrorResponseSchema,
+        },
         summary: 'List channels visible to the current member',
         tags: ['channels'],
       },

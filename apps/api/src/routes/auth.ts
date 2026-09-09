@@ -2,12 +2,15 @@ import {
   AuthResponseSchema,
   CurrentUserSchema,
   ErrorResponseSchema,
+  HandleAvailabilityParamsSchema,
+  HandleAvailabilityResponseSchema,
   LoginBodySchema,
   LogoutBodySchema,
   LogoutResponseSchema,
   RefreshBodySchema,
   RegisterBodySchema,
   type LoginBody,
+  type HandleAvailabilityParams,
   type LogoutBody,
   type RefreshBody,
   type RegisterBody,
@@ -16,8 +19,27 @@ import type { FastifyPluginAsync } from 'fastify'
 
 import { sessionMetadata } from '../lib/session-metadata.js'
 import { AppError } from '../lib/errors.js'
+import { normalizeHandle } from '../lib/ids.js'
 
 const authRoutes: FastifyPluginAsync = async (app) => {
+  app.get<{ Querystring: HandleAvailabilityParams }>(
+    '/auth/handle-availability',
+    {
+      config: { rateLimit: { max: 30, timeWindow: '1 minute' } },
+      schema: {
+        operationId: 'getHandleAvailability',
+        querystring: HandleAvailabilityParamsSchema,
+        response: { 200: HandleAvailabilityResponseSchema },
+        summary: 'Check whether a normalized account handle is available',
+        tags: ['auth'],
+      },
+    },
+    async (request) => ({
+      available: await app.authService.isHandleAvailable(request.query.handle),
+      normalizedHandle: normalizeHandle(request.query.handle),
+    }),
+  )
+
   app.post<{ Body: RegisterBody }>(
     '/auth/register',
     {

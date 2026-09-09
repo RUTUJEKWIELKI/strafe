@@ -6,13 +6,24 @@ export const api = createClient<paths>({
   baseUrl: import.meta.env.VITE_API_URL ?? 'http://localhost:3000',
 })
 
+let accessToken: string | null = null
+
 api.use({
+  onRequest({ request }) {
+    if (accessToken)
+      request.headers.set('authorization', `Bearer ${accessToken}`)
+    return request
+  },
   onResponse({ response }) {
     if (response.status === 401) {
       window.dispatchEvent(new Event('strafe:device-invalidated'))
     }
   },
 })
+
+export function setApiAccessToken(token: string | null): void {
+  accessToken = token
+}
 
 /** Call after a successful logout, before removing the in-memory session key. */
 export function notifyLocalLogout(): void {

@@ -20,10 +20,10 @@ import {
   X,
 } from 'lucide-solid'
 import { createSignal, For, Show } from 'solid-js'
-import { useLanguage, useTranslation } from 'solid-i18next'
+import { useTranslation } from 'solid-i18next'
 
 import { TurtleMark } from '../components/brand/turtle-mark.js'
-import { changeLanguage, type SupportedLocale } from '../lib/i18n/i18n.js'
+import { LanguageSelect } from '../components/language-select.js'
 
 const communities = [
   { color: '#f4ca45', initials: 'CD', label: 'Creative Dept.' },
@@ -222,30 +222,6 @@ function ProductPreview() {
   )
 }
 
-function LanguageSwitcher() {
-  const [t, translation] = useTranslation()
-  const [currentLanguage] = useLanguage(translation)
-
-  return (
-    <div class="language-switcher" aria-label={t('language.label')}>
-      <For each={['pl', 'en'] as SupportedLocale[]}>
-        {(locale) => (
-          <button
-            aria-pressed={currentLanguage() === locale}
-            classList={{
-              'language-switcher__option--active': currentLanguage() === locale,
-            }}
-            onClick={() => void changeLanguage(locale)}
-            type="button"
-          >
-            {locale.toUpperCase()}
-          </button>
-        )}
-      </For>
-    </div>
-  )
-}
-
 export function LandingPage() {
   const [menuOpen, setMenuOpen] = createSignal(false)
   const [t] = useTranslation()
@@ -260,8 +236,8 @@ export function LandingPage() {
           <a href="#dla-kogo">{t('navigation.audience')}</a>
         </nav>
         <div class="header-actions">
-          <LanguageSwitcher />
-          <a class="header-cta" href="#start">
+          <LanguageSelect />
+          <a class="header-cta" href="/login">
             {t('navigation.open')} <ArrowRight size={15} />
           </a>
         </div>
@@ -286,10 +262,10 @@ export function LandingPage() {
             <a href="#dla-kogo" onClick={() => setMenuOpen(false)}>
               {t('navigation.audience')}
             </a>
-            <a href="#start" onClick={() => setMenuOpen(false)}>
+            <a href="/login" onClick={() => setMenuOpen(false)}>
               {t('navigation.open')}
             </a>
-            <LanguageSwitcher />
+            <LanguageSelect />
           </nav>
         </Show>
       </header>
@@ -307,7 +283,7 @@ export function LandingPage() {
             </h1>
             <p>{t('hero.description')}</p>
             <div class="hero-actions">
-              <a class="button button--primary" href="#start">
+              <a class="button button--primary" href="/register">
                 {t('hero.primaryAction')} <ArrowRight size={17} />
               </a>
               <a class="button button--text" href="#mozliwosci">
@@ -376,7 +352,7 @@ export function LandingPage() {
                     </div>
                     <h3>{t(`features.items.${feature.key}.title`)}</h3>
                     <p>{t(`features.items.${feature.key}.description`)}</p>
-                    <a href="#start">
+                    <a href="/register">
                       {t('features.learnMore')} <ArrowRight size={15} />
                     </a>
                   </article>
@@ -428,7 +404,7 @@ export function LandingPage() {
             <em>{t('closing.titleSecond')}</em>
           </h2>
           <p>{t('closing.description')}</p>
-          <a class="button button--dark" href="#start">
+          <a class="button button--dark" href="/register">
             {t('closing.action')} <ArrowRight size={17} />
           </a>
           <TurtleMark class="closing-turtle" />

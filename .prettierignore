@@ -10,6 +10,7 @@ apps/api/openapi/**
 apps/web/src/lib/api/schema.d.ts
 packages/bot-sdk/src/schema.d.ts
 apps/docs/public/openapi.json
+apps/docs/public/bot-openapi.json
 apps/docs/guide
 apps/docs/api/generated
 pnpm-lock.yaml

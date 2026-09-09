@@ -67,7 +67,9 @@ describe('LandingPage', () => {
   it('switches to English and remembers the explicit choice', async () => {
     renderLandingPage()
 
-    await fireEvent.click(screen.getAllByRole('button', { name: 'EN' })[0]!)
+    await fireEvent.change(screen.getByRole('combobox', { name: 'Język' }), {
+      target: { value: 'en' },
+    })
 
     expect(
       screen.getByRole('heading', {

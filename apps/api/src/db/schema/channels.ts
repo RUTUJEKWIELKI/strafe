@@ -5,6 +5,7 @@ import {
   check,
   index,
   integer,
+  jsonb,
   type AnyPgColumn,
   pgTable,
   primaryKey,
@@ -77,6 +78,7 @@ export const channelMembers = pgTable(
     joinedAt: timestamp('joined_at', { withTimezone: true })
       .defaultNow()
       .notNull(),
+    role: text('role').default('member').notNull(),
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
@@ -87,6 +89,40 @@ export const channelMembers = pgTable(
       name: 'channel_members_pk',
     }),
     index('channel_members_user_id_idx').on(table.userId),
+    check(
+      'channel_members_role_check',
+      sql`${table.role} in ('owner', 'member')`,
+    ),
+  ],
+)
+
+export const conversationEvents = pgTable(
+  'conversation_events',
+  {
+    actorId: uuid('actor_id').references(() => users.id, {
+      onDelete: 'set null',
+    }),
+    channelId: uuid('channel_id')
+      .notNull()
+      .references(() => channels.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    id: uuid('id').primaryKey(),
+    metadata: jsonb('metadata')
+      .$type<Record<string, unknown>>()
+      .default({})
+      .notNull(),
+    targetId: uuid('target_id').references(() => users.id, {
+      onDelete: 'set null',
+    }),
+    type: text('type').notNull(),
+  },
+  (table) => [
+    index('conversation_events_channel_time_idx').on(
+      table.channelId,
+      table.createdAt.desc(),
+    ),
   ],
 )
 

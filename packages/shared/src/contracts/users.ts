@@ -63,7 +63,7 @@ export const UserSettingsSchema = Type.Object(
       Type.Literal('everyone'),
       Type.Literal('friends'),
     ]),
-    locale: Type.String(),
+    locale: Type.Union([Type.Literal('en'), Type.Literal('pl')]),
     manualStatus: Type.Union([
       Type.Literal('online'),
       Type.Literal('idle'),
@@ -95,6 +95,7 @@ export const UserRelationshipSchema = Type.Object(
     addresseeId: IdSchema,
     createdAt: DateTimeSchema,
     requesterId: IdSchema,
+    user: UserSchema,
     status: Type.Union([
       Type.Literal('pending'),
       Type.Literal('accepted'),
@@ -103,6 +104,19 @@ export const UserRelationshipSchema = Type.Object(
   },
   { $id: 'UserRelationship' },
 )
+
+export const RelationshipListResponseSchema = Type.Object({
+  relationships: Type.Array(UserRelationshipSchema),
+})
+
+export const BlockedUserSchema = Type.Object({
+  blockedAt: DateTimeSchema,
+  user: UserSchema,
+})
+
+export const BlockedUserListResponseSchema = Type.Object({
+  blocks: Type.Array(BlockedUserSchema),
+})
 
 export const CreateRelationshipBodySchema = Type.Object(
   { targetId: IdSchema },
@@ -121,6 +135,9 @@ export type UpdateUserBody = Static<typeof UpdateUserBodySchema>
 export type UserSettings = Static<typeof UserSettingsSchema>
 export type UpdateUserSettingsBody = Static<typeof UpdateUserSettingsBodySchema>
 export type UserRelationship = Static<typeof UserRelationshipSchema>
+export type RelationshipListResponse = Static<
+  typeof RelationshipListResponseSchema
+>
 export type CreateRelationshipBody = Static<typeof CreateRelationshipBodySchema>
 export type WebPushSubscriptionBody = Static<
   typeof WebPushSubscriptionBodySchema
