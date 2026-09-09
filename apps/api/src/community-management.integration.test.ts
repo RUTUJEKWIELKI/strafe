@@ -23,9 +23,11 @@ describe.skipIf(!databaseUrl)('community management integration', () => {
       const response = await app.inject({
         method: 'POST',
         payload: {
+          birthDate: '1990-01-01',
           displayName: label,
           email: `${label.toLowerCase()}-${suffix}@example.test`,
           handle: `${label.toLowerCase()}_${suffix}`,
+          locale: 'en',
           password: 'correct horse battery staple',
         },
         url: '/api/auth/register',

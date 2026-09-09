@@ -50,6 +50,7 @@
     "emojibase-data": "^17.0.0",
     "hash-wasm": "^4.12.0",
     "hls.js": "^1.7.1",
+    "i18next": "^26.4.2",
     "linkify-it": "^6.1.0",
     "livekit-client": "^2.22.1",
     "lucide-solid": "^1.37.0",
@@ -57,6 +58,7 @@
     "micromark-extension-gfm": "^3.0.0",
     "openapi-fetch": "^0.17.0",
     "shiki": "^4.4.3",
+    "solid-i18next": "^0.0.5",
     "solid-js": "^1.9.15",
     "valibot": "^1.4.2",
     "wavesurfer.js": "^7.12.11"

@@ -93,6 +93,10 @@ export default withMermaid(
                 text: 'Bots and Applications',
                 link: '/guide/guides/bots-and-applications',
               },
+              {
+                text: 'Bot TypeScript Client',
+                link: '/guide/guides/bot-sdk',
+              },
             ],
             text: 'Guides',
           },
@@ -133,6 +137,7 @@ export default withMermaid(
           {
             items: [
               { text: 'Interactive API Reference', link: '/api/reference' },
+              { text: 'Bot API Reference', link: '/api/bots' },
               { text: 'Generated TypeScript API', link: '/api/generated/' },
             ],
             text: 'API',

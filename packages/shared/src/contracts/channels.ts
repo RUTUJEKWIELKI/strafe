@@ -140,6 +140,57 @@ export const CreateDirectMessageBodySchema = Type.Object(
   { $id: 'CreateDirectMessageBody' },
 )
 
+export const CreateGroupDirectMessageBodySchema = Type.Object(
+  {
+    memberIds: Type.Array(IdSchema, {
+      maxItems: 9,
+      minItems: 1,
+      uniqueItems: true,
+    }),
+    name: Type.String({ maxLength: 100, minLength: 1 }),
+  },
+  { $id: 'CreateGroupDirectMessageBody', additionalProperties: false },
+)
+
+export const ConversationMemberSchema = Type.Object({
+  joinedAt: DateTimeSchema,
+  role: Type.Union([Type.Literal('owner'), Type.Literal('member')]),
+  user: Type.Object({
+    avatarUrl: Type.Union([Type.String(), Type.Null()]),
+    displayName: Type.String(),
+    handle: Type.String(),
+    id: IdSchema,
+  }),
+})
+
+export const ConversationSchema = Type.Intersect(
+  [
+    ChannelSchema,
+    Type.Object({ members: Type.Array(ConversationMemberSchema) }),
+    Type.Object({ currentEncryptionEpoch: Type.Integer({ minimum: 1 }) }),
+  ],
+  { $id: 'Conversation' },
+)
+
+export const ConversationListResponseSchema = Type.Object({
+  conversations: Type.Array(ConversationSchema),
+})
+
+export const UpdateGroupDirectMessageBodySchema = Type.Object(
+  { name: Type.String({ maxLength: 100, minLength: 1 }) },
+  { additionalProperties: false, $id: 'UpdateGroupDirectMessageBody' },
+)
+
+export const GroupMemberBodySchema = Type.Object(
+  { userId: IdSchema },
+  { additionalProperties: false, $id: 'GroupMemberBody' },
+)
+
+export const GroupActionResponseSchema = Type.Object({
+  conversation: Type.Union([ConversationSchema, Type.Null()]),
+  encryptionEpoch: Type.Integer({ minimum: 1 }),
+})
+
 export type Channel = Static<typeof ChannelSchema>
 export type ChannelPermissionOverwrite = Static<
   typeof ChannelPermissionOverwriteSchema
@@ -147,6 +198,15 @@ export type ChannelPermissionOverwrite = Static<
 export type CreateChannelBody = Static<typeof CreateChannelBodySchema>
 export type CreateDirectMessageBody = Static<
   typeof CreateDirectMessageBodySchema
+>
+export type CreateGroupDirectMessageBody = Static<
+  typeof CreateGroupDirectMessageBodySchema
+>
+export type Conversation = Static<typeof ConversationSchema>
+export type ConversationMember = Static<typeof ConversationMemberSchema>
+export type GroupMemberBody = Static<typeof GroupMemberBodySchema>
+export type UpdateGroupDirectMessageBody = Static<
+  typeof UpdateGroupDirectMessageBodySchema
 >
 export type PermissionOverwriteSubjectType = Static<
   typeof PermissionOverwriteSubjectTypeSchema

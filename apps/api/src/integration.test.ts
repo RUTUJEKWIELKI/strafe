@@ -22,9 +22,11 @@ describe.skipIf(!databaseUrl)('community API integration', () => {
       const ownerRegistration = await server.inject({
         method: 'POST',
         payload: {
+          birthDate: '1990-01-01',
           displayName: 'Owner',
           email: `owner-${suffix}@example.test`,
           handle: `owner_${suffix}`,
+          locale: 'en',
           password: 'correct horse battery staple',
         },
         url: '/api/auth/register',
@@ -56,9 +58,11 @@ describe.skipIf(!databaseUrl)('community API integration', () => {
       const memberRegistration = await server.inject({
         method: 'POST',
         payload: {
+          birthDate: '1990-01-01',
           displayName: 'Member',
           email: `member-${suffix}@example.test`,
           handle: `member_${suffix}`,
+          locale: 'en',
           password: 'correct horse battery staple',
         },
         url: '/api/auth/register',

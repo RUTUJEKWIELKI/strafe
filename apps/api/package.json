@@ -73,7 +73,7 @@
     "mjml": "^5.4.0",
     "msgpackr": "^2.1.0",
     "music-metadata": "^11.15.0",
-    "nodemailer": "^9.0.6",
+    "nodemailer": "^9.1.0",
     "otplib": "^13.5.0",
     "pg": "^8.23.0",
     "prom-client": "^15.1.3",
