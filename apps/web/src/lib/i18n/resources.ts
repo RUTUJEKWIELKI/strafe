@@ -180,6 +180,81 @@ export const resources = {
         saved: 'Language preference saved.',
         saveFailed: 'Couldn’t save the preference to your account.',
       },
+      workspace: {
+        navigation: {
+          home: 'Home',
+          friends: 'Friends',
+          notifications: 'Notifications',
+          directMessages: 'DIRECT MESSAGES',
+          groups: 'GROUPS',
+          search: 'Search conversations',
+        },
+        actions: {
+          block: 'Block',
+          close: 'Close',
+          message: 'Message',
+          send: 'Send',
+        },
+        roles: { owner: 'Owner', member: 'Member' },
+        members: {
+          title: 'Members',
+          open: 'Open member list',
+          remove: 'Remove {{name}} from group',
+        },
+        profile: { title: 'User profile', role: 'Group role' },
+        emoji: { title: 'Emoji picker', open: 'Open emoji picker' },
+        encryption: {
+          status: 'Security verified per device',
+          setupRequired: 'Set up encryption keys to send messages',
+        },
+        chat: {
+          directMessage: 'Direct message',
+          memberCount: '{{count}} members',
+          loading: 'Loading encrypted history…',
+          emptyTitle: 'No messages yet',
+          emptyText:
+            'Encrypted messages sent here will appear on every authorized device.',
+          system: 'System',
+          deleted: 'Message deleted',
+          edited: 'edited',
+          encryptedLocked: 'Encrypted message — unlock this device to read',
+          unavailable: 'Conversation unavailable.',
+          message: 'Message',
+          placeholder: 'Write an encrypted message',
+        },
+        home: {
+          kicker: 'YOUR SPACE',
+          title: 'Good to see you.',
+          description:
+            'Pick up a private conversation or check what changed while you were away.',
+          friends: 'Requests, connections and blocked users',
+          notifications: 'Updates that need your attention',
+          emptyTitle: 'Your conversations live here',
+          emptyText:
+            'Choose a direct message from the sidebar or start one from Friends.',
+          encryption:
+            'Message contents are end-to-end encrypted on your device.',
+        },
+        notifications: {
+          readAll: 'Mark all read',
+          empty: 'You’re all caught up.',
+          types: {
+            friend_request: 'You received a friend request',
+            message_reply: 'Someone replied to your message',
+            default: 'You have a new notification',
+          },
+        },
+        friends: {
+          all: 'All',
+          pending: 'Pending',
+          blocked: 'Blocked',
+          noBlocked: 'No blocked users.',
+          empty: 'Nothing here yet.',
+          unblock: 'Unblock',
+          accept: 'Accept',
+        },
+        reactions: { add: 'Add reaction' },
+      },
     },
   },
   pl: {
@@ -366,6 +441,83 @@ export const resources = {
         localeDescription: 'Wybierz język używany w całym Strafe.',
         saved: 'Preferencja języka została zapisana.',
         saveFailed: 'Nie udało się zapisać preferencji na koncie.',
+      },
+      workspace: {
+        navigation: {
+          home: 'Główna',
+          friends: 'Znajomi',
+          notifications: 'Powiadomienia',
+          directMessages: 'WIADOMOŚCI PRYWATNE',
+          groups: 'GRUPY',
+          search: 'Szukaj rozmów',
+        },
+        actions: {
+          block: 'Zablokuj',
+          close: 'Zamknij',
+          message: 'Wiadomość',
+          send: 'Wyślij',
+        },
+        roles: { owner: 'Właściciel', member: 'Członek' },
+        members: {
+          title: 'Członkowie',
+          open: 'Otwórz listę członków',
+          remove: 'Usuń {{name}} z grupy',
+        },
+        profile: { title: 'Profil użytkownika', role: 'Rola w grupie' },
+        emoji: { title: 'Wybór emoji', open: 'Otwórz wybór emoji' },
+        encryption: {
+          status: 'Bezpieczeństwo weryfikowane dla urządzenia',
+          setupRequired:
+            'Skonfiguruj klucze szyfrowania, aby wysyłać wiadomości',
+        },
+        chat: {
+          directMessage: 'Wiadomość prywatna',
+          memberCount: 'Liczba członków: {{count}}',
+          loading: 'Ładowanie zaszyfrowanej historii…',
+          emptyTitle: 'Nie ma jeszcze wiadomości',
+          emptyText:
+            'Zaszyfrowane wiadomości pojawią się na każdym autoryzowanym urządzeniu.',
+          system: 'System',
+          deleted: 'Wiadomość usunięta',
+          edited: 'edytowano',
+          encryptedLocked:
+            'Zaszyfrowana wiadomość — odblokuj urządzenie, aby ją odczytać',
+          unavailable: 'Rozmowa jest niedostępna.',
+          message: 'Wiadomość',
+          placeholder: 'Napisz zaszyfrowaną wiadomość',
+        },
+        home: {
+          kicker: 'TWOJA PRZESTRZEŃ',
+          title: 'Dobrze Cię widzieć.',
+          description:
+            'Wróć do prywatnej rozmowy lub sprawdź, co zmieniło się podczas Twojej nieobecności.',
+          friends: 'Zaproszenia, znajomi i zablokowane osoby',
+          notifications: 'Aktualizacje wymagające Twojej uwagi',
+          emptyTitle: 'Tutaj są Twoje rozmowy',
+          emptyText:
+            'Wybierz prywatną rozmowę z panelu bocznego lub rozpocznij ją w sekcji Znajomi.',
+          encryption:
+            'Treść wiadomości jest szyfrowana end-to-end na Twoim urządzeniu.',
+        },
+        notifications: {
+          readAll: 'Oznacz wszystkie jako przeczytane',
+          empty: 'Wszystko przeczytane.',
+          types: {
+            friend_request: 'Masz nowe zaproszenie do znajomych',
+            message_reply: 'Ktoś odpowiedział na Twoją wiadomość',
+            default: 'Masz nowe powiadomienie',
+          },
+        },
+        friends: {
+          all: 'Wszyscy',
+          pending: 'Oczekujące',
+          blocked: 'Zablokowani',
+          noBlocked: 'Brak zablokowanych użytkowników.',
+          empty: 'Nic tutaj jeszcze nie ma.',
+          unblock: 'Odblokuj',
+          accept: 'Akceptuj',
+        },
+        reactions: { add: 'Dodaj reakcję' },
       },
     },
   },

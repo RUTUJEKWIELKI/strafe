@@ -1,8 +1,14 @@
 import { useParams } from '@solidjs/router'
-import { createResource, For, Show } from 'solid-js'
-import { LockKeyhole, SmilePlus } from 'lucide-solid'
-import { api } from '../lib/api/client.js'
+import { createResource, createSignal, Show } from 'solid-js'
+import { useTranslation } from 'solid-i18next'
+
+import { ConversationHeader } from '../components/app/conversation-header.js'
 import { EncryptionNotice } from '../components/app/encryption-notice.js'
+import { GroupMemberPanel } from '../components/app/group-member-panel.js'
+import { MessageComposer } from '../components/app/message-composer.js'
+import { MessageList } from '../components/app/message-list.js'
+import { api } from '../lib/api/client.js'
+import { useConversations } from '../lib/conversations/context.js'
 
 async function loadMessages(channelId: string) {
   const result = await api.GET('/api/channels/{channelId}/messages', {
@@ -11,85 +17,68 @@ async function loadMessages(channelId: string) {
   if (!result.data) throw result
   return result.data.messages.toReversed()
 }
+
 export function ChatPage() {
+  const [t] = useTranslation()
   const params = useParams()
+  const conversations = useConversations()
+  const conversation = () =>
+    conversations
+      .conversations()
+      .find((item) => item.id === params.conversationId)
   const [messages] = createResource(() => params.conversationId, loadMessages)
+  const [membersOpen, setMembersOpen] = createSignal(false)
   return (
-    <section class="chat-view">
-      <header>
-        <div>
-          <h1>Private conversation</h1>
-          <span>
-            <LockKeyhole size={14} /> Security status is verified per device
-          </span>
-        </div>
-      </header>
-      <EncryptionNotice />
-      <div class="message-list">
-        <Show
-          when={!messages.loading}
-          fallback={<p>Loading encrypted history…</p>}
+    <Show
+      when={conversation()}
+      fallback={
+        <section class="chat-view">
+          <p class="app-loading">{t('workspace.chat.unavailable')}</p>
+        </section>
+      }
+    >
+      {(active) => (
+        <section
+          classList={{
+            'chat-view': true,
+            'chat-view--group': active().type === 'group_dm',
+          }}
         >
-          <For
-            each={messages()}
-            fallback={
-              <div class="chat-empty">
-                <h2>No messages yet</h2>
-                <p>
-                  Encrypted messages sent here will appear on every authorized
-                  device.
-                </p>
+          <div class="chat-column">
+            <ConversationHeader
+              conversation={active()}
+              onMembers={() => setMembersOpen(true)}
+            />
+            <EncryptionNotice />
+            <MessageList
+              messages={messages() ?? []}
+              loading={messages.loading}
+            />
+            <MessageComposer encryptionReady={false} />
+          </div>
+          {active().type === 'group_dm' && (
+            <GroupMemberPanel
+              conversation={active()}
+              onChanged={conversations.refetch}
+            />
+          )}
+          <Show when={membersOpen()}>
+            <div
+              class="member-drawer-backdrop"
+              onClick={() => setMembersOpen(false)}
+            >
+              <div onClick={(event) => event.stopPropagation()}>
+                <GroupMemberPanel
+                  conversation={active()}
+                  mobile
+                  onClose={() => setMembersOpen(false)}
+                  onChanged={conversations.refetch}
+                />
               </div>
-            }
-          >
-            {(message) => (
-              <article class="message-row">
-                <div class="avatar">
-                  {message.author?.displayName[0] ?? '·'}
-                </div>
-                <div>
-                  <strong>
-                    {message.author?.displayName ?? 'System'}{' '}
-                    <time>
-                      {new Date(message.createdAt).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </time>
-                  </strong>
-                  <p>
-                    {message.deletedAt
-                      ? 'Message deleted'
-                      : message.envelope
-                        ? 'Encrypted message — unlock this device to read'
-                        : 'Unavailable legacy message'}
-                  </p>
-                </div>
-                <button aria-label="Add reaction">
-                  <SmilePlus size={17} />
-                </button>
-              </article>
-            )}
-          </For>
-        </Show>
-      </div>
-      <form
-        class="message-composer"
-        onSubmit={(event) => event.preventDefault()}
-      >
-        <button type="button" aria-label="Open emoji picker">
-          <SmilePlus />
-        </button>
-        <label class="sr-only" for="message-content">
-          Message
-        </label>
-        <textarea
-          id="message-content"
-          disabled
-          placeholder="Set up encryption keys to send messages"
-        />
-        <button disabled>Send</button>
-      </form>
-    </section>
+            </div>
+          </Show>
+        </section>
+      )}
+    </Show>
   )
 }

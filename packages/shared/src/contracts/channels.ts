@@ -175,6 +175,21 @@ export const ConversationListResponseSchema = Type.Object({
   conversations: Type.Array(ConversationSchema),
 })
 
+export const UpdateGroupDirectMessageBodySchema = Type.Object(
+  { name: Type.String({ maxLength: 100, minLength: 1 }) },
+  { additionalProperties: false, $id: 'UpdateGroupDirectMessageBody' },
+)
+
+export const GroupMemberBodySchema = Type.Object(
+  { userId: IdSchema },
+  { additionalProperties: false, $id: 'GroupMemberBody' },
+)
+
+export const GroupActionResponseSchema = Type.Object({
+  conversation: Type.Union([ConversationSchema, Type.Null()]),
+  encryptionEpoch: Type.Integer({ minimum: 1 }),
+})
+
 export type Channel = Static<typeof ChannelSchema>
 export type ChannelPermissionOverwrite = Static<
   typeof ChannelPermissionOverwriteSchema
@@ -187,6 +202,11 @@ export type CreateGroupDirectMessageBody = Static<
   typeof CreateGroupDirectMessageBodySchema
 >
 export type Conversation = Static<typeof ConversationSchema>
+export type ConversationMember = Static<typeof ConversationMemberSchema>
+export type GroupMemberBody = Static<typeof GroupMemberBodySchema>
+export type UpdateGroupDirectMessageBody = Static<
+  typeof UpdateGroupDirectMessageBodySchema
+>
 export type PermissionOverwriteSubjectType = Static<
   typeof PermissionOverwriteSubjectTypeSchema
 >

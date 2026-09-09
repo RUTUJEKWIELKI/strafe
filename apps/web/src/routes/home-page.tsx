@@ -1,37 +1,33 @@
 import { Bell, LockKeyhole, MessageCircle, UsersRound } from 'lucide-solid'
+import { useTranslation } from 'solid-i18next'
 export function HomePage() {
+  const [t] = useTranslation()
   return (
     <div class="home-view">
       <header>
-        <span class="kicker">YOUR SPACE</span>
-        <h1>Good to see you.</h1>
-        <p>
-          Pick up a private conversation or check what changed while you were
-          away.
-        </p>
+        <span class="kicker">{t('workspace.home.kicker')}</span>
+        <h1>{t('workspace.home.title')}</h1>
+        <p>{t('workspace.home.description')}</p>
       </header>
       <section class="home-grid">
         <a href="/@me/friends">
           <UsersRound />
-          <strong>Friends</strong>
-          <span>Requests, connections and blocked users</span>
+          <strong>{t('workspace.navigation.friends')}</strong>
+          <span>{t('workspace.home.friends')}</span>
         </a>
         <a href="/@me/notifications">
           <Bell />
-          <strong>Notifications</strong>
-          <span>Updates that need your attention</span>
+          <strong>{t('workspace.navigation.notifications')}</strong>
+          <span>{t('workspace.home.notifications')}</span>
         </a>
       </section>
       <section class="home-empty">
         <MessageCircle />
-        <h2>Your conversations live here</h2>
-        <p>
-          Choose a direct message from the sidebar or start one from Friends.
-        </p>
+        <h2>{t('workspace.home.emptyTitle')}</h2>
+        <p>{t('workspace.home.emptyText')}</p>
       </section>
       <footer>
-        <LockKeyhole size={16} /> Message contents are end-to-end encrypted on
-        your device.
+        <LockKeyhole size={16} /> {t('workspace.home.encryption')}
       </footer>
     </div>
   )

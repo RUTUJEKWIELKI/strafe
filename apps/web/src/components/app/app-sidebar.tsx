@@ -1,17 +1,34 @@
 import { A, useLocation, useNavigate } from '@solidjs/router'
 import { Bell, Home, LogOut, Settings, UserRound } from 'lucide-solid'
-import { For } from 'solid-js'
+import { createSignal, For } from 'solid-js'
 import type { Conversation } from '@strafe/shared'
+import { useTranslation } from 'solid-i18next'
 
 import { currentUser, logout } from '../../lib/auth/session.js'
 
 export function AppSidebar(props: { conversations: Conversation[] }) {
   const location = useLocation()
   const navigate = useNavigate()
+  const [t] = useTranslation()
+  const [query, setQuery] = createSignal('')
+  const conversationName = (conversation: Conversation) =>
+    conversation.type === 'dm'
+      ? (conversation.members.find(
+          (member) => member.user.id !== currentUser()?.id,
+        )?.user.displayName ?? t('workspace.chat.directMessage'))
+      : conversation.name
   const links = [
-    { href: '/@me', icon: Home, label: 'Home' },
-    { href: '/@me/friends', icon: UserRound, label: 'Friends' },
-    { href: '/@me/notifications', icon: Bell, label: 'Notifications' },
+    { href: '/@me', icon: Home, label: t('workspace.navigation.home') },
+    {
+      href: '/@me/friends',
+      icon: UserRound,
+      label: t('workspace.navigation.friends'),
+    },
+    {
+      href: '/@me/notifications',
+      icon: Bell,
+      label: t('workspace.navigation.notifications'),
+    },
   ]
   return (
     <aside class="app-sidebar" aria-label="Private navigation">
@@ -31,22 +48,41 @@ export function AppSidebar(props: { conversations: Conversation[] }) {
           )}
         </For>
       </nav>
+      <input
+        class="conversation-search"
+        value={query()}
+        onInput={(event) => setQuery(event.currentTarget.value)}
+        placeholder={t('workspace.navigation.search')}
+        aria-label={t('workspace.navigation.search')}
+      />
       <div class="sidebar-section">
-        <span>DIRECT MESSAGES</span>
-        <For each={props.conversations.filter((item) => item.type === 'dm')}>
+        <span>{t('workspace.navigation.directMessages')}</span>
+        <For
+          each={props.conversations.filter(
+            (item) =>
+              item.type === 'dm' &&
+              conversationName(item)
+                .toLowerCase()
+                .includes(query().toLowerCase()),
+          )}
+        >
           {(conversation) => (
             <A href={`/@me/dm/${conversation.id}`}>
               {conversation.members.find(
                 (member) => member.user.id !== currentUser()?.id,
-              )?.user.displayName ?? 'Direct message'}
+              )?.user.displayName ?? t('workspace.chat.directMessage')}
             </A>
           )}
         </For>
       </div>
       <div class="sidebar-section">
-        <span>GROUPS</span>
+        <span>{t('workspace.navigation.groups')}</span>
         <For
-          each={props.conversations.filter((item) => item.type === 'group_dm')}
+          each={props.conversations.filter(
+            (item) =>
+              item.type === 'group_dm' &&
+              item.name.toLowerCase().includes(query().toLowerCase()),
+          )}
         >
           {(conversation) => (
             <A href={`/@me/groups/${conversation.id}`}>{conversation.name}</A>

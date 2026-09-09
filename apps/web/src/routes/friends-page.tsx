@@ -2,6 +2,7 @@ import { createResource, For, Show } from 'solid-js'
 import { useLocation } from '@solidjs/router'
 import { api } from '../lib/api/client.js'
 import { currentUser } from '../lib/auth/session.js'
+import { useTranslation } from 'solid-i18next'
 
 async function loadRelationships() {
   const result = await api.GET('/api/users/@me/relationships')
@@ -23,6 +24,7 @@ async function loadBlocks() {
 }
 
 export function FriendsPage() {
+  const [t] = useTranslation()
   const location = useLocation()
   const blocked = () => location.pathname.endsWith('/blocked')
   const pending = () => location.pathname.endsWith('/pending')
@@ -37,11 +39,11 @@ export function FriendsPage() {
   return (
     <section class="friends-view">
       <header>
-        <h1>Friends</h1>
+        <h1>{t('workspace.navigation.friends')}</h1>
         <nav>
-          <a href="/@me/friends">All</a>
-          <a href="/@me/friends/pending">Pending</a>
-          <a href="/@me/friends/blocked">Blocked</a>
+          <a href="/@me/friends">{t('workspace.friends.all')}</a>
+          <a href="/@me/friends/pending">{t('workspace.friends.pending')}</a>
+          <a href="/@me/friends/blocked">{t('workspace.friends.blocked')}</a>
         </nav>
       </header>
       <Show
@@ -50,7 +52,9 @@ export function FriendsPage() {
           <div class="user-list">
             <For
               each={blocks()}
-              fallback={<p class="empty-copy">No blocked users.</p>}
+              fallback={
+                <p class="empty-copy">{t('workspace.friends.noBlocked')}</p>
+              }
             >
               {(block) => (
                 <article>
@@ -79,7 +83,7 @@ export function FriendsPage() {
         <div class="user-list">
           <For
             each={shown()}
-            fallback={<p class="empty-copy">Nothing here yet.</p>}
+            fallback={<p class="empty-copy">{t('workspace.friends.empty')}</p>}
           >
             {(relationship) => (
               <article>
