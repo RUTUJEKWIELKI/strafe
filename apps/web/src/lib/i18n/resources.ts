@@ -211,6 +211,10 @@ export const resources = {
           directMessage: 'Direct message',
           memberCount: '{{count}} members',
           loading: 'Loading encrypted history…',
+          decrypting: 'Decrypting…',
+          decryptFailed: 'This message could not be decrypted on this device.',
+          sendFailed:
+            'Message was not sent. Check your connection and try again.',
           emptyTitle: 'No messages yet',
           emptyText:
             'Encrypted messages sent here will appear on every authorized device.',
@@ -474,6 +478,11 @@ export const resources = {
           directMessage: 'Wiadomość prywatna',
           memberCount: 'Liczba członków: {{count}}',
           loading: 'Ładowanie zaszyfrowanej historii…',
+          decrypting: 'Odszyfrowywanie…',
+          decryptFailed:
+            'Nie udało się odszyfrować tej wiadomości na tym urządzeniu.',
+          sendFailed:
+            'Wiadomość nie została wysłana. Sprawdź połączenie i spróbuj ponownie.',
           emptyTitle: 'Nie ma jeszcze wiadomości',
           emptyText:
             'Zaszyfrowane wiadomości pojawią się na każdym autoryzowanym urządzeniu.',

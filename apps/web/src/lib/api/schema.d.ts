@@ -4883,6 +4883,8 @@ export interface operations {
                                     id: string;
                                 };
                             }[];
+                        } & {
+                            currentEncryptionEpoch: number;
                         })[];
                     };
                 };
@@ -4936,6 +4938,8 @@ export interface operations {
                                 id: string;
                             };
                         }[];
+                    } & {
+                        currentEncryptionEpoch: number;
                     };
                 };
             };
@@ -5047,6 +5051,8 @@ export interface operations {
                                     id: string;
                                 };
                             }[];
+                        } & {
+                            currentEncryptionEpoch: number;
                         }) | null;
                         encryptionEpoch: number;
                     };
@@ -5161,6 +5167,8 @@ export interface operations {
                                     id: string;
                                 };
                             }[];
+                        } & {
+                            currentEncryptionEpoch: number;
                         }) | null;
                         encryptionEpoch: number;
                     };
@@ -5269,6 +5277,8 @@ export interface operations {
                                     id: string;
                                 };
                             }[];
+                        } & {
+                            currentEncryptionEpoch: number;
                         }) | null;
                         encryptionEpoch: number;
                     };
@@ -5376,6 +5386,8 @@ export interface operations {
                                     id: string;
                                 };
                             }[];
+                        } & {
+                            currentEncryptionEpoch: number;
                         }) | null;
                         encryptionEpoch: number;
                     };
@@ -5471,6 +5483,8 @@ export interface operations {
                                     id: string;
                                 };
                             }[];
+                        } & {
+                            currentEncryptionEpoch: number;
                         }) | null;
                         encryptionEpoch: number;
                     };

@@ -167,6 +167,7 @@ export const ConversationSchema = Type.Intersect(
   [
     ChannelSchema,
     Type.Object({ members: Type.Array(ConversationMemberSchema) }),
+    Type.Object({ currentEncryptionEpoch: Type.Integer({ minimum: 1 }) }),
   ],
   { $id: 'Conversation' },
 )

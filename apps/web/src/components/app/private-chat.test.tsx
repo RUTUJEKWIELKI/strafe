@@ -9,6 +9,7 @@ import { MessageComposer } from './message-composer.js'
 
 const conversation: Conversation = {
   archivedAt: null,
+  currentEncryptionEpoch: 1,
   flags: 0,
   id: '018f0f50-c0f2-7bd1-8000-000000000001',
   members: [
@@ -47,7 +48,11 @@ describe('private chat controls', () => {
   it('keeps the composer disabled until E2EE is available', () => {
     render(() => (
       <I18nextProvider i18n={i18n}>
-        <MessageComposer encryptionReady={false} />
+        <MessageComposer
+          encryptionReady={false}
+          onSend={() => Promise.resolve()}
+          onTyping={() => {}}
+        />
       </I18nextProvider>
     ))
     expect((screen.getByRole('textbox') as HTMLTextAreaElement).disabled).toBe(

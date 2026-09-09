@@ -4,8 +4,44 @@ import { SmilePlus } from 'lucide-solid'
 import { useTranslation } from 'solid-i18next'
 import { api } from '../../lib/api/client.js'
 import { EmojiPicker } from './emoji-picker.js'
+import { createResource } from 'solid-js'
+import {
+  decryptMessage,
+  type SecureConversationKeyStore,
+} from '../../lib/messages/encryption.js'
 
-export function MessageList(props: { messages: Message[]; loading: boolean }) {
+function MessageContent(props: {
+  message: Message
+  keyStore: SecureConversationKeyStore
+}) {
+  const [t] = useTranslation()
+  const [plaintext] = createResource(
+    () => props.message.envelope,
+    (envelope) =>
+      decryptMessage(envelope, props.message.channelId, props.keyStore),
+  )
+  return (
+    <Show
+      when={!props.message.deletedAt}
+      fallback={<p class="deleted">{t('workspace.chat.deleted')}</p>}
+    >
+      <Show
+        when={!plaintext.loading}
+        fallback={<p>{t('workspace.chat.decrypting')}</p>}
+      >
+        <p>
+          {plaintext.error ? t('workspace.chat.decryptFailed') : plaintext()}
+        </p>
+      </Show>
+    </Show>
+  )
+}
+
+export function MessageList(props: {
+  messages: Message[]
+  loading: boolean
+  keyStore: SecureConversationKeyStore
+}) {
   const [t] = useTranslation()
   const [reacting, setReacting] = createSignal<string>()
   return (
@@ -55,13 +91,7 @@ export function MessageList(props: { messages: Message[]; loading: boolean }) {
                       </time>
                     </strong>
                   </Show>
-                  <p classList={{ deleted: Boolean(message.deletedAt) }}>
-                    {message.deletedAt
-                      ? t('workspace.chat.deleted')
-                      : message.envelope
-                        ? t('workspace.chat.encryptedLocked')
-                        : t('workspace.chat.unavailable')}
-                  </p>
+                  <MessageContent message={message} keyStore={props.keyStore} />
                   {message.editedAt && (
                     <small>{t('workspace.chat.edited')}</small>
                   )}

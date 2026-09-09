@@ -298,21 +298,24 @@ export class DirectMessageService {
       .innerJoin(users, eq(users.id, channelMembers.userId))
       .innerJoin(userProfiles, eq(userProfiles.userId, users.id))
       .where(inArray(channelMembers.channelId, ids))
-    return rows.map(({ channel }) => ({
-      ...mapChannel(channel),
-      members: members
-        .filter((member) => member.channelId === channel.id)
-        .map((member) => ({
-          joinedAt: member.joinedAt.toISOString(),
-          role: member.role as 'owner' | 'member',
-          user: {
-            avatarUrl: member.avatarUrl,
-            displayName: member.displayName,
-            handle: member.handle,
-            id: member.id,
-          },
-        })),
-    }))
+    return Promise.all(
+      rows.map(async ({ channel }) => ({
+        ...mapChannel(channel),
+        currentEncryptionEpoch: await this.#epoch(channel.id),
+        members: members
+          .filter((member) => member.channelId === channel.id)
+          .map((member) => ({
+            joinedAt: member.joinedAt.toISOString(),
+            role: member.role as 'owner' | 'member',
+            user: {
+              avatarUrl: member.avatarUrl,
+              displayName: member.displayName,
+              handle: member.handle,
+              id: member.id,
+            },
+          })),
+      })),
+    )
   }
 
   async createGroup(

@@ -8983,6 +8983,18 @@
                                 }
                               }
                             }
+                          },
+                          {
+                            "type": "object",
+                            "required": [
+                              "currentEncryptionEpoch"
+                            ],
+                            "properties": {
+                              "currentEncryptionEpoch": {
+                                "type": "integer",
+                                "minimum": 1
+                              }
+                            }
                           }
                         ],
                         "title": "Conversation"
@@ -9258,6 +9270,18 @@
                               }
                             }
                           }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "currentEncryptionEpoch"
+                      ],
+                      "properties": {
+                        "currentEncryptionEpoch": {
+                          "type": "integer",
+                          "minimum": 1
                         }
                       }
                     }
@@ -9692,6 +9716,18 @@
                                       }
                                     }
                                   }
+                                }
+                              }
+                            },
+                            {
+                              "type": "object",
+                              "required": [
+                                "currentEncryptionEpoch"
+                              ],
+                              "properties": {
+                                "currentEncryptionEpoch": {
+                                  "type": "integer",
+                                  "minimum": 1
                                 }
                               }
                             }
@@ -10138,6 +10174,18 @@
                                   }
                                 }
                               }
+                            },
+                            {
+                              "type": "object",
+                              "required": [
+                                "currentEncryptionEpoch"
+                              ],
+                              "properties": {
+                                "currentEncryptionEpoch": {
+                                  "type": "integer",
+                                  "minimum": 1
+                                }
+                              }
                             }
                           ]
                         },
@@ -10571,6 +10619,18 @@
                                   }
                                 }
                               }
+                            },
+                            {
+                              "type": "object",
+                              "required": [
+                                "currentEncryptionEpoch"
+                              ],
+                              "properties": {
+                                "currentEncryptionEpoch": {
+                                  "type": "integer",
+                                  "minimum": 1
+                                }
+                              }
                             }
                           ]
                         },
@@ -10995,6 +11055,18 @@
                                   }
                                 }
                               }
+                            },
+                            {
+                              "type": "object",
+                              "required": [
+                                "currentEncryptionEpoch"
+                              ],
+                              "properties": {
+                                "currentEncryptionEpoch": {
+                                  "type": "integer",
+                                  "minimum": 1
+                                }
+                              }
                             }
                           ]
                         },
@@ -11386,6 +11458,18 @@
                                       }
                                     }
                                   }
+                                }
+                              }
+                            },
+                            {
+                              "type": "object",
+                              "required": [
+                                "currentEncryptionEpoch"
+                              ],
+                              "properties": {
+                                "currentEncryptionEpoch": {
+                                  "type": "integer",
+                                  "minimum": 1
                                 }
                               }
                             }

@@ -3,12 +3,24 @@ import { SmilePlus } from 'lucide-solid'
 import { useTranslation } from 'solid-i18next'
 import { EmojiPicker } from './emoji-picker.js'
 
-export function MessageComposer(props: { encryptionReady: boolean }) {
+export function MessageComposer(props: {
+  encryptionReady: boolean
+  onSend: (value: string) => Promise<void>
+  onTyping: () => void
+}) {
   const [t] = useTranslation()
   const [value, setValue] = createSignal('')
   const [pickerOpen, setPickerOpen] = createSignal(false)
   return (
-    <form class="message-composer" onSubmit={(event) => event.preventDefault()}>
+    <form
+      class="message-composer"
+      onSubmit={(event) => {
+        event.preventDefault()
+        const message = value().trim()
+        if (!message) return
+        void props.onSend(message).then(() => setValue(''))
+      }}
+    >
       <button
         type="button"
         onClick={() => setPickerOpen(!pickerOpen())}
@@ -30,7 +42,16 @@ export function MessageComposer(props: { encryptionReady: boolean }) {
       <textarea
         id="message-content"
         value={value()}
-        onInput={(event) => setValue(event.currentTarget.value)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault()
+            event.currentTarget.form?.requestSubmit()
+          }
+        }}
+        onInput={(event) => {
+          setValue(event.currentTarget.value.slice(0, 4000))
+          props.onTyping()
+        }}
         disabled={!props.encryptionReady}
         placeholder={
           props.encryptionReady

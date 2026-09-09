@@ -7,6 +7,7 @@ export const api = createClient<paths>({
 })
 
 let accessToken: string | null = null
+const tokenListeners = new Set<(token: string | null) => void>()
 
 api.use({
   onRequest({ request }) {
@@ -23,6 +24,14 @@ api.use({
 
 export function setApiAccessToken(token: string | null): void {
   accessToken = token
+  for (const listener of tokenListeners) listener(token)
+}
+
+export const getApiAccessToken = () => accessToken
+
+export function onApiAccessToken(listener: (token: string | null) => void) {
+  tokenListeners.add(listener)
+  return () => tokenListeners.delete(listener)
 }
 
 /** Call after a successful logout, before removing the in-memory session key. */

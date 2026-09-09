@@ -7,6 +7,7 @@ import {
   ConversationProvider,
   useConversations,
 } from '../lib/conversations/context.js'
+import { RealtimeProvider } from '../lib/realtime/context.js'
 
 function Workspace(props: { children?: JSX.Element }) {
   const conversations = useConversations()
@@ -28,9 +29,11 @@ function Workspace(props: { children?: JSX.Element }) {
 export function MeLayout(props: { children?: JSX.Element }) {
   return (
     <Show when={currentUser()} fallback={<Navigate href="/login" />}>
-      <ConversationProvider>
-        <Workspace>{props.children}</Workspace>
-      </ConversationProvider>
+      <RealtimeProvider>
+        <ConversationProvider>
+          <Workspace>{props.children}</Workspace>
+        </ConversationProvider>
+      </RealtimeProvider>
     </Show>
   )
 }

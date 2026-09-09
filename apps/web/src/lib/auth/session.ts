@@ -12,6 +12,7 @@ interface StoredSession {
 
 interface AuthTokens {
   accessToken: string
+  deviceId?: string
   refreshToken: string
 }
 
@@ -19,6 +20,9 @@ export const [currentUser, setCurrentUser] = createSignal<CurrentUser | null>(
   null,
 )
 export const [sessionReady, setSessionReady] = createSignal(false)
+export const [currentDeviceId, setCurrentDeviceId] = createSignal<
+  string | null
+>(null)
 
 function savedSession(): StoredSession | null {
   try {
@@ -32,6 +36,7 @@ function savedSession(): StoredSession | null {
 function applySession(tokens: AuthTokens, user: CurrentUser): void {
   setApiAccessToken(tokens.accessToken)
   setCurrentUser(user)
+  setCurrentDeviceId(tokens.deviceId ?? null)
   sessionStorage.setItem(
     storageKey,
     JSON.stringify({
@@ -91,6 +96,7 @@ export async function restoreSession(): Promise<void> {
   } catch {
     sessionStorage.removeItem(storageKey)
     setApiAccessToken(null)
+    setCurrentDeviceId(null)
   } finally {
     setSessionReady(true)
   }
@@ -109,6 +115,7 @@ export async function logout(): Promise<void> {
     sessionStorage.removeItem(storageKey)
     setApiAccessToken(null)
     setCurrentUser(null)
+    setCurrentDeviceId(null)
   }
 }
 
